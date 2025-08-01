@@ -126,7 +126,7 @@ export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps)
 
   return (
     <div className="space-y-2">
-      {lastLog ? (
+      {logs.length > 0 ? (
         <>
             <div className="group flex flex-col p-2.5 bg-secondary/50 rounded-lg text-sm -mt-2">
                  <div className="font-medium flex items-center gap-2 whitespace-nowrap">
@@ -147,13 +147,13 @@ export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps)
                 <div className="font-medium whitespace-nowrap">Last Feeding</div>
                 <div className="flex justify-between items-baseline mt-2">
                     <div className="flex items-baseline gap-2">
-                        <div className="text-xl font-bold text-primary">{lastLog.amount}g</div>
-                        <div className="text-md font-semibold">{lastLog.foodItem}</div>
+                        <div className="text-xl font-bold text-primary">{logs[0].amount}g</div>
+                        <div className="text-md font-semibold">{logs[0].foodItem}</div>
                     </div>
-                    {lastLog.protein && <span className="text-sm text-muted-foreground">{lastLog.protein.toFixed(1)}g p</span>}
+                    {logs[0].protein && <span className="text-sm text-muted-foreground">{logs[0].protein.toFixed(1)}g p</span>}
                 </div>
                  <div className="text-xs text-muted-foreground mt-1 flex justify-between">
-                    <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm')}</span>
+                    <span>{format(parseISO(logs[0].datetime), 'MMM d, HH:mm')}</span>
                 </div>
           </div>
         </>

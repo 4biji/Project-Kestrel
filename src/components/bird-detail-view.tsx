@@ -95,13 +95,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     })
   );
   const [isEditingChartSettings, setIsEditingChartSettings] = useState(false);
-  const [isViewingAllLogs, setIsViewingAllLogs] = useState(false);
   
+  const [isViewingAllWeightLogs, setIsViewingAllWeightLogs] = useState(false);
   const [isViewingAllTrainingLogs, setIsViewingAllTrainingLogs] = useState(false);
   const [isViewingAllFeedingLogs, setIsViewingAllFeedingLogs] = useState(false);
   const [isViewingAllHusbandryLogs, setIsViewingAllHusbandryLogs] = useState(false);
   const [isViewingAllMuteLogs, setIsViewingAllMuteLogs] = useState(false);
   const [isViewingAllHuntingLogs, setIsViewingAllHuntingLogs] = useState(false);
+
   const [isViewingNutritionTable, setIsViewingNutritionTable] = useState(false);
   const [isEditingHusbandrySettings, setIsEditingHusbandrySettings] = useState(false);
   const [isEditingTrainingSettings, setIsEditingTrainingSettings] = useState(false);
@@ -255,6 +256,16 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     }
   }
 
+  const handleEditLog = (log: LogEntry) => {
+    setIsViewingAllWeightLogs(false);
+    setIsViewingAllFeedingLogs(false);
+    setIsViewingAllHusbandryLogs(false);
+    setIsViewingAllHuntingLogs(false);
+    setIsViewingAllMuteLogs(false);
+    setIsViewingAllTrainingLogs(false);
+    setEditingLog(log);
+  }
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -298,7 +309,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => setIsViewingAllLogs(true)}>
+                        <DropdownMenuItem onSelect={() => setIsViewingAllWeightLogs(true)}>
                         <ScrollText className="mr-2 h-4 w-4" />
                         <span>View All Logs</span>
                         </DropdownMenuItem>
@@ -316,8 +327,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 ) : (
                     <WeightLogComponent 
                         logs={birdWeightLogs} 
-                        onEdit={(log) => setEditingLog(log)}
-                        onDelete={(log) => handleDeleteLog(log)}
+                        onEdit={handleEditLog}
+                        onDelete={handleDeleteLog}
                     />
                 )}
             </CardContent>
@@ -362,7 +373,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                             onCancel={() => setEditingLog(null)}
                         />
                     ) : (
-                        <TrainingLogComponent logs={birdTrainingLogs} onEdit={(log) => setEditingLog(log)} onDelete={(log) => handleDeleteLog(log)} />
+                        <TrainingLogComponent logs={birdTrainingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                     )}
                 </CardContent>
             </Card>
@@ -406,7 +417,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                             onCancel={() => setEditingLog(null)}
                         />
                     ) : (
-                        <FeedingLogComponent logs={birdFeedingLogs} onEdit={(log) => setEditingLog(log)} onDelete={(log) => handleDeleteLog(log)} />
+                        <FeedingLogComponent logs={birdFeedingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                     )}
                 </CardContent>
             </Card>
@@ -446,7 +457,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                             onCancel={() => setEditingLog(null)}
                         />
                     ) : (
-                        <HuntingLogComponent logs={birdHuntingLogs} onEdit={(log) => setEditingLog(log)} onDelete={(log) => handleDeleteLog(log)} />
+                        <HuntingLogComponent logs={birdHuntingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                     )}
                 </CardContent>
             </Card>
@@ -534,7 +545,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                             onCancel={() => setEditingLog(null)}
                         />
                     ) : (
-                        <MuteLogComponent logs={birdMuteLogs} onEdit={(log) => setEditingLog(log)} onDelete={(log) => handleDeleteLog(log)} />
+                        <MuteLogComponent logs={birdMuteLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                     )}
                 </CardContent>
             </Card>
@@ -564,13 +575,13 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
           averageWeight={averageWeight}
         />
       )}
-      {isViewingAllLogs && (
+      {isViewingAllWeightLogs && (
         <ViewAllLogsDialog
-            open={isViewingAllLogs}
-            onOpenChange={setIsViewingAllLogs}
+            open={isViewingAllWeightLogs}
+            onOpenChange={setIsViewingAllWeightLogs}
             logs={birdWeightLogs}
-            onEdit={(log) => setEditingLog(log)}
-            onDelete={(log) => handleDeleteLog(log)}
+            onEdit={handleEditLog}
+            onDelete={handleDeleteLog}
         />
       )}
       {isViewingAllFeedingLogs && (
@@ -578,8 +589,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             open={isViewingAllFeedingLogs}
             onOpenChange={setIsViewingAllFeedingLogs}
             logs={birdFeedingLogs}
-            onEdit={(log) => setEditingLog(log)}
-            onDelete={(log) => handleDeleteLog(log)}
+            onEdit={handleEditLog}
+            onDelete={handleDeleteLog}
         />
       )}
       {isViewingAllHuntingLogs && (
@@ -587,8 +598,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             open={isViewingAllHuntingLogs}
             onOpenChange={setIsViewingAllHuntingLogs}
             logs={birdHuntingLogs}
-            onEdit={(log) => setEditingLog(log)}
-            onDelete={(log) => handleDeleteLog(log)}
+            onEdit={handleEditLog}
+            onDelete={handleDeleteLog}
         />
       )}
       {isViewingAllHusbandryLogs && (
@@ -596,8 +607,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             open={isViewingAllHusbandryLogs}
             onOpenChange={setIsViewingAllHusbandryLogs}
             tasks={birdHusbandryLogs}
-            onEdit={(task) => setEditingLog(task)}
-            onDelete={(task) => handleDeleteLog(task)}
+            onEdit={handleEditLog}
+            onDelete={handleDeleteLog}
         />
        )}
       {isViewingAllTrainingLogs && (
@@ -605,8 +616,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             open={isViewingAllTrainingLogs}
             onOpenChange={setIsViewingAllTrainingLogs}
             logs={birdTrainingLogs}
-            onEdit={(log) => setEditingLog(log)}
-            onDelete={(log) => handleDeleteLog(log)}
+            onEdit={handleEditLog}
+            onDelete={handleDeleteLog}
         />
       )}
        {isViewingAllMuteLogs && (
@@ -614,8 +625,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             open={isViewingAllMuteLogs}
             onOpenChange={setIsViewingAllMuteLogs}
             logs={birdMuteLogs}
-            onEdit={(log) => setEditingLog(log)}
-            onDelete={(log) => handleDeleteLog(log)}
+            onEdit={handleEditLog}
+            onDelete={handleDeleteLog}
         />
        )}
        {isViewingNutritionTable && (

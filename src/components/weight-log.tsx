@@ -66,18 +66,18 @@ export function ViewAllLogsDialog({ open, onOpenChange, logs, onEdit, onDelete }
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DialogClose asChild>
-                                            <DropdownMenuItem onClick={() => onEdit(log)}>
-                                                <Pencil className="mr-2 h-4 w-4" />
-                                                <span>Edit</span>
-                                            </DropdownMenuItem>
-                                        </DialogClose>
-                                        <DialogClose asChild>
-                                            <DropdownMenuItem onClick={() => onDelete(log)} className="text-red-500 focus:text-red-500">
-                                                <Trash2 className="mr-2 h-4 w-4" />
-                                                <span>Delete</span>
-                                            </DropdownMenuItem>
-                                        </DialogClose>
+                                        
+                                        <DropdownMenuItem onClick={() => onEdit(log)}>
+                                            <Pencil className="mr-2 h-4 w-4" />
+                                            <span>Edit</span>
+                                        </DropdownMenuItem>
+                                        
+                                        
+                                        <DropdownMenuItem onClick={() => onDelete(log)} className="text-red-500 focus:text-red-500">
+                                            <Trash2 className="mr-2 h-4 w-4" />
+                                            <span>Delete</span>
+                                        </DropdownMenuItem>
+                                        
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
