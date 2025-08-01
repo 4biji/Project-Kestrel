@@ -13,7 +13,7 @@ import { WeightLogComponent } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets } from "lucide-react";
+import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { FeedingLogComponent } from "./feeding-log";
 import { HusbandryLog } from "./husbandry-log";
@@ -132,8 +132,11 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="flex flex-col">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
+                <Button variant="ghost" size="icon">
+                    <Settings className="w-4 h-4" />
+                </Button>
             </CardHeader>
             <CardContent className="flex-grow h-[300px]">
                 <WeightChart data={birdWeightLogs} />
@@ -141,9 +144,8 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
         </Card>
         <Card className="flex flex-col">
            <CardHeader className="flex flex-row items-center justify-between">
-                <div className="flex flex-col space-y-1.5">
-                    <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
-                </div>
+                <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
+                <div className="flex items-center">
                  <Dialog open={isAddingWeightLog} onOpenChange={setIsAddingWeightLog}>
                     <DialogTrigger asChild>
                       <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
@@ -161,6 +163,10 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                       />
                     </DialogContent>
                   </Dialog>
+                  <Button variant="ghost" size="icon">
+                    <Settings className="w-4 h-4" />
+                </Button>
+                </div>
             </CardHeader>
             <CardContent className="flex-grow">
                 {editingWeightLog ? (
@@ -182,36 +188,56 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg"><Footprints className="w-5 h-5"/> Training Log</CardTitle>
-                 <CardDescription>Records of training sessions and behaviors.</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle className="flex items-center gap-2 text-lg"><Footprints className="w-5 h-5"/> Training Log</CardTitle>
+                    <CardDescription>Records of training sessions and behaviors.</CardDescription>
+                </div>
+                <Button variant="ghost" size="icon">
+                    <Settings className="w-4 h-4" />
+                </Button>
             </CardHeader>
             <CardContent>
                 <TrainingLogComponent logs={birdTrainingLogs} />
             </CardContent>
         </Card>
         <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg"><Bone className="w-5 h-5"/> Feeding Log</CardTitle>
-                <CardDescription>Daily food intake and notes.</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle className="flex items-center gap-2 text-lg"><Bone className="w-5 h-5"/> Feeding Log</CardTitle>
+                    <CardDescription>Daily food intake and notes.</CardDescription>
+                </div>
+                <Button variant="ghost" size="icon">
+                    <Settings className="w-4 h-4" />
+                </Button>
             </CardHeader>
             <CardContent>
                 <FeedingLogComponent logs={birdFeedingLogs} />
             </CardContent>
         </Card>
         <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg"><ShieldCheck className="w-5 h-5"/> Husbandry</CardTitle>
-                <CardDescription>Daily care and equipment checks.</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle className="flex items-center gap-2 text-lg"><ShieldCheck className="w-5 h-5"/> Husbandry</CardTitle>
+                    <CardDescription>Daily care and equipment checks.</CardDescription>
+                </div>
+                <Button variant="ghost" size="icon">
+                    <Settings className="w-4 h-4" />
+                </Button>
             </CardHeader>
             <CardContent>
                 <HusbandryLog tasks={birdHusbandryLogs} />
             </CardContent>
         </Card>
          <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes & Castings</CardTitle>
-                <CardDescription>Health monitoring through droppings.</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes & Castings</CardTitle>
+                    <CardDescription>Health monitoring through droppings.</CardDescription>
+                </div>
+                <Button variant="ghost" size="icon">
+                    <Settings className="w-4 h-4" />
+                </Button>
             </CardHeader>
             <CardContent>
                 <MuteLogComponent logs={birdMuteLogs} />
