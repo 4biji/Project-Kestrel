@@ -18,12 +18,14 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import { Bird, View, Plus, Minus } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 
 export const settingsSchema = z.object({
   isLayoutEditable: z.boolean().default(false),
+  rowHeight: z.coerce.number().positive().default(125),
   visibleCards: z.object({
     'weight-trend': z.boolean().default(true),
     'weight-log': z.boolean().default(true),
@@ -147,6 +149,20 @@ export function SettingsDialog({
                                             checked={field.value}
                                             onCheckedChange={field.onChange}
                                         />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="rowHeight"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Row Height (in pixels)
+                                    </FormLabel>
+                                    <FormControl>
+                                       <Input type="number" {...field} />
                                     </FormControl>
                                 </FormItem>
                             )}
