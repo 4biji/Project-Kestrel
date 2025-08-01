@@ -61,15 +61,15 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
     <div className="space-y-2">
       {lastLog ? (
         <>
-          <div className="group flex flex-col p-3 bg-secondary/50 rounded-lg text-sm">
+          <div className="group flex flex-col p-2.5 bg-secondary/50 rounded-lg text-sm -mt-2.5">
             <div className="font-medium whitespace-nowrap">Last Entry</div>
-            <div className="flex items-baseline gap-2 mt-2">
+            <div className="flex items-baseline gap-2 mt-1">
                 <div className="text-2xl font-bold text-primary">{lastLog.weight}g</div>
                 {(log => {
                     const weightChange = getChangeForLog(log);
                     return weightChange !== null && !isNaN(weightChange) && (
-                    <span className={`flex items-center text-lg font-bold ${weightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        {weightChange >= 0 ? <TrendingUp className="w-4 h-4 mr-0.5" /> : <TrendingDown className="w-4 h-4 mr-0.5" />}
+                    <span className={`flex items-center text-2xl font-bold ${weightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {weightChange >= 0 ? <TrendingUp className="w-5 h-5 mr-0.5" /> : <TrendingDown className="w-5 h-5 mr-0.5" />}
                         {weightChange.toFixed(1)}g
                     </span>
                     );
