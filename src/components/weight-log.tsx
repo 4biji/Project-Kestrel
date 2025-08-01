@@ -1,15 +1,14 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, parseISO, differenceInHours } from "date-fns";
 import type { WeightLog } from "@/lib/types";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter, DialogTrigger } from "./ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
 import { TrendingUp, TrendingDown, MoreVertical, Pencil, Trash2, Activity, ScrollText } from "lucide-react";
-import { DialogTrigger } from "@radix-ui/react-dialog";
 
 interface WeightLogComponentProps {
   logs: WeightLog[];
@@ -18,27 +17,28 @@ interface WeightLogComponentProps {
 }
 
 export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponentProps) {
-  const sortedLogs = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
-  const displayLogs = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
-  
-  const lastLog = displayLogs.length > 0 ? displayLogs[0] : null;
+  const [sortedLogs, setSortedLogs] = useState<WeightLog[]>([]);
+  const [displayLogs, setDisplayLogs] = useState<WeightLog[]>([]);
+  const [lastLog, setLastLog] = useState<WeightLog | null>(null);
+  const [averageHourlyLoss, setAverageHourlyLoss] = useState(0);
 
-  const getChangeForLog = (currentLog: WeightLog) => {
-    const currentIndex = displayLogs.findIndex(log => log.datetime === currentLog.datetime);
-    if (currentIndex === -1 || currentIndex >= displayLogs.length - 1) return null;
-    const previousLog = displayLogs[currentIndex + 1];
-    return currentLog.weight - previousLog.weight;
-  }
+  useEffect(() => {
+    const sorted = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
+    const display = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+    
+    setSortedLogs(sorted);
+    setDisplayLogs(display);
+    setLastLog(display.length > 0 ? display[0] : null);
 
-  const calculateAverageHourlyWeightLoss = () => {
-    if (sortedLogs.length < 2) return 0;
+    if (sorted.length < 2) {
+      setAverageHourlyLoss(0);
+      return;
+    }
 
     const hourlyLosses: number[] = [];
-
-    for (let i = 1; i < sortedLogs.length; i++) {
-      const prevLog = sortedLogs[i-1];
-      const currentLog = sortedLogs[i];
-
+    for (let i = 1; i < sorted.length; i++) {
+      const prevLog = sorted[i-1];
+      const currentLog = sorted[i];
       const weightChange = prevLog.weight - currentLog.weight;
 
       if (weightChange > 0) { // Only consider weight loss
@@ -50,21 +50,29 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
       }
     }
 
-    if (hourlyLosses.length === 0) return 0;
+    if (hourlyLosses.length === 0) {
+      setAverageHourlyLoss(0);
+      return;
+    }
 
-    const averageHourlyWeightLoss = hourlyLosses.reduce((sum, loss) => sum + loss, 0) / hourlyLosses.length;
-    return averageHourlyWeightLoss;
-  };
+    const avgLoss = hourlyLosses.reduce((sum, loss) => sum + loss, 0) / hourlyLosses.length;
+    setAverageHourlyLoss(avgLoss);
+  }, [logs]);
 
-  const averageHourlyLoss = calculateAverageHourlyWeightLoss();
+  const getChangeForLog = (currentLog: WeightLog) => {
+    const currentIndex = displayLogs.findIndex(log => log.datetime === currentLog.datetime);
+    if (currentIndex === -1 || currentIndex >= displayLogs.length - 1) return null;
+    const previousLog = displayLogs[currentIndex + 1];
+    return currentLog.weight - previousLog.weight;
+  }
 
   return (
     <div className="space-y-2">
       {lastLog ? (
         <>
-          <div className="group flex flex-col p-2.5 bg-secondary/50 rounded-lg text-sm">
+          <div className="group flex flex-col p-2.5 bg-secondary/50 rounded-lg text-sm -mt-2">
             <div className="font-medium whitespace-nowrap">Last Entry</div>
-            <div className="flex items-baseline gap-2 mt-1">
+            <div className="flex items-center gap-2 mt-1">
                 <div className="text-2xl font-bold text-primary">{lastLog.weight}g</div>
                 {(log => {
                     const weightChange = getChangeForLog(log);

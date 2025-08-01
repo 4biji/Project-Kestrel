@@ -144,7 +144,7 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                             </Card>
                         </div>
                         <div className="lg:col-span-1">
-                             <Card>
+                             <Card className="h-full">
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <CardTitle className="flex items-center gap-2 text-lg">
                                         <Scale className="w-5 h-5" /> Weight Log

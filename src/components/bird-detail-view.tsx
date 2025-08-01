@@ -131,15 +131,15 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="flex flex-col">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
             </CardHeader>
-            <CardContent className="h-[300px]">
+            <CardContent className="flex-grow h-[300px]">
                 <WeightChart data={birdWeightLogs} />
             </CardContent>
         </Card>
-        <Card>
+        <Card className="flex flex-col">
            <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex flex-col space-y-1.5">
                     <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
@@ -162,7 +162,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </DialogContent>
                   </Dialog>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-grow">
                 {editingWeightLog ? (
                     <EditWeightLogForm
                         log={editingWeightLog}
