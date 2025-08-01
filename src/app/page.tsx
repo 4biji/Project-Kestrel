@@ -12,5 +12,5 @@ export default function Home() {
     weightLogs,
   };
 
-  return <FalconryJournalClient initialData={appData} />;
+  return <FalconryJournalClient initialData={appData} view="overview" />;
 }
