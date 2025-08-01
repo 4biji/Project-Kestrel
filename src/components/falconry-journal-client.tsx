@@ -99,7 +99,11 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
       <SidebarInset>
         <main className="min-h-screen p-4 sm:p-6 lg:p-8">
             {view === 'overview' ? (
-                <AllBirdsOverview initialData={initialData} />
+                <AllBirdsOverview initialData={{
+                    birds: initialData.birds,
+                    weightLogs: initialData.weightLogs,
+                    feedingLogs: initialData.feedingLogs
+                }} />
             ) : (
                 <BirdDetailView 
                     initialData={initialData} 

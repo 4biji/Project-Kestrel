@@ -1,22 +1,40 @@
 
 "use client"
 
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, ReferenceLine, Label } from "recharts"
-import type { WeightLog } from "@/lib/types"
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, ReferenceLine, Label, ReferenceDot } from "recharts"
+import type { WeightLog, FeedingLog } from "@/lib/types"
 import type { WeightChartSettingsData } from './weight-chart-settings';
+import { Bone } from "lucide-react";
+import { format } from "date-fns";
 
 interface WeightChartProps {
   data: WeightLog[];
   settings: WeightChartSettingsData;
+  feedingLogs?: FeedingLog[];
 }
 
-export function WeightChart({ data, settings }: WeightChartProps) {
+const FeedingTooltipContent = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload.feeding;
+      return (
+        <div className="rounded-lg border bg-background p-2 shadow-sm text-xs">
+          <div className="font-bold">{format(new Date(data.datetime), 'MMM d, HH:mm')}</div>
+          <div>Fed: {data.foodItem} ({data.amount}g)</div>
+          {data.notes && <div className="italic text-muted-foreground">"{data.notes}"</div>}
+        </div>
+      );
+    }
+    return null;
+  };
+
+export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartProps) {
     if (!data || data.length === 0) {
         return <div className="text-center text-muted-foreground py-10">No weight data available.</div>
     }
 
   const chartData = data.map(log => ({
-    ...log,
+    datetime: log.datetime,
+    weight: log.weight,
     name: new Date(log.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   })).sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
@@ -49,9 +67,26 @@ export function WeightChart({ data, settings }: WeightChartProps) {
     const maxValue = Math.max(...allValues);
     const padding = (maxValue - minValue) * 0.1 || 10;
 
-    return [minValue - padding, maxValue + padding];
+    return [Math.floor(minValue - padding), Math.ceil(maxValue + padding)];
   }
 
+  const findWeightAtTime = (time: string) => {
+    const targetTime = new Date(time).getTime();
+    
+    let closestLog = null;
+    let minDiff = Infinity;
+
+    for (const log of chartData) {
+      const logTime = new Date(log.datetime).getTime();
+      const diff = Math.abs(logTime - targetTime);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestLog = log;
+      }
+    }
+    return closestLog ? closestLog.weight : 0;
+  }
+  
 
   return (
     <div className="h-full w-full">
@@ -81,17 +116,21 @@ export function WeightChart({ data, settings }: WeightChartProps) {
                 width={30}
             />
             <Tooltip
-                contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    borderColor: 'hsl(var(--border))',
-                    borderRadius: 'var(--radius)',
-                    color: 'hsl(var(--card-foreground))'
-                }}
-                labelStyle={{ fontWeight: 'bold' }}
-                formatter={(value: number) => [`${value}g`, "Weight"]}
-                labelFormatter={(label) => {
-                    const log = chartData.find(d => d.name === label);
-                    return log ? new Date(log.datetime).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : label
+                content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                        if (payload[0].payload.feeding) {
+                            return <FeedingTooltipContent active={active} payload={payload} />;
+                        }
+
+                        const log = chartData.find(d => d.name === label);
+                        return (
+                            <div className="rounded-lg border bg-background p-2 shadow-sm text-sm">
+                                <div className="font-bold">{log ? new Date(log.datetime).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : label}</div>
+                                <div>Weight: {payload[0].value}g</div>
+                            </div>
+                        )
+                    }
+                    return null;
                 }}
             />
              <Label 
@@ -141,6 +180,19 @@ export function WeightChart({ data, settings }: WeightChartProps) {
                     strokeDasharray="4 4"
                 />
             )}
+            {settings.showFeedingEvents && feedingLogs.map(log => (
+                <ReferenceDot
+                    key={log.id}
+                    x={new Date(log.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    y={findWeightAtTime(log.datetime) + 5} // Position slightly above the line
+                    r={8}
+                    fill="hsl(var(--primary))"
+                    stroke="hsl(var(--background))"
+                    shape={<Bone className="w-4 h-4 text-orange-500" />}
+                >
+                     <Label value={`${log.amount}g`} position="top" fill="hsl(var(--muted-foreground))" fontSize={10}/>
+                </ReferenceDot>
+            ))}
             </LineChart>
         </ResponsiveContainer>
     </div>

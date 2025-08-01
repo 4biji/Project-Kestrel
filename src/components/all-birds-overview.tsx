@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Bird as BirdType, WeightLog } from "@/lib/types";
+import type { Bird as BirdType, WeightLog, FeedingLog } from "@/lib/types";
 import { format } from 'date-fns';
 
 import { BirdProfileHeader } from "@/components/bird-profile-header";
@@ -36,12 +36,14 @@ interface AllBirdsOverviewProps {
   initialData: {
     birds: BirdType[];
     weightLogs: { [birdId: string]: WeightLog[] };
+    feedingLogs: { [birdId: string]: FeedingLog[] };
   };
 }
 
 export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
   const [birds, setBirds] = useState(initialData.birds);
   const [weightLogs, setWeightLogs] = useState(initialData.weightLogs);
+  const [feedingLogs, setFeedingLogs] = useState(initialData.feedingLogs);
   const [editingWeightLog, setEditingWeightLog] = useState<WeightLog | null>(null);
   const [addingWeightLogToBirdId, setAddingWeightLogToBirdId] = useState<string | null>(null);
   const [overviewTitle, setOverviewTitle] = useState("All Birds Weight Overview");
@@ -129,11 +131,11 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
     });
   };
 
-  const getDefaultChartSettings = () => {
+  const getDefaultChartSettings = (birdId: string): WeightChartSettingsData => {
     return weightChartSettingsSchema.parse({
-        alertBelowAverage: { enabled: false, percentage: 5 },
-        presetAlert: { enabled: false, weight: 0 },
-        huntingWeight: { enabled: false, weight: 0 },
+        alertBelowAverage: {},
+        presetAlert: {},
+        huntingWeight: {},
     });
   };
   
@@ -154,8 +156,9 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
     {birds.length > 0 ? (
         birds.map((bird, index) => {
             const birdWeightLogs = weightLogs[bird.id] || [];
+            const birdFeedingLogs = feedingLogs[bird.id] || [];
             const birdForEditing = editingWeightLog && Object.keys(weightLogs).find(id => weightLogs[id].some(l => l.datetime === editingWeightLog.datetime)) === bird.id ? editingWeightLog : null;
-            const currentChartSettings = chartSettings[bird.id] || getDefaultChartSettings();
+            const currentChartSettings = chartSettings[bird.id] || getDefaultChartSettings(bird.id);
             const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
             return (
                 <div key={bird.id}>
@@ -172,7 +175,11 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                                     </Button>
                                 </CardHeader>
                                 <CardContent className="h-[250px]">
-                                    <WeightChart data={birdWeightLogs} settings={currentChartSettings} />
+                                    <WeightChart 
+                                        data={birdWeightLogs} 
+                                        settings={currentChartSettings} 
+                                        feedingLogs={birdFeedingLogs}
+                                    />
                                 </CardContent>
                             </Card>
                         </div>

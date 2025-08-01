@@ -26,10 +26,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Separator } from "./ui/separator";
 
 export const weightChartSettingsSchema = z.object({
     style: z.enum(["monotone", "linear", "step"]).default("monotone"),
     showAverage: z.boolean().default(true),
+    showFeedingEvents: z.boolean().default(true),
     alertBelowAverage: z.object({
         enabled: z.boolean().default(false),
         percentage: z.coerce.number().min(0).max(100).default(5),
@@ -105,6 +107,19 @@ export function WeightChartSettings({
                 />
                 
                 <div className="space-y-4 rounded-md border p-4">
+                     <FormField
+                        control={form.control}
+                        name="showFeedingEvents"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between">
+                                <FormLabel>Show Feeding Events</FormLabel>
+                                <FormControl>
+                                    <Switch checked={field.value} onCheckedChange={field.onChange}/>
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    <Separator />
                     <FormField
                         control={form.control}
                         name="showAverage"
@@ -148,7 +163,7 @@ export function WeightChartSettings({
                         name="alertBelowAverage.enabled"
                         render={({ field }) => (
                             <FormItem className="flex flex-row items-center justify-between">
-                                <FormLabel>Alert Below Average</FormLabel>
+                                <FormLabel>Alert if {form.watch('alertBelowAverage.percentage')}% Below Average</FormLabel>
                                 <FormControl>
                                     <Switch checked={field.value} onCheckedChange={field.onChange}/>
                                 </FormControl>
@@ -174,7 +189,7 @@ export function WeightChartSettings({
                         name="presetAlert.enabled"
                         render={({ field }) => (
                              <FormItem className="flex flex-row items-center justify-between">
-                                <FormLabel>Preset Weight Alert</FormLabel>
+                                <FormLabel>Alert if Below {form.watch('presetAlert.weight') || '...'}g</FormLabel>
                                 <FormControl>
                                     <Switch checked={field.value} onCheckedChange={field.onChange}/>
                                 </FormControl>
