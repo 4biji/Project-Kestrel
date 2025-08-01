@@ -7,6 +7,7 @@ import {
   Feather,
   Plus,
   LayoutDashboard,
+  Settings,
 } from "lucide-react";
 import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog } from "@/lib/types";
 import { usePathname, useRouter } from 'next/navigation';
@@ -26,6 +27,8 @@ import {
 } from "@/components/ui/sidebar";
 import { AllBirdsOverview } from "@/components/all-birds-overview";
 import { BirdDetailView } from "@/components/bird-detail-view";
+import { ManageBirdsDialog } from "./manage-birds-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface FalconryJournalClientProps {
   initialData: {
@@ -41,14 +44,39 @@ interface FalconryJournalClientProps {
 }
 
 export function FalconryJournalClient({ initialData, view, selectedBirdId: initialSelectedBirdId }: FalconryJournalClientProps) {
-  const [birds] = useState(initialData.birds);
+  const [birds, setBirds] = useState(initialData.birds);
   const router = useRouter();
   const pathname = usePathname();
+  const [isManageBirdsOpen, setIsManageBirdsOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleNavigate = (path: string) => {
     router.push(path);
   };
   
+  const handleSaveBirds = (updatedBirds: BirdType[]) => {
+    const newBirds = updatedBirds.filter(b => !birds.some(ob => ob.id === b.id));
+    const deletedBirds = birds.filter(b => !updatedBirds.some(ub => ub.id === b.id));
+    const updatedBirdInfo = updatedBirds.find(b => {
+        const original = birds.find(ob => ob.id === b.id);
+        return original && JSON.stringify(original) !== JSON.stringify(b);
+    });
+
+    setBirds(updatedBirds);
+    setIsManageBirdsOpen(false);
+
+    if (newBirds.length > 0) {
+        toast({ title: "Bird Added", description: `${newBirds.map(b => b.name).join(', ')} has been added.` });
+    } else if (deletedBirds.length > 0) {
+        toast({ title: "Bird Removed", description: `${deletedBirds.map(b => b.name).join(', ')} has been removed.`, variant: "destructive" });
+        if (view === 'detail' && deletedBirds.some(b => b.id === initialSelectedBirdId)) {
+            router.push('/');
+        }
+    } else if (updatedBirdInfo) {
+        toast({ title: "Bird Updated", description: `${updatedBirdInfo.name}'s information has been updated.` });
+    }
+  };
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -85,9 +113,9 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
                 </SidebarMenuItem>
               ))}
                <SidebarMenuItem>
-                <SidebarMenuButton>
-                    <Plus className="w-4 h-4" />
-                    Add Bird
+                <SidebarMenuButton onClick={() => setIsManageBirdsOpen(true)}>
+                    <Settings className="w-4 h-4" />
+                    Manage Birds
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarGroup>
@@ -112,6 +140,12 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
             )}
         </main>
       </SidebarInset>
+      <ManageBirdsDialog
+        open={isManageBirdsOpen}
+        onOpenChange={setIsManageBirdsOpen}
+        birds={birds}
+        onSave={handleSaveBirds}
+      />
     </SidebarProvider>
   );
 }
