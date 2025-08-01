@@ -24,7 +24,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface AddWeightLogFormProps {
-  onSubmit: (data: Omit<WeightLog, 'id' | 'logType' | 'datetime'> & { datetime: string }) => void;
+  onSubmit: (data: Omit<WeightLog, 'id' | 'logType' | 'datetime'>) => void;
   onCancel: () => void;
 }
 
@@ -39,15 +39,7 @@ export function AddWeightLogForm({ onSubmit, onCancel }: AddWeightLogFormProps) 
   });
 
   const handleSubmit = (values: FormValues) => {
-    const [hours, minutes] = values.time.split(':').map(Number);
-    const combinedDateTime = new Date(values.date);
-    combinedDateTime.setHours(hours);
-    combinedDateTime.setMinutes(minutes);
-
-    onSubmit({
-      weight: values.weight,
-      datetime: combinedDateTime.toISOString(),
-    });
+    onSubmit(values);
   };
 
   return (
@@ -129,3 +121,4 @@ export function AddWeightLogForm({ onSubmit, onCancel }: AddWeightLogFormProps) 
     </Form>
   );
 }
+
