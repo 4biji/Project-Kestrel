@@ -23,7 +23,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 
 export const settingsSchema = z.object({
-  isLayoutEditable: z.boolean().default(true),
+  isLayoutEditable: z.boolean().default(false),
   visibleCards: z.object({
     'weight-trend': z.boolean().default(true),
     'weight-log': z.boolean().default(true),
