@@ -1,4 +1,5 @@
 
+      
 "use client";
 
 import { useState, useEffect } from "react";
@@ -13,7 +14,7 @@ import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, X, Rabbit } from "lucide-react";
+import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, Rabbit } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { AddHusbandryTaskForm } from "./add-husbandry-task-form";
@@ -36,8 +37,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import {
     DropdownMenu,
@@ -63,7 +62,6 @@ const defaultLayouts: Responsive.Layouts = {
       { i: 'hunting-log', x: 3, y: 2, w: 1, h: 3, minW: 1, minH: 2 },
       { i: 'husbandry', x: 0, y: 5, w: 1, h: 3, minW: 1, minH: 2 },
       { i: 'mutes-castings', x: 1, y: 5, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'add-log', x: 2, y: 5, w: 1, h: 3, minW: 1, minH: 2},
     ],
 };
 
@@ -277,10 +275,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     const visibleCardKeys = Object.entries(settings.visibleCards)
       .filter(([, visible]) => visible)
       .map(([key]) => key);
-
-    if (addingLogType) {
-      visibleCardKeys.push('add-log');
-    }
 
     const filteredLayouts: Responsive.Layouts = {
       lg: layouts.lg?.filter(l => visibleCardKeys.includes(l.i)) || [],
@@ -588,28 +582,22 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </Card>
             </div>
         )}
-        {addingLogType && (
-             <div key="add-log">
-                <Card className="h-full">
-                    <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
-                        <CardTitle>{getAddLogCardTitle(addingLogType)}</CardTitle>
-                         <Button variant="ghost" size="icon" onClick={() => setAddingLogType(null)}>
-                            <X className="w-4 h-4" />
-                        </Button>
-                    </CardHeader>
-                    <CardContent>
-                        {addingLogType === 'weight' && <AddWeightLogForm onSubmit={handleAddWeightLog} onCancel={() => setAddingLogType(null)} />}
-                        {addingLogType === 'feeding' && <AddFeedingLogForm birdName={selectedBird.name} onSubmit={handleAddFeedingLog} onCancel={() => setAddingLogType(null)} />}
-                        {addingLogType === 'husbandry' && <AddHusbandryTaskForm birdName={selectedBird.name} onSubmit={handleAddHusbandryTask} onCancel={() => setAddingLogType(null)} />}
-                        {addingLogType === 'training' && <AddTrainingLogForm birdName={selectedBird.name} onSubmit={handleAddTrainingLog} onCancel={() => setAddingLogType(null)} />}
-                        {addingLogType === 'mute' && <AddMuteLogForm birdName={selectedBird.name} onSubmit={handleAddMuteLog} onCancel={() => setAddingLogType(null)} />}
-                        {addingLogType === 'hunting' && <AddHuntingLogForm birdName={selectedBird.name} onSubmit={handleAddHuntingLog} onCancel={() => setAddingLogType(null)} />}
-                    </CardContent>
-                </Card>
-            </div>
-        )}
       </ResponsiveGridLayout>
       
+        <Dialog open={!!addingLogType} onOpenChange={(isOpen) => !isOpen && setAddingLogType(null)}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{getAddLogCardTitle(addingLogType)}</DialogTitle>
+                </DialogHeader>
+                {addingLogType === 'weight' && <AddWeightLogForm onSubmit={handleAddWeightLog} onCancel={() => setAddingLogType(null)} />}
+                {addingLogType === 'feeding' && <AddFeedingLogForm birdName={selectedBird.name} onSubmit={handleAddFeedingLog} onCancel={() => setAddingLogType(null)} />}
+                {addingLogType === 'husbandry' && <AddHusbandryTaskForm birdName={selectedBird.name} onSubmit={handleAddHusbandryTask} onCancel={() => setAddingLogType(null)} />}
+                {addingLogType === 'training' && <AddTrainingLogForm birdName={selectedBird.name} onSubmit={handleAddTrainingLog} onCancel={() => setAddingLogType(null)} />}
+                {addingLogType === 'mute' && <AddMuteLogForm birdName={selectedBird.name} onSubmit={handleAddMuteLog} onCancel={() => setAddingLogType(null)} />}
+                {addingLogType === 'hunting' && <AddHuntingLogForm birdName={selectedBird.name} onSubmit={handleAddHuntingLog} onCancel={() => setAddingLogType(null)} />}
+            </DialogContent>
+        </Dialog>
+
       {isEditingChartSettings && (
         <WeightChartSettings
           open={isEditingChartSettings}
@@ -685,5 +673,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     </div>
   );
 }
+
+    
 
     
