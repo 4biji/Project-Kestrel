@@ -330,7 +330,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         onLayoutChange={onLayoutChange}
         breakpoints={{lg: 1200, md: 768, sm: 640, xs: 0}}
         cols={{lg: 4, md: 2, sm: 1, xs: 1}}
-        rowHeight={150}
+        rowHeight={125}
         draggableHandle=".card-header"
         isDraggable={settings.isLayoutEditable}
         isResizable={settings.isLayoutEditable}
