@@ -184,11 +184,10 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
                 <ReferenceDot
                     key={log.id}
                     x={new Date(log.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    y={findWeightAtTime(log.datetime) + 5} // Position slightly above the line
-                    r={8}
-                    fill="hsl(var(--primary))"
+                    y={findWeightAtTime(log.datetime)}
+                    r={5}
+                    fill="hsl(140 80% 40%)"
                     stroke="hsl(var(--background))"
-                    shape={<Bone className="w-4 h-4 text-orange-500" />}
                 >
                      <Label value={`${log.amount}g`} position="top" fill="hsl(var(--muted-foreground))" fontSize={10}/>
                 </ReferenceDot>
