@@ -27,6 +27,7 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
   const [birds, setBirds] = useState(initialData.birds);
   const [weightLogs, setWeightLogs] = useState(initialData.weightLogs);
   const [editingWeightLog, setEditingWeightLog] = useState<WeightLog | null>(null);
+  const [overviewTitle, setOverviewTitle] = useState("All Birds Weight Overview");
   const { toast } = useToast();
 
   const handleUpdateWeightLog = (updatedLog: WeightLog) => {
@@ -83,7 +84,14 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
-         <h1 className="text-3xl font-bold font-headline">All Birds Weight Overview</h1>
+         <h1 
+          className="text-3xl font-bold font-headline"
+          contentEditable
+          suppressContentEditableWarning={true}
+          onBlur={(e) => setOverviewTitle(e.currentTarget.textContent || "All Birds Weight Overview")}
+          >
+            {overviewTitle}
+          </h1>
         <SidebarTrigger />
       </div>
 
