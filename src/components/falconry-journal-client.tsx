@@ -40,7 +40,6 @@ import { TrainingLogComponent } from "@/components/training-log";
 import { MuteLogComponent } from "@/components/mute-log";
 import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { AiWeightAnalysis } from "./ai-weight-analysis";
 import { WeightLogComponent } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
@@ -176,7 +175,6 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
                             <WeightChart data={birdWeightLogs} />
                         </CardContent>
                     </Card>
-                    <AiWeightAnalysis weightLogs={birdWeightLogs} />
                 </div>
                 <div className="lg:col-span-1 flex flex-col gap-6">
                     <Card>
