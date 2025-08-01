@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,7 +18,9 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
-import { Bird, View } from "lucide-react";
+import { Bird, View, Plus, Minus } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+
 
 export const settingsSchema = z.object({
   isLayoutEditable: z.boolean().default(true),
@@ -68,6 +71,9 @@ export function SettingsDialog({
   onSave,
   onManageBirdsClick,
 }: SettingsDialogProps) {
+  const [isDataManagementOpen, setIsDataManagementOpen] = useState(true);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+
   const form = useForm<SettingsData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: settings,
@@ -88,81 +94,91 @@ export function SettingsDialog({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
-                <div className="space-y-4 rounded-lg border p-4">
-                    <h3 className="font-medium text-foreground flex items-center gap-2">
-                        <Bird className="w-4 h-4" />
-                        Data Management
-                    </h3>
-                    <div className="flex flex-row items-center justify-between">
-                        <div className="space-y-0.5">
-                            <FormLabel>
-                                Manage Birds
-                            </FormLabel>
-                            <p className="text-sm text-muted-foreground">
-                                Add, edit, or remove birds from your journal.
-                            </p>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 pt-4">
+                 <Collapsible open={isDataManagementOpen} onOpenChange={setIsDataManagementOpen} className="space-y-4 rounded-lg border p-4">
+                    <CollapsibleTrigger className="flex w-full items-center justify-between">
+                        <h3 className="font-medium text-foreground flex items-center gap-2">
+                            <Bird className="w-4 h-4" />
+                            Data Management
+                        </h3>
+                        {isDataManagementOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-4">
+                        <div className="flex flex-row items-center justify-between">
+                            <div className="space-y-0.5">
+                                <FormLabel>
+                                    Manage Birds
+                                </FormLabel>
+                                <p className="text-sm text-muted-foreground">
+                                    Add, edit, or remove birds from your journal.
+                                </p>
+                            </div>
+                            <Button type="button" variant="outline" onClick={onManageBirdsClick}>
+                                Manage
+                            </Button>
                         </div>
-                        <Button type="button" variant="outline" onClick={onManageBirdsClick}>
-                            Manage
-                        </Button>
-                    </div>
-                </div>
+                    </CollapsibleContent>
+                </Collapsible>
 
-                <div className="space-y-4 rounded-lg border p-4">
-                     <h3 className="font-medium text-foreground flex items-center gap-2">
-                        <View className="w-4 h-4" />
-                        Dashboard
-                    </h3>
-                    <FormField
-                        control={form.control}
-                        name="isLayoutEditable"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between">
-                                <div className="space-y-0.5">
-                                    <FormLabel>
-                                        Enable Layout Editing
-                                    </FormLabel>
-                                    <p className="text-sm text-muted-foreground">
-                                        Allow moving and resizing cards.
-                                    </p>
-                                </div>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
+                <Collapsible open={isDashboardOpen} onOpenChange={setIsDashboardOpen} className="space-y-4 rounded-lg border p-4">
+                     <CollapsibleTrigger className="flex w-full items-center justify-between">
+                        <h3 className="font-medium text-foreground flex items-center gap-2">
+                            <View className="w-4 h-4" />
+                            Dashboard
+                        </h3>
+                         {isDashboardOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="isLayoutEditable"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <FormLabel>
+                                            Enable Layout Editing
+                                        </FormLabel>
+                                        <p className="text-sm text-muted-foreground">
+                                            Allow moving and resizing cards.
+                                        </p>
+                                    </div>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <div className="space-y-2">
+                            <FormLabel>Visible Cards</FormLabel>
+                            <p className="text-sm text-muted-foreground">
+                                Choose which cards to display on the dashboard.
+                            </p>
+                            <div className="space-y-2 pt-2">
+                                {cardOptions.map(card => (
+                                    <FormField
+                                        key={card.id}
+                                        control={form.control}
+                                        name={`visibleCards.${card.id}`}
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-row items-center justify-between">
+                                                <FormLabel className="font-normal">{card.label}</FormLabel>
+                                                <FormControl>
+                                                    <Switch
+                                                        checked={field.value}
+                                                        onCheckedChange={field.onChange}
+                                                    />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
                                     />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                     <div className="space-y-2">
-                        <FormLabel>Visible Cards</FormLabel>
-                         <p className="text-sm text-muted-foreground">
-                            Choose which cards to display on the dashboard.
-                        </p>
-                        <div className="space-y-2 pt-2">
-                            {cardOptions.map(card => (
-                                <FormField
-                                    key={card.id}
-                                    control={form.control}
-                                    name={`visibleCards.${card.id}`}
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center justify-between">
-                                            <FormLabel className="font-normal">{card.label}</FormLabel>
-                                            <FormControl>
-                                                <Switch
-                                                    checked={field.value}
-                                                    onCheckedChange={field.onChange}
-                                                />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </CollapsibleContent>
+                </Collapsible>
 
                 <DialogFooter>
                     <DialogClose asChild>
