@@ -1,12 +1,13 @@
 
 "use client";
 
-import { format, parseISO } from "date-fns";
+import { useState, useEffect } from "react";
+import { format, parseISO, differenceInHours } from "date-fns";
 import type { FeedingLog } from "@/lib/types";
 import { ScrollArea } from "./ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Bone, Activity } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 interface FeedingLogProps {
@@ -89,36 +90,74 @@ export function ViewAllFeedingLogsDialog({ open, onOpenChange, logs, onEdit, onD
 
 
 export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps) {
+    const [lastLog, setLastLog] = useState<FeedingLog | null>(null);
+    const [averageFoodPerHour, setAverageFoodPerHour] = useState(0);
+    const [averageProteinPerHour, setAverageProteinPerHour] = useState(0);
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || logs.length === 0) return;
+
+        const sortedByTime = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+        setLastLog(sortedByTime[sortedByTime.length - 1]);
+
+        if (sortedByTime.length < 2) {
+            setAverageFoodPerHour(0);
+            setAverageProteinPerHour(0);
+            return;
+        }
+
+        const firstLogTime = parseISO(sortedByTime[0].datetime);
+        const lastLogTime = parseISO(sortedByTime[sortedByTime.length - 1].datetime);
+        const totalHours = differenceInHours(lastLogTime, firstLogTime);
+
+        if (totalHours > 0) {
+            const totalFood = sortedByTime.reduce((sum, log) => sum + log.amount, 0);
+            setAverageFoodPerHour(totalFood / totalHours);
+
+            const totalProtein = sortedByTime.reduce((sum, log) => sum + (log.protein || 0), 0);
+            setAverageProteinPerHour(totalProtein / totalHours);
+        } else {
+            setAverageFoodPerHour(0);
+            setAverageProteinPerHour(0);
+        }
+
+    }, [logs]);
+
+
   return (
-    <div className="space-y-4">
-      {logs.length > 0 ? (
-        <ScrollArea className="h-64">
-            <div className="space-y-3 pr-4">
-            {logs.slice(0, 5).map((log) => (
-                <div key={log.id} className="p-3 bg-secondary/50 rounded-lg text-sm">
-                <div className="flex justify-between font-medium items-baseline">
-                    <span>{log.foodItem}</span>
-                    <div className="flex items-baseline gap-2">
-                      {log.protein && <span className="text-xs text-muted-foreground">{log.protein.toFixed(1)}g p</span>}
-                      <span className="font-bold">{log.amount}g</span>
-                    </div>
+    <div className="space-y-2">
+      {lastLog ? (
+        <>
+            <div className="group flex flex-col p-2.5 bg-secondary/50 rounded-lg text-sm -mt-2">
+                <div className="font-medium whitespace-nowrap">Last Feeding</div>
+                <div className="flex items-baseline gap-2 mt-1">
+                    <div className="text-2xl font-bold text-primary">{lastLog.amount}g</div>
+                    <div className="text-lg font-semibold">{lastLog.foodItem}</div>
                 </div>
-                <div className="text-xs text-muted-foreground flex justify-between">
-                    <span>{format(parseISO(log.datetime), 'MMM d, yyyy')}</span>
-                    <span>{format(parseISO(log.datetime), 'HH:mm:ss')}</span>
+                 <div className="text-xs text-muted-foreground mt-1 flex justify-between">
+                    <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm')}</span>
+                    {lastLog.protein && <span>{lastLog.protein.toFixed(1)}g protein</span>}
                 </div>
-                {log.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>}
-                </div>
-            ))}
             </div>
-        </ScrollArea>
+
+            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+              <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                  <Activity className="w-4 h-4 text-primary"/>
+                  Avg. Hourly Consumption
+              </div>
+              <div className="flex items-baseline gap-4 mt-2">
+                <div className="text-xl font-bold text-primary">
+                    {averageFoodPerHour.toFixed(1)}g/hr
+                </div>
+                 <div className="text-md font-semibold text-muted-foreground">
+                    {averageProteinPerHour.toFixed(1)}p/hr
+                </div>
+              </div>
+          </div>
+        </>
       ) : (
         <p className="text-sm text-center text-muted-foreground py-10">No feeding records yet.</p>
       )}
     </div>
   );
 }
-
-    
-
-    
