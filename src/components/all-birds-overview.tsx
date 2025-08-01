@@ -10,11 +10,20 @@ import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { WeightLogComponent } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
+import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
 import { Scale, Feather, Plus } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface AllBirdsOverviewProps {
   initialData: {
@@ -27,6 +36,7 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
   const [birds, setBirds] = useState(initialData.birds);
   const [weightLogs, setWeightLogs] = useState(initialData.weightLogs);
   const [editingWeightLog, setEditingWeightLog] = useState<WeightLog | null>(null);
+  const [addingWeightLogToBirdId, setAddingWeightLogToBirdId] = useState<string | null>(null);
   const [overviewTitle, setOverviewTitle] = useState("All Birds Weight Overview");
   const { toast } = useToast();
 
@@ -80,6 +90,24 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
       variant: "destructive"
     });
   };
+  
+  const handleAddWeightLog = (newLog: Omit<WeightLog, 'datetime'>, birdId: string) => {
+    const logWithDate: WeightLog = {
+        ...newLog,
+        datetime: new Date().toISOString(),
+    };
+
+    setWeightLogs(prev => ({
+        ...prev,
+        [birdId]: [logWithDate, ...(prev[birdId] || [])].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime())
+    }));
+
+    setAddingWeightLogToBirdId(null);
+    toast({
+        title: "Weight Log Added",
+        description: `New weight of ${newLog.weight}g has been logged for ${birds.find(b => b.id === birdId)?.name}.`,
+    });
+  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -104,7 +132,7 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                     <BirdProfileHeader bird={bird} />
                     <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 flex flex-col gap-6">
-                            <Card className="flex flex-col">
+                            <Card className="flex flex-col h-[220px]">
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <CardTitle className="flex items-center gap-2 text-lg">
                                         <Scale className="w-5 h-5" /> Weight Trend
@@ -116,12 +144,30 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                             </Card>
                         </div>
                         <div className="lg:col-span-1 flex flex-col gap-6">
-                            <Card className="flex flex-col">
+                            <Card className="flex flex-col h-[220px]">
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <CardTitle className="flex items-center gap-2 text-lg">
                                         <Scale className="w-5 h-5" /> Weight Log
                                     </CardTitle>
-                                    <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
+                                     <Dialog open={addingWeightLogToBirdId === bird.id} onOpenChange={(isOpen) => !isOpen && setAddingWeightLogToBirdId(null)}>
+                                        <DialogTrigger asChild>
+                                            <Button variant="ghost" size="icon" onClick={() => setAddingWeightLogToBirdId(bird.id)}>
+                                                <Plus className="w-4 h-4"/>
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Add Weight Log for {bird.name}</DialogTitle>
+                                                <DialogDescription>
+                                                    Enter the date, time, and weight for the new log entry.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <AddWeightLogForm
+                                                onSubmit={(data) => handleAddWeightLog(data, bird.id)}
+                                                onCancel={() => setAddingWeightLogToBirdId(null)}
+                                            />
+                                        </DialogContent>
+                                    </Dialog>
                                 </CardHeader>
                                 <CardContent className="h-[188px]">
                                     {birdForEditing ? (

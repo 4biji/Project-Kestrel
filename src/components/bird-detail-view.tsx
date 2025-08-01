@@ -11,6 +11,7 @@ import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
 import { WeightLogComponent } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
+import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
 import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
@@ -19,6 +20,14 @@ import { HusbandryLog } from "./husbandry-log";
 import { TrainingLogComponent } from "./training-log";
 import { MuteLogComponent } from "./mute-log";
 import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface BirdDetailViewProps {
   initialData: {
@@ -41,6 +50,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
   const [weightLogs, setWeightLogs] = useState(initialData.weightLogs);
   
   const [editingWeightLog, setEditingWeightLog] = useState<WeightLog | null>(null);
+  const [isAddingWeightLog, setIsAddingWeightLog] = useState(false);
   const { toast } = useToast();
 
   const selectedBird = birds.find(b => b.id === birdId);
@@ -89,6 +99,24 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
     });
   };
   
+  const handleAddWeightLog = (newLog: Omit<WeightLog, 'datetime'>) => {
+    const logWithDate: WeightLog = {
+      ...newLog,
+      datetime: new Date().toISOString(),
+    };
+  
+    setWeightLogs(prev => ({
+      ...prev,
+      [birdId]: [logWithDate, ...(prev[birdId] || [])].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime())
+    }));
+  
+    setIsAddingWeightLog(false);
+    toast({
+      title: "Weight Log Added",
+      description: `New weight of ${newLog.weight}g has been logged for ${selectedBird.name}.`,
+    });
+  };
+
   const birdWeightLogs = weightLogs[selectedBird.id] || [];
   const birdFeedingLogs = feedingLogs[selectedBird.id] || [];
   const birdHusbandryLogs = husbandryLogs[selectedBird.id] || [];
@@ -102,23 +130,39 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
         <SidebarTrigger />
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <Card className="flex flex-col">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
             </CardHeader>
-            <CardContent className="h-[300px]">
+            <CardContent className="flex-grow h-[300px]">
                 <WeightChart data={birdWeightLogs} />
             </CardContent>
         </Card>
-        <Card className="lg:col-span-1">
+        <Card className="flex flex-col">
            <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex flex-col space-y-1.5">
                     <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
                 </div>
-                <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
+                 <Dialog open={isAddingWeightLog} onOpenChange={setIsAddingWeightLog}>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add Weight Log for {selectedBird.name}</DialogTitle>
+                         <DialogDescription>
+                            Enter the date, time, and weight for the new log entry.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <AddWeightLogForm
+                        onSubmit={handleAddWeightLog}
+                        onCancel={() => setIsAddingWeightLog(false)}
+                      />
+                    </DialogContent>
+                  </Dialog>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-grow">
                 {editingWeightLog ? (
                     <EditWeightLogForm
                         log={editingWeightLog}
