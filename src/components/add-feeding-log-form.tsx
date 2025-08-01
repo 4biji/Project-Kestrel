@@ -4,14 +4,15 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import type { FeedingLog } from "@/lib/types";
+import type { FeedingLog, NutritionInfo } from "@/lib/types";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 const formSchema = z.object({
-  foodItem: z.string().min(1, "Food item is required."),
+  foodItem: z.string({ required_error: "Please select a food item." }).min(1, "Food item is required."),
   amount: z.coerce.number().positive("Amount must be a positive number."),
   notes: z.string().optional(),
 });
@@ -20,15 +21,15 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface AddFeedingLogFormProps {
   birdName: string;
+  nutritionInfo: NutritionInfo[];
   onSubmit: (data: Omit<FeedingLog, "id" | "datetime" | "logType">) => void;
   onCancel: () => void;
 }
 
-export function AddFeedingLogForm({ birdName, onSubmit, onCancel }: AddFeedingLogFormProps) {
+export function AddFeedingLogForm({ birdName, nutritionInfo, onSubmit, onCancel }: AddFeedingLogFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      foodItem: "",
       amount: 0,
       notes: "",
     },
@@ -46,9 +47,16 @@ export function AddFeedingLogForm({ birdName, onSubmit, onCancel }: AddFeedingLo
           render={({ field }) => (
             <FormItem>
               <FormLabel>Food Item</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., Quail" {...field} />
-              </FormControl>
+               <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select a food type" />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                        {nutritionInfo.map(item => <SelectItem key={item.id} value={item.foodType}>{item.foodType}</SelectItem>)}
+                    </SelectContent>
+                </Select>
               <FormMessage />
             </FormItem>
           )}

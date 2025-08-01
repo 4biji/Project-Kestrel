@@ -545,7 +545,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                     <DialogTitle>{getAddLogCardTitle(addingLogType)}</DialogTitle>
                 </DialogHeader>
                 {addingLogType === 'weight' && <AddWeightLogForm onSubmit={(data) => handleAddLog(data, 'weight')} onCancel={() => setAddingLogType(null)} />}
-                {addingLogType === 'feeding' && <AddFeedingLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'feeding')} onCancel={() => setAddingLogType(null)} />}
+                {addingLogType === 'feeding' && <AddFeedingLogForm birdName={selectedBird.name} nutritionInfo={nutritionInfo} onSubmit={(data) => handleAddLog(data, 'feeding')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'husbandry' && <AddHusbandryTaskForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'husbandry')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'training' && <AddTrainingLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'training')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'mute' && <AddMuteLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'mute')} onCancel={() => setAddingLogType(null)} />}
