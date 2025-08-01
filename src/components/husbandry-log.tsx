@@ -8,13 +8,19 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 interface HusbandryLogProps {
   tasks: HusbandryTask[];
 }
 
+interface CommonProps extends HusbandryLogProps {
+    onEdit: (task: HusbandryTask) => void;
+    onDelete: (task: HusbandryTask) => void;
+}
 
-export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks }: { open: boolean, onOpenChange: (open: boolean) => void, tasks: HusbandryTask[] }) {
+export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks, onEdit, onDelete }: { open: boolean, onOpenChange: (open: boolean) => void } & CommonProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
@@ -27,20 +33,43 @@ export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks }: { ope
                 <ScrollArea className="h-72">
                     <div className="space-y-2 pt-2 pr-4">
                         {tasks.map(task => (
-                            <div key={task.id} className="flex items-center space-x-3 p-2 bg-secondary/50 rounded-lg">
-                                <Checkbox
-                                    id={`dialog-${task.id}`}
-                                    checked={task.completed}
-                                    disabled
-                                />
-                                <Label
-                                    htmlFor={`dialog-${task.id}`}
-                                    className={`text-sm ${
-                                        task.completed ? "text-muted-foreground line-through" : ""
-                                    }`}
-                                >
-                                    {task.task}
-                                </Label>
+                             <div key={task.id} className="group flex items-center justify-between p-2 bg-secondary/50 rounded-lg">
+                                <div className="flex items-center space-x-3">
+                                    <Checkbox
+                                        id={`dialog-${task.id}`}
+                                        checked={task.completed}
+                                        disabled
+                                    />
+                                    <Label
+                                        htmlFor={`dialog-${task.id}`}
+                                        className={`text-sm ${
+                                            task.completed ? "text-muted-foreground line-through" : ""
+                                        }`}
+                                    >
+                                        {task.task}
+                                    </Label>
+                                </div>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DialogClose asChild>
+                                            <DropdownMenuItem onClick={() => onEdit(task)}>
+                                                <Pencil className="mr-2 h-4 w-4" />
+                                                <span>Edit</span>
+                                            </DropdownMenuItem>
+                                        </DialogClose>
+                                        <DialogClose asChild>
+                                            <DropdownMenuItem onClick={() => onDelete(task)} className="text-red-500 focus:text-red-500">
+                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                <span>Delete</span>
+                                            </DropdownMenuItem>
+                                        </DialogClose>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
                         ))}
                     </div>
@@ -94,3 +123,5 @@ export function HusbandryLog({ tasks: initialTasks }: HusbandryLogProps) {
     </div>
   );
 }
+
+    
