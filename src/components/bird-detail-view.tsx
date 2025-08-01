@@ -99,21 +99,15 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
   const [layouts, setLayouts] = useState(() => {
-    try {
-      const savedLayouts = localStorage.getItem(`bird-detail-layout-${birdId}`);
-      return savedLayouts ? JSON.parse(savedLayouts) : undefined;
-    } catch {
-      return undefined;
-    }
+    // We'll manage layout changes in state if needed, but for now, we'll use a static default.
+    // Local storage persistence can be added back if it's a firm requirement.
+    return undefined;
   });
 
+
   const onLayoutChange = (layout: any, allLayouts: any) => {
-    try {
-        localStorage.setItem(`bird-detail-layout-${birdId}`, JSON.stringify(allLayouts));
-        setLayouts(allLayouts);
-    } catch {
-        // ignore storage errors
-    }
+    // You can save layouts to state or local storage here if needed
+    setLayouts(allLayouts);
   };
 
 
@@ -253,7 +247,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
     toast({ title: "Mute/Casting Log Added" });
   };
 
-  const initialLayouts = {
+  const defaultLayouts = {
     lg: [
       { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 1 },
       { i: 'weight-log', x: 2, y: 0, w: 1, h: 2, minW: 1, minH: 2 },
@@ -261,7 +255,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
       { i: 'feeding-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
       { i: 'husbandry', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
       { i: 'mutes-castings', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'add-log', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 2},
+      { i: 'add-log', x: 1, y: 4, w: 2, h: 2, minW: 1, minH: 2},
     ],
     md: [
       { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
@@ -270,9 +264,14 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
       { i: 'feeding-log', x: 0, y: 4, w: 1, h: 2 },
       { i: 'husbandry', x: 1, y: 4, w: 1, h: 2 },
       { i: 'mutes-castings', x: 0, y: 6, w: 1, h: 2 },
-      { i: 'add-log', x: 1, y: 6, w: 1, h: 2},
+      { i: 'add-log', x: 0, y: 8, w: 2, h: 2},
     ],
   };
+
+  const currentLayouts = {
+      lg: addingLogType ? defaultLayouts.lg : defaultLayouts.lg.filter(l => l.i !== 'add-log'),
+      md: addingLogType ? defaultLayouts.md : defaultLayouts.md.filter(l => l.i !== 'add-log'),
+  }
   
   const getAddLogCardTitle = (logType: LogType | null) => {
     switch (logType) {
@@ -295,9 +294,8 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
       
       <ResponsiveGridLayout 
         className="layout"
-        layouts={layouts || initialLayouts}
+        layouts={layouts || currentLayouts}
         onLayoutChange={onLayoutChange}
-        key={addingLogType ? `with-add-${addingLogType}` : 'default'}
         breakpoints={{lg: 1200, md: 768, sm: 640, xs: 0}}
         cols={{lg: 3, md: 2, sm: 1, xs: 1}}
         rowHeight={150}
@@ -605,7 +603,5 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
     </div>
   );
 }
-
-    
 
     
