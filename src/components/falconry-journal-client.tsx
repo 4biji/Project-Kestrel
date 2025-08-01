@@ -24,7 +24,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { AllBirdsOverview } from "@/components/all-birds-overview";
 import { BirdDetailView } from "@/components/bird-detail-view";
 
@@ -85,14 +84,16 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+               <SidebarMenuItem>
+                <SidebarMenuButton>
+                    <Plus className="w-4 h-4" />
+                    Add Bird
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarGroup>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-            <Button variant="ghost" className="w-full justify-start gap-2">
-                <Plus className="w-4 h-4" />
-                Add Bird
-            </Button>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
