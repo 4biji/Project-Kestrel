@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -19,7 +20,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
-import { Bird, View, Plus, Minus } from "lucide-react";
+import { Bird, View, Plus, Minus, PlusSquare } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 
@@ -34,6 +35,7 @@ export const settingsSchema = z.object({
     'hunting-log': z.boolean().default(true),
     'husbandry': z.boolean().default(true),
     'mutes-castings': z.boolean().default(true),
+    'first-aid': z.boolean().default(true),
   }).default({
     'weight-trend': true,
     'weight-log': true,
@@ -42,6 +44,7 @@ export const settingsSchema = z.object({
     'hunting-log': true,
     'husbandry': true,
     'mutes-castings': true,
+    'first-aid': true,
   }),
 });
 
@@ -63,6 +66,7 @@ const cardOptions = [
     { id: 'hunting-log', label: 'Hunting Log' },
     { id: 'husbandry', label: 'Husbandry Tasks' },
     { id: 'mutes-castings', label: 'Mutes & Castings Log' },
+    { id: 'first-aid', label: 'First Aid' },
 ] as const;
 
 export function SettingsDialog({
