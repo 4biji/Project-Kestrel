@@ -123,13 +123,13 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   useEffect(() => {
     try {
       const savedLayouts = localStorage.getItem(`layouts_${birdId}`);
-      if (settings.isLayoutEditable && savedLayouts) {
+      if (savedLayouts) {
         setLayouts(JSON.parse(savedLayouts));
       }
     } catch (error) {
       console.error("Could not load layouts from local storage", error);
     }
-  }, [birdId, settings.isLayoutEditable]);
+  }, [birdId]);
 
 
   const onLayoutChange = (layout: any, allLayouts: Responsive.Layouts) => {
