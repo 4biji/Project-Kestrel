@@ -8,11 +8,11 @@ import { format } from 'date-fns';
 import { BirdProfileHeader } from "@/components/bird-profile-header";
 import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { WeightLogComponent } from "./weight-log";
+import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Feather, Plus, Settings } from "lucide-react";
+import { Scale, Feather, Plus, Settings, ScrollText } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 import { Button } from "./ui/button";
@@ -24,6 +24,12 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 
 interface AllBirdsOverviewProps {
@@ -43,6 +49,7 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
 
   const [chartSettings, setChartSettings] = useState<{ [birdId: string]: WeightChartSettingsData }>({});
   const [editingChartSettingsForBirdId, setEditingChartSettingsForBirdId] = useState<string | null>(null);
+  const [viewingAllLogsForBirdId, setViewingAllLogsForBirdId] = useState<string | null>(null);
 
   const handleSaveChartSettings = (birdId: string, settings: WeightChartSettingsData) => {
     setChartSettings(prev => ({ ...prev, [birdId]: settings }));
@@ -123,7 +130,11 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
   };
 
   const getDefaultChartSettings = () => {
-    return weightChartSettingsSchema.parse({});
+    return weightChartSettingsSchema.parse({
+        alertBelowAverage: { enabled: false, percentage: 5 },
+        presetAlert: { enabled: false, weight: 0 },
+        huntingWeight: { enabled: false, weight: 0 },
+    });
   };
   
   return (
@@ -191,9 +202,19 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                                             />
                                         </DialogContent>
                                     </Dialog>
-                                    <Button variant="ghost" size="icon">
-                                        <Settings className="w-4 h-4" />
-                                    </Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon">
+                                                <Settings className="w-4 h-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onSelect={() => setViewingAllLogsForBirdId(bird.id)}>
+                                                <ScrollText className="mr-2 h-4 w-4" />
+                                                <span>View All Logs</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                     </div>
                                 </CardHeader>
                                 <CardContent>
@@ -221,6 +242,15 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                             settings={currentChartSettings}
                             onSave={(settings) => handleSaveChartSettings(bird.id, settings)}
                             averageWeight={averageWeight}
+                        />
+                    )}
+                    {viewingAllLogsForBirdId === bird.id && (
+                        <ViewAllLogsDialog
+                            open={viewingAllLogsForBirdId === bird.id}
+                            onOpenChange={(isOpen) => !isOpen && setViewingAllLogsForBirdId(null)}
+                            logs={birdWeightLogs}
+                            onEdit={setEditingWeightLog}
+                            onDelete={handleDeleteWeightLog}
                         />
                     )}
                     {index < birds.length - 1 && <Separator className="my-8" />}

@@ -8,11 +8,11 @@ import { format } from 'date-fns';
 import { BirdProfileHeader } from "@/components/bird-profile-header";
 import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
-import { WeightLogComponent } from "./weight-log";
+import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings } from "lucide-react";
+import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { FeedingLogComponent } from "./feeding-log";
 import { HusbandryLog } from "./husbandry-log";
@@ -27,6 +27,12 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 
 interface BirdDetailViewProps {
@@ -57,6 +63,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
     weightChartSettingsSchema.parse({})
   );
   const [isEditingChartSettings, setIsEditingChartSettings] = useState(false);
+  const [isViewingAllLogs, setIsViewingAllLogs] = useState(false);
 
   const selectedBird = birds.find(b => b.id === birdId);
 
@@ -180,9 +187,19 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                       />
                     </DialogContent>
                   </Dialog>
-                  <Button variant="ghost" size="icon">
-                    <Settings className="w-4 h-4" />
-                </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <Settings className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onSelect={() => setIsViewingAllLogs(true)}>
+                        <ScrollText className="mr-2 h-4 w-4" />
+                        <span>View All Logs</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
             </CardHeader>
             <CardContent className="flex-grow">
@@ -269,6 +286,15 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
           settings={chartSettings}
           onSave={handleSaveChartSettings}
           averageWeight={averageWeight}
+        />
+      )}
+      {isViewingAllLogs && (
+        <ViewAllLogsDialog
+            open={isViewingAllLogs}
+            onOpenChange={setIsViewingAllLogs}
+            logs={birdWeightLogs}
+            onEdit={setEditingWeightLog}
+            onDelete={handleDeleteWeightLog}
         />
       )}
     </div>
