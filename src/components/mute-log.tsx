@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { format, parseISO } from "date-fns";
 import type { MuteLog } from "@/lib/types";
 import { ScrollArea } from "./ui/scroll-area";
 import { Badge } from "./ui/badge";
@@ -40,7 +41,7 @@ export function MuteLogComponent({ logs }: MuteLogProps) {
                 <Badge variant={getBadgeVariant(log.condition)}>{log.condition}</Badge>
               </div>
                <div className="text-xs text-muted-foreground">
-                 <span>{new Date(log.date).toLocaleDateString('en-US', {month: 'long', day: 'numeric'})}</span>
+                 <span>{format(parseISO(log.date), 'MMMM d')}</span>
                </div>
               {log.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>}
             </div>

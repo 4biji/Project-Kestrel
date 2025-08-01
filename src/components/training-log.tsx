@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { format, parseISO } from "date-fns";
 import type { TrainingLog } from "@/lib/types";
 import { ScrollArea } from "./ui/scroll-area";
 import { Badge } from "./ui/badge";
@@ -24,7 +25,7 @@ export function TrainingLogComponent({ logs }: TrainingLogProps) {
               )}
               <div className="font-medium">{log.behavior}</div>
               <div className="flex justify-between items-center text-xs text-muted-foreground">
-                <span>{new Date(log.date).toLocaleDateString('en-US', {month: 'long', day: 'numeric'})}</span>
+                <span>{format(parseISO(log.date), 'MMMM d')}</span>
                 <Badge variant="outline">{log.duration} min</Badge>
               </div>
               <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>
