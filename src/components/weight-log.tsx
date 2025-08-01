@@ -17,7 +17,7 @@ interface WeightLogComponentProps {
 }
 
 export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponentProps) {
-  const sortedLogs = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+  const sortedLogs = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
   const displayLogs = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
   
   const lastLog = displayLogs.length > 0 ? displayLogs[0] : null;
@@ -61,22 +61,20 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
     <div className="space-y-2">
       {lastLog ? (
         <>
-          <div className="group flex items-center justify-between p-3 bg-secondary/50 rounded-lg text-sm">
-            <div>
-              <div className="font-medium">Last Entry</div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span>{lastLog.weight}g</span>
-                <span className="text-muted-foreground/50">{format(parseISO(lastLog.datetime), 'MMM d, HH:mm:ss')}</span>
-                {(log => {
-                  const weightChange = getChangeForLog(log);
-                  return weightChange !== null && !isNaN(weightChange) && (
-                    <span className={`flex items-center ${weightChange < 0 ? 'text-red-500' : 'text-green-500'}`}>
-                      {weightChange >= 0 ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}
-                      {weightChange.toFixed(1)}g
-                    </span>
-                  );
-                })(lastLog)}
-              </div>
+          <div className="group flex flex-col p-3 bg-secondary/50 rounded-lg text-sm">
+            <div className="font-medium">Last Entry</div>
+            <div className="text-2xl font-bold text-primary mt-2">{lastLog.weight}g</div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+              <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm:ss')}</span>
+              {(log => {
+                const weightChange = getChangeForLog(log);
+                return weightChange !== null && !isNaN(weightChange) && (
+                  <span className={`flex items-center ${weightChange < 0 ? 'text-red-500' : 'text-green-500'}`}>
+                    {weightChange >= 0 ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}
+                    {weightChange.toFixed(1)}g
+                  </span>
+                );
+              })(lastLog)}
             </div>
           </div>
           <div className="p-3 bg-secondary/50 rounded-lg text-sm">
