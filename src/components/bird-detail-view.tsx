@@ -101,82 +101,78 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
          <BirdProfileHeader bird={selectedBird} />
         <SidebarTrigger />
       </div>
-
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <WeightChart data={birdWeightLogs} />
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg"><Footprints className="w-5 h-5"/> Training Log</CardTitle>
-                     <CardDescription>Records of training sessions and behaviors.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <TrainingLogComponent logs={birdTrainingLogs} />
-                </CardContent>
-            </Card>
-        </div>
+        <Card className="lg:col-span-2">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
+            </CardHeader>
+            <CardContent className="h-[300px]">
+                <WeightChart data={birdWeightLogs} />
+            </CardContent>
+        </Card>
+        <Card className="lg:col-span-1">
+           <CardHeader className="flex flex-row items-center justify-between">
+                <div className="flex flex-col space-y-1.5">
+                    <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
+                </div>
+                <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
+            </CardHeader>
+            <CardContent>
+                {editingWeightLog ? (
+                    <EditWeightLogForm
+                        log={editingWeightLog}
+                        onSubmit={handleUpdateWeightLog}
+                        onCancel={() => setEditingWeightLog(null)}
+                    />
+                ) : (
+                    <WeightLogComponent 
+                        logs={birdWeightLogs} 
+                        onEdit={setEditingWeightLog}
+                        onDelete={handleDeleteWeightLog}
+                    />
+                )}
+            </CardContent>
+        </Card>
+      </div>
 
-        {/* Right column */}
-        <div className="lg:col-span-1 flex flex-col gap-6">
-             <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div className="flex flex-col space-y-1.5">
-                        <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
-                    </div>
-                    <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
-                </CardHeader>
-                <CardContent>
-                    {editingWeightLog ? (
-                        <EditWeightLogForm
-                            log={editingWeightLog}
-                            onSubmit={handleUpdateWeightLog}
-                            onCancel={() => setEditingWeightLog(null)}
-                        />
-                    ) : (
-                        <WeightLogComponent 
-                            logs={birdWeightLogs} 
-                            onEdit={setEditingWeightLog}
-                            onDelete={handleDeleteWeightLog}
-                        />
-                    )}
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg"><Bone className="w-5 h-5"/> Feeding Log</CardTitle>
-                    <CardDescription>Daily food intake and notes.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <FeedingLogComponent logs={birdFeedingLogs} />
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg"><ShieldCheck className="w-5 h-5"/> Husbandry</CardTitle>
-                    <CardDescription>Daily care and equipment checks.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <HusbandryLog tasks={birdHusbandryLogs} />
-                </CardContent>
-            </Card>
-             <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes & Castings</CardTitle>
-                    <CardDescription>Health monitoring through droppings.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <MuteLogComponent logs={birdMuteLogs} />
-                </CardContent>
-            </Card>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg"><Footprints className="w-5 h-5"/> Training Log</CardTitle>
+                 <CardDescription>Records of training sessions and behaviors.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <TrainingLogComponent logs={birdTrainingLogs} />
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg"><Bone className="w-5 h-5"/> Feeding Log</CardTitle>
+                <CardDescription>Daily food intake and notes.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <FeedingLogComponent logs={birdFeedingLogs} />
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg"><ShieldCheck className="w-5 h-5"/> Husbandry</CardTitle>
+                <CardDescription>Daily care and equipment checks.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <HusbandryLog tasks={birdHusbandryLogs} />
+            </CardContent>
+        </Card>
+         <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes & Castings</CardTitle>
+                <CardDescription>Health monitoring through droppings.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <MuteLogComponent logs={birdMuteLogs} />
+            </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ export function WeightChart({ data }: WeightChartProps) {
   const averageWeight = data.reduce((acc, log) => acc + log.weight, 0) / data.length;
 
   return (
-    <div className="h-[188px] w-full">
+    <div className="h-full w-full">
         <ResponsiveContainer width="100%" height="100%">
             <LineChart
             data={chartData}
