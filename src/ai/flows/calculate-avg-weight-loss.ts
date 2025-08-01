@@ -11,7 +11,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { weightLogs } from '@/lib/data';
-import { parseISO, isWithinInterval } from 'date-fns';
+import { parseISO, isWithinInterval, differenceInHours } from 'date-fns';
 
 const CalculateAvgWeightLossInputSchema = z.object({
   birdId: z.string().describe('The ID of the bird.'),
@@ -22,6 +22,7 @@ export type CalculateAvgWeightLossInput = z.infer<typeof CalculateAvgWeightLossI
 
 const CalculateAvgWeightLossOutputSchema = z.object({
   averageWeightLoss: z.number().describe('The average weight loss of the bird during the specified period, in grams.'),
+  averageHourlyWeightLoss: z.number().describe('The average weight loss per hour of the bird during the specified period, in grams per hour.'),
 });
 export type CalculateAvgWeightLossOutput = z.infer<typeof CalculateAvgWeightLossOutputSchema>;
 
@@ -39,7 +40,7 @@ const calculateAvgWeightLossFlow = ai.defineFlow(
     const birdWeightLogs = weightLogs[birdId];
 
     if (!birdWeightLogs) {
-      return { averageWeightLoss: 0 };
+      return { averageWeightLoss: 0, averageHourlyWeightLoss: 0 };
     }
 
     const start = parseISO(startDate);
@@ -50,7 +51,7 @@ const calculateAvgWeightLossFlow = ai.defineFlow(
     ).sort((a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime());
 
     if (relevantLogs.length < 2) {
-      return { averageWeightLoss: 0 };
+      return { averageWeightLoss: 0, averageHourlyWeightLoss: 0 };
     }
     
     let totalLoss = 0;
@@ -66,6 +67,22 @@ const calculateAvgWeightLossFlow = ai.defineFlow(
     
     const averageWeightLoss = lossCount > 0 ? totalLoss / lossCount : 0;
 
-    return { averageWeightLoss };
+    const firstLog = relevantLogs[0];
+    const lastLog = relevantLogs[relevantLogs.length - 1];
+    const totalDurationInHours = differenceInHours(parseISO(lastLog.date), parseISO(firstLog.date));
+
+    const totalNetLoss = relevantLogs.reduce((acc, curr, i, arr) => {
+        if (i === 0) return acc;
+        const prev = arr[i - 1];
+        const change = curr.weight - prev.weight;
+        if (change < 0) {
+            acc += Math.abs(change);
+        }
+        return acc;
+    }, 0);
+    
+    const averageHourlyWeightLoss = totalDurationInHours > 0 ? totalNetLoss / totalDurationInHours : 0;
+
+    return { averageWeightLoss, averageHourlyWeightLoss };
   }
 );

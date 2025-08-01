@@ -11,7 +11,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { calculateAvgWeightLoss } from "@/ai/flows/calculate-avg-weight-loss";
+import { calculateAvgWeightLoss, type CalculateAvgWeightLossOutput } from "@/ai/flows/calculate-avg-weight-loss";
 
 interface AvgWeightLossCalculatorProps {
   birdId: string;
@@ -20,7 +20,7 @@ interface AvgWeightLossCalculatorProps {
 export function AvgWeightLossCalculator({ birdId }: AvgWeightLossCalculatorProps) {
   const [date, setDate] = useState<DateRange | undefined>();
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<number | null>(null);
+  const [result, setResult] = useState<CalculateAvgWeightLossOutput | null>(null);
   const { toast } = useToast();
 
   const handleCalculate = async () => {
@@ -42,7 +42,7 @@ export function AvgWeightLossCalculator({ birdId }: AvgWeightLossCalculatorProps
         startDate: format(date.from, "yyyy-MM-dd"),
         endDate: format(date.to, "yyyy-MM-dd"),
       });
-      setResult(response.averageWeightLoss);
+      setResult(response);
     } catch (error) {
       console.error("Error calculating average weight loss:", error);
       toast({
@@ -108,8 +108,16 @@ export function AvgWeightLossCalculator({ birdId }: AvgWeightLossCalculatorProps
             Analysis Complete
           </AlertTitle>
           <AlertDescription>
-            The estimated average weight loss for the selected period is{" "}
-            <span className="font-bold text-primary">{result.toFixed(2)}g</span>.
+            <div className="space-y-1">
+                <p>
+                    The estimated average weight loss per occurrence is{" "}
+                    <span className="font-bold text-primary">{result.averageWeightLoss.toFixed(2)}g</span>.
+                </p>
+                <p>
+                    The average hourly weight loss for the period is{" "}
+                    <span className="font-bold text-primary">{result.averageHourlyWeightLoss.toFixed(2)}g/hr</span>.
+                </p>
+            </div>
           </AlertDescription>
         </Alert>
       )}
