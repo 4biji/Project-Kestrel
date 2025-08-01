@@ -6,7 +6,7 @@ import { format, parseISO, differenceInHours } from "date-fns";
 import type { WeightLog } from "@/lib/types";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
 import { TrendingUp, TrendingDown, MoreVertical, Pencil, Trash2, Activity, ScrollText } from "lucide-react";
 
@@ -63,18 +63,20 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
         <>
           <div className="group flex flex-col p-3 bg-secondary/50 rounded-lg text-sm">
             <div className="font-medium whitespace-nowrap">Last Entry</div>
-            <div className="text-2xl font-bold text-primary mt-2">{lastLog.weight}g</div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+            <div className="flex items-baseline gap-2 mt-2">
+                <div className="text-2xl font-bold text-primary">{lastLog.weight}g</div>
+                {(log => {
+                    const weightChange = getChangeForLog(log);
+                    return weightChange !== null && !isNaN(weightChange) && (
+                    <span className={`flex items-center text-lg font-bold ${weightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {weightChange >= 0 ? <TrendingUp className="w-4 h-4 mr-0.5" /> : <TrendingDown className="w-4 h-4 mr-0.5" />}
+                        {weightChange.toFixed(1)}g
+                    </span>
+                    );
+                })(lastLog)}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
               <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm:ss')}</span>
-              {(log => {
-                const weightChange = getChangeForLog(log);
-                return weightChange !== null && !isNaN(weightChange) && (
-                  <span className={`flex items-center ${weightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                    {weightChange >= 0 ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}
-                    {weightChange.toFixed(1)}g
-                  </span>
-                );
-              })(lastLog)}
             </div>
           </div>
           <div className="p-3 bg-secondary/50 rounded-lg text-sm">
