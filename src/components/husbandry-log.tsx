@@ -2,7 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import type { HusbandryTask } from "@/lib/types";
+import { isToday, isThisWeek, isThisMonth, parseISO } from "date-fns";
+import type { HusbandryTask, PredefinedHusbandryTask } from "@/lib/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
@@ -10,11 +11,12 @@ import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface HusbandryLogProps {
-  tasks: HusbandryTask[];
-  onEdit: (task: HusbandryTask) => void;
-  onDelete: (task: HusbandryTask) => void;
+  predefinedTasks: PredefinedHusbandryTask[];
+  loggedTasks: HusbandryTask[];
+  onCompleteTask: (task: string) => void;
 }
 
 interface CommonProps {
@@ -88,44 +90,69 @@ export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks, onEdit,
     );
 }
 
-export function HusbandryLog({ tasks: initialTasks, onEdit, onDelete }: HusbandryLogProps) {
-  const [tasks, setTasks] = useState(initialTasks);
+export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: HusbandryLogProps) {
+  
+  const getIsTaskCompleted = (task: string, frequency: 'daily' | 'weekly' | 'monthly') => {
+    return loggedTasks.some(log => {
+      if (log.task !== task || !log.completed) return false;
+      const logDate = parseISO(log.datetime);
+      switch(frequency) {
+        case 'daily': return isToday(logDate);
+        case 'weekly': return isThisWeek(logDate, { weekStartsOn: 1 });
+        case 'monthly': return isThisMonth(logDate);
+        default: return false;
+      }
+    });
+  };
 
-  const handleCheckedChange = (taskId: string) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
+  const renderTaskList = (frequency: 'daily' | 'weekly' | 'monthly') => {
+    const tasks = predefinedTasks.filter(t => t.frequency === frequency);
+    if (tasks.length === 0) {
+      return <p className="text-sm text-center text-muted-foreground py-10">No {frequency} tasks defined.</p>;
+    }
+    return (
+      <div className="space-y-4">
+        {tasks.map(task => {
+          const isCompleted = getIsTaskCompleted(task.task, frequency);
+          return (
+            <div key={task.id} className="flex items-center space-x-3">
+              <Checkbox
+                id={task.id}
+                checked={isCompleted}
+                onCheckedChange={() => !isCompleted && onCompleteTask(task.task)}
+                disabled={isCompleted}
+              />
+              <Label
+                htmlFor={task.id}
+                className={`text-sm ${
+                  isCompleted ? "text-muted-foreground line-through" : ""
+                }`}
+              >
+                {task.task}
+              </Label>
+            </div>
+          );
+        })}
+      </div>
     );
   };
 
   return (
-    <div className="space-y-4">
-      {tasks.length > 0 ? (
-        tasks.slice(0, 5).map((task) => (
-          <div key={task.id} className="flex items-center space-x-3">
-            <Checkbox
-              id={task.id}
-              checked={task.completed}
-              onCheckedChange={() => handleCheckedChange(task.id)}
-            />
-            <Label
-              htmlFor={task.id}
-              className={`text-sm ${
-                task.completed ? "text-muted-foreground line-through" : ""
-              }`}
-            >
-              {task.task}
-            </Label>
-          </div>
-        ))
-      ) : (
-        <p className="text-sm text-center text-muted-foreground py-10">No husbandry tasks.</p>
-      )}
-    </div>
+    <Tabs defaultValue="daily" className="w-full">
+      <TabsList className="grid w-full grid-cols-3">
+        <TabsTrigger value="daily">Daily</TabsTrigger>
+        <TabsTrigger value="weekly">Weekly</TabsTrigger>
+        <TabsTrigger value="monthly">Monthly</TabsTrigger>
+      </TabsList>
+      <TabsContent value="daily" className="pt-4">
+        {renderTaskList('daily')}
+      </TabsContent>
+      <TabsContent value="weekly" className="pt-4">
+        {renderTaskList('weekly')}
+      </TabsContent>
+      <TabsContent value="monthly" className="pt-4">
+        {renderTaskList('monthly')}
+      </TabsContent>
+    </Tabs>
   );
 }
-
-    
-
-    

@@ -61,11 +61,10 @@ const defaultLayouts: Responsive.Layouts = {
       { i: 'feeding-log', x: 1, y: 2, w: 1, h: 3 },
       { i: 'training-log', x: 2, y: 2, w: 1, h: 3 },
       { i: 'hunting-log', x: 3, y: 2, w: 1, h: 3 },
-      { i: 'husbandry', x: 0, y: 5, w: 1, h: 3 },
-      { i: 'mutes-castings', x: 1, y: 5, w: 1, h: 3 },
+      { i: 'husbandry', x: 0, y: 5, w: 2, h: 3 },
+      { i: 'mutes-castings', x: 2, y: 5, w: 2, h: 3 },
     ],
 };
-
 
 interface BirdDetailViewProps {
   initialData: {
@@ -475,7 +474,11 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                             onCancel={() => setEditingLog(null)}
                         />
                     ) : (
-                        <HusbandryLog tasks={birdHusbandryLogs} onEdit={(task) => setEditingLog(task)} onDelete={(task) => handleDeleteLog(task)} />
+                        <HusbandryLog 
+                           predefinedTasks={predefinedHusbandryTasks}
+                           loggedTasks={birdHusbandryLogs}
+                           onCompleteTask={(task) => handleAddLog({task, completed: true}, 'husbandry')}
+                        />
                     )}
                 </CardContent>
             </Card>
