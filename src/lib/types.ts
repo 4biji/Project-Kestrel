@@ -69,6 +69,12 @@ export interface PredefinedHusbandryTask {
     frequency: 'daily' | 'weekly' | 'monthly';
 }
 
+export interface PredefinedTraining {
+    id: string;
+    behavior: string;
+}
+
+
 export type AllLogs = {
   [birdId: string]: LogEntry[];
 }

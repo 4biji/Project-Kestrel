@@ -4,12 +4,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import type { TrainingLog } from "@/lib/types";
+import type { TrainingLog, PredefinedTraining } from "@/lib/types";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
-import { Label } from "./ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Separator } from "./ui/separator";
 
 const formSchema = z.object({
   behavior: z.string().min(1, "Behavior is required."),
@@ -22,11 +23,12 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface AddTrainingLogFormProps {
   birdName: string;
+  predefinedTraining: PredefinedTraining[];
   onSubmit: (data: Omit<TrainingLog, "id" | "datetime" | "logType">) => void;
   onCancel: () => void;
 }
 
-export function AddTrainingLogForm({ birdName, onSubmit, onCancel }: AddTrainingLogFormProps) {
+export function AddTrainingLogForm({ birdName, predefinedTraining, onSubmit, onCancel }: AddTrainingLogFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,12 +45,36 @@ export function AddTrainingLogForm({ birdName, onSubmit, onCancel }: AddTraining
         <p className="text-sm text-muted-foreground">
             Log a new training session for {birdName}.
         </p>
+
+        {predefinedTraining.length > 0 && (
+          <>
+            <FormItem>
+                <FormLabel>Predefined Behaviors</FormLabel>
+                <Select onValueChange={(value) => form.setValue('behavior', value)}>
+                    <FormControl>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select a predefined behavior" />
+                    </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                        {predefinedTraining.map(item => <SelectItem key={item.id} value={item.behavior}>{item.behavior}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </FormItem>
+            <div className="flex items-center">
+                <Separator className="flex-1" />
+                <span className="px-2 text-xs text-muted-foreground">OR</span>
+                <Separator className="flex-1" />
+            </div>
+          </>
+        )}
+
         <FormField
           control={form.control}
           name="behavior"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Behavior Trained</FormLabel>
+              <FormLabel>Custom Behavior Trained</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., Lure stooping" {...field} />
               </FormControl>
