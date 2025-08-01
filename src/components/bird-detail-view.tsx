@@ -13,10 +13,9 @@ import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList } from "lucide-react";
+import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, X } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { FeedingLogComponent, ViewAllFeedingLogsDialog } from "./feeding-log";
-import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { EditFeedingLogForm } from "./edit-feeding-log-form";
 import { HusbandryLog, ViewAllHusbandryTasksDialog } from "./husbandry-log";
 import { AddHusbandryTaskForm } from "./add-husbandry-task-form";
@@ -48,6 +47,8 @@ import { nutritionInfo as initialNutritionInfo } from "@/lib/data";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
+type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute';
+
 interface BirdDetailViewProps {
   initialData: {
     birds: BirdType[];
@@ -74,7 +75,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
   const [editingTrainingLog, setEditingTrainingLog] = useState<TrainingLog | null>(null);
   const [editingMuteLog, setEditingMuteLog] = useState<MuteLog | null>(null);
 
-  const [isAddingWeightLog, setIsAddingWeightLog] = useState(false);
+  const [addingLogType, setAddingLogType] = useState<LogType | null>(null);
   const { toast } = useToast();
 
   const [chartSettings, setChartSettings] = useState<WeightChartSettingsData>(
@@ -94,11 +95,6 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
   const [isViewingAllMuteLogs, setIsViewingAllMuteLogs] = useState(false);
   const [isViewingNutritionTable, setIsViewingNutritionTable] = useState(false);
   
-  const [isAddingFeedingLog, setIsAddingFeedingLog] = useState(false);
-  const [isAddingHusbandryTask, setIsAddingHusbandryTask] = useState(false);
-  const [isAddingTrainingLog, setIsAddingTrainingLog] = useState(false);
-  const [isAddingMuteLog, setIsAddingMuteLog] = useState(false);
-
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
   const [layouts, setLayouts] = useState(() => {
@@ -222,7 +218,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
       ...prev,
       [birdId]: [logWithDate, ...(prev[birdId] || [])].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime())
     }));
-    setIsAddingWeightLog(false);
+    setAddingLogType(null);
     toast({
       title: "Weight Log Added",
       description: `New weight of ${newLog.weight}g has been logged for ${selectedBird.name}.`,
@@ -232,28 +228,28 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
    const handleAddFeedingLog = (data: Omit<FeedingLog, 'id' | 'datetime'>) => {
     const newLog: FeedingLog = { ...data, id: `f${Date.now()}`, datetime: new Date().toISOString() };
     setFeedingLogs(prev => ({...prev, [birdId]: [newLog, ...(prev[birdId] || [])]}));
-    setIsAddingFeedingLog(false);
+    setAddingLogType(null);
     toast({ title: "Feeding Log Added" });
   };
   
   const handleAddHusbandryTask = (data: Omit<HusbandryTask, 'id' | 'completed'>) => {
     const newTask: HusbandryTask = { ...data, id: `h${Date.now()}`, completed: false };
     setHusbandryLogs(prev => ({...prev, [birdId]: [newTask, ...(prev[birdId] || [])]}));
-    setIsAddingHusbandryTask(false);
+    setAddingLogType(null);
     toast({ title: "Husbandry Task Added" });
   };
   
   const handleAddTrainingLog = (data: Omit<TrainingLog, 'id' | 'datetime'>) => {
     const newLog: TrainingLog = { ...data, id: `t${Date.now()}`, datetime: new Date().toISOString() };
     setTrainingLogs(prev => ({...prev, [birdId]: [newLog, ...(prev[birdId] || [])]}));
-    setIsAddingTrainingLog(false);
+    setAddingLogType(null);
     toast({ title: "Training Log Added" });
   };
   
   const handleAddMuteLog = (data: Omit<MuteLog, 'id' | 'datetime'>) => {
     const newLog: MuteLog = { ...data, id: `m${Date.now()}`, datetime: new Date().toISOString() };
     setMuteLogs(prev => ({...prev, [birdId]: [newLog, ...(prev[birdId] || [])]}));
-    setIsAddingMuteLog(false);
+    setAddingLogType(null);
     toast({ title: "Mute/Casting Log Added" });
   };
 
@@ -277,9 +273,36 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
   };
 
   const getLayouts = () => {
-    if (layouts) return layouts;
-    return initialLayouts;
+    if (!addingLogType) {
+        return layouts || initialLayouts;
+    }
+    
+    const newLayouts = JSON.parse(JSON.stringify(layouts || initialLayouts));
+    const newItem = {
+        i: `add-${addingLogType}-log`,
+        x: 0,
+        y: Infinity, // place at the bottom
+        w: 1,
+        h: 2,
+    };
+    
+    newLayouts.lg.push(newItem);
+    newLayouts.md.push(newItem);
+
+    return newLayouts;
   }
+  
+  const getAddLogCardTitle = (logType: LogType | null) => {
+    switch (logType) {
+        case 'weight': return 'Add Weight Log';
+        case 'feeding': return 'Add Feeding Log';
+        case 'husbandry': return 'Add Husbandry Task';
+        case 'training': return 'Add Training Log';
+        case 'mute': return 'Add Mute/Casting Log';
+        default: return '';
+    }
+  }
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -315,23 +338,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
            <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
                 <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
                 <div className="flex items-center">
-                 <Dialog open={isAddingWeightLog} onOpenChange={setIsAddingWeightLog}>
-                    <DialogTrigger asChild>
-                      <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add Weight Log for {selectedBird.name}</DialogTitle>
-                         <DialogDescription>
-                            Enter the date, time, and weight for the new log entry.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <AddWeightLogForm
-                        onSubmit={handleAddWeightLog}
-                        onCancel={() => setIsAddingWeightLog(false)}
-                      />
-                    </DialogContent>
-                  </Dialog>
+                  <Button variant="ghost" size="icon" onClick={() => setAddingLogType('weight')}><Plus className="w-4 h-4"/></Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
@@ -372,13 +379,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                         <CardDescription>Records of training sessions and behaviors.</CardDescription>
                     </div>
                     <div className="flex items-center">
-                        <Dialog open={isAddingTrainingLog} onOpenChange={setIsAddingTrainingLog}>
-                            <DialogTrigger asChild><Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button></DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader><DialogTitle>Add Training Log</DialogTitle></DialogHeader>
-                                <AddTrainingLogForm birdName={selectedBird.name} onSubmit={handleAddTrainingLog} onCancel={() => setIsAddingTrainingLog(false)} />
-                            </DialogContent>
-                        </Dialog>
+                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('training')}><Plus className="w-4 h-4"/></Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
@@ -407,13 +408,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                         <CardDescription>Daily food intake and notes.</CardDescription>
                     </div>
                     <div className="flex items-center">
-                        <Dialog open={isAddingFeedingLog} onOpenChange={setIsAddingFeedingLog}>
-                            <DialogTrigger asChild><Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button></DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader><DialogTitle>Add Feeding Log</DialogTitle></DialogHeader>
-                                <AddFeedingLogForm birdName={selectedBird.name} onSubmit={handleAddFeedingLog} onCancel={() => setIsAddingFeedingLog(false)} />
-                            </DialogContent>
-                        </Dialog>
+                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('feeding')}><Plus className="w-4 h-4"/></Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
@@ -446,13 +441,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                         <CardDescription>Daily care and equipment checks.</CardDescription>
                     </div>
                     <div className="flex items-center">
-                        <Dialog open={isAddingHusbandryTask} onOpenChange={setIsAddingHusbandryTask}>
-                            <DialogTrigger asChild><Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button></DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader><DialogTitle>Add Husbandry Task</DialogTitle></DialogHeader>
-                                <AddHusbandryTaskForm birdName={selectedBird.name} onSubmit={handleAddHusbandryTask} onCancel={() => setIsAddingHusbandryTask(false)} />
-                            </DialogContent>
-                        </Dialog>
+                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('husbandry')}><Plus className="w-4 h-4"/></Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
@@ -481,13 +470,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                         <CardDescription>Health monitoring through droppings.</CardDescription>
                     </div>
                     <div className="flex items-center">
-                        <Dialog open={isAddingMuteLog} onOpenChange={setIsAddingMuteLog}>
-                            <DialogTrigger asChild><Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button></DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader><DialogTitle>Add Mute/Casting Log</DialogTitle></DialogHeader>
-                                <AddMuteLogForm birdName={selectedBird.name} onSubmit={handleAddMuteLog} onCancel={() => setIsAddingMuteLog(false)} />
-                            </DialogContent>
-                        </Dialog>
+                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('mute')}><Plus className="w-4 h-4"/></Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
@@ -508,6 +491,25 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                 </CardContent>
             </Card>
         </div>
+        {addingLogType && (
+            <div key={`add-${addingLogType}-log`}>
+                <Card className="h-full">
+                    <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
+                        <CardTitle>{getAddLogCardTitle(addingLogType)}</CardTitle>
+                         <Button variant="ghost" size="icon" onClick={() => setAddingLogType(null)}>
+                            <X className="w-4 h-4" />
+                        </Button>
+                    </CardHeader>
+                    <CardContent>
+                        {addingLogType === 'weight' && <AddWeightLogForm onSubmit={handleAddWeightLog} onCancel={() => setAddingLogType(null)} />}
+                        {addingLogType === 'feeding' && <AddFeedingLogForm birdName={selectedBird.name} onSubmit={handleAddFeedingLog} onCancel={() => setAddingLogType(null)} />}
+                        {addingLogType === 'husbandry' && <AddHusbandryTaskForm birdName={selectedBird.name} onSubmit={handleAddHusbandryTask} onCancel={() => setAddingLogType(null)} />}
+                        {addingLogType === 'training' && <AddTrainingLogForm birdName={selectedBird.name} onSubmit={handleAddTrainingLog} onCancel={() => setAddingLogType(null)} />}
+                        {addingLogType === 'mute' && <AddMuteLogForm birdName={selectedBird.name} onSubmit={handleAddMuteLog} onCancel={() => setAddingLogType(null)} />}
+                    </CardContent>
+                </Card>
+            </div>
+        )}
       </ResponsiveGridLayout>
       
       {isEditingChartSettings && (

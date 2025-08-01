@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,8 +29,6 @@ interface AddWeightLogFormProps {
 }
 
 export function AddWeightLogForm({ onSubmit, onCancel }: AddWeightLogFormProps) {
-    const [date, setDate] = useState<Date>(new Date());
-    
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
