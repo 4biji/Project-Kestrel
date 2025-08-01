@@ -40,6 +40,7 @@ import { MuteLogComponent } from "@/components/mute-log";
 import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { AiWeightAnalysis } from "./ai-weight-analysis";
+import { WeightLogComponent } from "./weight-log";
 
 interface FalconryJournalClientProps {
   initialData: {
@@ -124,14 +125,15 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
                     <AiWeightAnalysis weightLogs={birdWeightLogs} />
                 </div>
                 <div className="lg:col-span-1 flex flex-col gap-6">
-                     <Card>
+                    <Card>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle className="flex items-center gap-2 text-lg">
-                                <ClipboardList className="w-5 h-5" /> Husbandry
+                                <Scale className="w-5 h-5" /> Weight Log
                             </CardTitle>
+                            <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
                         </CardHeader>
                         <CardContent>
-                            <HusbandryLog tasks={birdHusbandryLogs} />
+                            <WeightLogComponent logs={birdWeightLogs} />
                         </CardContent>
                     </Card>
                 </div>
@@ -172,7 +174,6 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
                     </CardContent>
                 </Card>
               </div>
-
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center">
