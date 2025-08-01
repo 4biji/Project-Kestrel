@@ -107,9 +107,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
-  const [layouts, setLayouts] = useState<Responsive.Layouts>({});
-
-  const defaultLayouts: Responsive.Layouts = {
+  const initialLayouts: Responsive.Layouts = {
     lg: [
       { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 1 },
       { i: 'weight-log', x: 2, y: 0, w: 1, h: 2, minW: 1, minH: 2 },
@@ -131,20 +129,21 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
       { i: 'add-log', x: 0, y: 8, w: 2, h: 2},
     ],
   };
+  const [layouts, setLayouts] = useState<Responsive.Layouts>(initialLayouts);
 
   useEffect(() => {
     try {
       const savedLayouts = localStorage.getItem(`layouts_${birdId}`);
-      if (savedLayouts) {
+      if (settings.isLayoutEditable && savedLayouts) {
         setLayouts(JSON.parse(savedLayouts));
       } else {
-        setLayouts(defaultLayouts);
+        setLayouts(initialLayouts);
       }
     } catch (error) {
       console.error("Could not load layouts from local storage", error);
-      setLayouts(defaultLayouts);
+      setLayouts(initialLayouts);
     }
-  }, [birdId]);
+  }, [birdId, settings.isLayoutEditable]);
 
 
   const onLayoutChange = (layout: any, allLayouts: Responsive.Layouts) => {
@@ -305,8 +304,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   };
 
   const getFilteredLayouts = () => {
-    if (!layouts.lg) return { lg: [], md: [] };
-
     const visibleCardKeys = Object.entries(settings.visibleCards)
       .filter(([, visible]) => visible)
       .map(([key]) => key);
@@ -316,7 +313,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     }
 
     const filteredLayouts: Responsive.Layouts = {
-      lg: layouts.lg.filter(l => visibleCardKeys.includes(l.i)),
+      lg: layouts.lg?.filter(l => visibleCardKeys.includes(l.i)) || [],
       md: layouts.md?.filter(l => visibleCardKeys.includes(l.i)) || [],
     };
     return filteredLayouts;
@@ -719,5 +716,3 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     </div>
   );
 }
-
-    
