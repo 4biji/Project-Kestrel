@@ -109,12 +109,12 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   
   const [layouts, setLayouts] = useState<Responsive.Layouts>({
     lg: [
-      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2, minW: 2, minH: 2 },
-      { i: 'weight-log', x: 2, y: 0, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'training-log', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'feeding-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'hunting-log', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'husbandry', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'weight-trend', x: 0, y: 0, w: 4, h: 2, minW: 2, minH: 2 },
+      { i: 'weight-log', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'training-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'feeding-log', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'hunting-log', x: 3, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'husbandry', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
       { i: 'mutes-castings', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
       { i: 'add-log', x: 2, y: 4, w: 1, h: 2, minW: 1, minH: 2},
     ],
@@ -329,7 +329,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         layouts={getFilteredLayouts()}
         onLayoutChange={onLayoutChange}
         breakpoints={{lg: 1200, md: 768, sm: 640, xs: 0}}
-        cols={{lg: 3, md: 2, sm: 1, xs: 1}}
+        cols={{lg: 4, md: 2, sm: 1, xs: 1}}
         rowHeight={150}
         draggableHandle=".card-header"
         isDraggable={settings.isLayoutEditable}
