@@ -107,41 +107,27 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
-  const initialLayouts: Responsive.Layouts = {
+  const [layouts, setLayouts] = useState<Responsive.Layouts>({
     lg: [
-      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 1 },
+      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2, minW: 2, minH: 2 },
       { i: 'weight-log', x: 2, y: 0, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'training-log', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'feeding-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'hunting-log', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'husbandry', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'mutes-castings', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
+      { i: 'training-log', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'feeding-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'hunting-log', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'husbandry', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'mutes-castings', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
       { i: 'add-log', x: 2, y: 4, w: 1, h: 2, minW: 1, minH: 2},
     ],
-    md: [
-      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
-      { i: 'weight-log', x: 0, y: 2, w: 1, h: 2 },
-      { i: 'training-log', x: 1, y: 2, w: 1, h: 2 },
-      { i: 'feeding-log', x: 0, y: 4, w: 1, h: 2 },
-      { i: 'hunting-log', x: 1, y: 4, w: 1, h: 2 },
-      { i: 'husbandry', x: 0, y: 6, w: 1, h: 2 },
-      { i: 'mutes-castings', x: 1, y: 6, w: 1, h: 2 },
-      { i: 'add-log', x: 0, y: 8, w: 2, h: 2},
-    ],
-  };
-  const [layouts, setLayouts] = useState<Responsive.Layouts>(initialLayouts);
+  });
 
   useEffect(() => {
     try {
       const savedLayouts = localStorage.getItem(`layouts_${birdId}`);
       if (settings.isLayoutEditable && savedLayouts) {
         setLayouts(JSON.parse(savedLayouts));
-      } else {
-        setLayouts(initialLayouts);
       }
     } catch (error) {
       console.error("Could not load layouts from local storage", error);
-      setLayouts(initialLayouts);
     }
   }, [birdId, settings.isLayoutEditable]);
 
@@ -314,7 +300,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
 
     const filteredLayouts: Responsive.Layouts = {
       lg: layouts.lg?.filter(l => visibleCardKeys.includes(l.i)) || [],
-      md: layouts.md?.filter(l => visibleCardKeys.includes(l.i)) || [],
     };
     return filteredLayouts;
   };
