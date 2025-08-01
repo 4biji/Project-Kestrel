@@ -8,7 +8,7 @@ import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter, DialogTrigger } from "./ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
-import { TrendingUp, TrendingDown, MoreVertical, Pencil, Trash2, Activity, ScrollText } from "lucide-react";
+import { TrendingUp, TrendingDown, MoreVertical, Pencil, Trash2, Activity, ScrollText, GitCommitHorizontal } from "lucide-react";
 
 interface WeightLogComponentProps {
   logs: WeightLog[];
@@ -21,24 +21,35 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
   const [displayLogs, setDisplayLogs] = useState<WeightLog[]>([]);
   const [lastLog, setLastLog] = useState<WeightLog | null>(null);
   const [averageHourlyLoss, setAverageHourlyLoss] = useState(0);
+  const [lastWeightChange, setLastWeightChange] = useState<number | null>(null);
+
 
   useEffect(() => {
-    const sorted = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
+    const sortedByTimeAsc = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
     const display = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
     
-    setSortedLogs(sorted);
+    setSortedLogs(sortedByTimeAsc);
     setDisplayLogs(display);
     setLastLog(display.length > 0 ? display[0] : null);
 
-    if (sorted.length < 2) {
+    if (display.length >= 2) {
+        const last = display[0].weight;
+        const secondLast = display[1].weight;
+        setLastWeightChange(last - secondLast);
+    } else {
+        setLastWeightChange(null);
+    }
+
+
+    if (sortedByTimeAsc.length < 2) {
       setAverageHourlyLoss(0);
       return;
     }
 
     const hourlyLosses: number[] = [];
-    for (let i = 1; i < sorted.length; i++) {
-      const prevLog = sorted[i-1];
-      const currentLog = sorted[i];
+    for (let i = 1; i < sortedByTimeAsc.length; i++) {
+      const prevLog = sortedByTimeAsc[i-1];
+      const currentLog = sortedByTimeAsc[i];
       const weightChange = prevLog.weight - currentLog.weight;
 
       if (weightChange > 0) { // Only consider weight loss
@@ -88,15 +99,31 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
               <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm:ss')}</span>
             </div>
           </div>
-          <div className="p-3 bg-secondary/50 rounded-lg text-sm">
-             <div className="font-medium flex items-center gap-2 whitespace-nowrap">
-                <Activity className="w-4 h-4 text-primary"/>
-                Avg. Hourly Weight Loss
-             </div>
-             <div className="text-2xl font-bold text-primary mt-2">
-                {averageHourlyLoss.toFixed(2)}g / hour
-             </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                    <Activity className="w-4 h-4 text-primary"/>
+                    Avg. Hourly Loss
+                </div>
+                <div className="text-xl font-bold text-primary mt-2">
+                    {averageHourlyLoss.toFixed(2)}g/hr
+                </div>
+            </div>
+             {lastWeightChange !== null && (
+                <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                     <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                        <GitCommitHorizontal className="w-4 h-4 text-primary"/>
+                        Last Change
+                     </div>
+                     <div className={`text-xl font-bold mt-2 flex items-center ${lastWeightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {lastWeightChange >= 0 ? <TrendingUp className="w-4 h-4 mr-0.5" /> : <TrendingDown className="w-4 h-4 mr-0.5" />}
+                        {lastWeightChange.toFixed(1)}g
+                     </div>
+                </div>
+            )}
           </div>
+
 
           <Dialog>
             <DialogTrigger asChild>
