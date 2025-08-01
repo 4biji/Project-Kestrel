@@ -4,7 +4,6 @@
 import { useState } from "react";
 import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog } from "@/lib/types";
 import { format } from 'date-fns';
-import { notFound } from "next/navigation";
 
 import { BirdProfileHeader } from "@/components/bird-profile-header";
 import { WeightChart } from "@/components/weight-chart";
@@ -28,6 +27,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 
 interface BirdDetailViewProps {
   initialData: {
@@ -53,12 +53,30 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
   const [isAddingWeightLog, setIsAddingWeightLog] = useState(false);
   const { toast } = useToast();
 
+  const [chartSettings, setChartSettings] = useState<WeightChartSettingsData>(
+    weightChartSettingsSchema.parse({})
+  );
+  const [isEditingChartSettings, setIsEditingChartSettings] = useState(false);
+
   const selectedBird = birds.find(b => b.id === birdId);
 
   if (!selectedBird) {
     // This should ideally be handled by the page component with notFound()
     return <p>Bird not found.</p>;
   }
+  
+  const birdWeightLogs = weightLogs[selectedBird.id] || [];
+  const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
+
+
+  const handleSaveChartSettings = (settings: WeightChartSettingsData) => {
+    setChartSettings(settings);
+    setIsEditingChartSettings(false);
+    toast({
+      title: "Chart Settings Updated",
+      description: "Your changes to the weight chart have been saved.",
+    });
+  };
 
   const handleUpdateWeightLog = (updatedLog: WeightLog) => {
     if (!editingWeightLog) return;
@@ -117,7 +135,6 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
     });
   };
 
-  const birdWeightLogs = weightLogs[selectedBird.id] || [];
   const birdFeedingLogs = feedingLogs[selectedBird.id] || [];
   const birdHusbandryLogs = husbandryLogs[selectedBird.id] || [];
   const birdTrainingLogs = trainingLogs[selectedBird.id] || [];
@@ -130,16 +147,16 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
         <SidebarTrigger />
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         <Card className="flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" onClick={() => setIsEditingChartSettings(true)}>
                     <Settings className="w-4 h-4" />
                 </Button>
             </CardHeader>
             <CardContent className="flex-grow h-[300px]">
-                <WeightChart data={birdWeightLogs} />
+                <WeightChart data={birdWeightLogs} settings={chartSettings} />
             </CardContent>
         </Card>
         <Card className="flex flex-col">
@@ -244,6 +261,16 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
             </CardContent>
         </Card>
       </div>
+      
+      {isEditingChartSettings && (
+        <WeightChartSettings
+          open={isEditingChartSettings}
+          onOpenChange={setIsEditingChartSettings}
+          settings={chartSettings}
+          onSave={handleSaveChartSettings}
+          averageWeight={averageWeight}
+        />
+      )}
     </div>
   );
 }

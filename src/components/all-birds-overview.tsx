@@ -24,6 +24,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 
 interface AllBirdsOverviewProps {
   initialData: {
@@ -39,6 +40,18 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
   const [addingWeightLogToBirdId, setAddingWeightLogToBirdId] = useState<string | null>(null);
   const [overviewTitle, setOverviewTitle] = useState("All Birds Weight Overview");
   const { toast } = useToast();
+
+  const [chartSettings, setChartSettings] = useState<{ [birdId: string]: WeightChartSettingsData }>({});
+  const [editingChartSettingsForBirdId, setEditingChartSettingsForBirdId] = useState<string | null>(null);
+
+  const handleSaveChartSettings = (birdId: string, settings: WeightChartSettingsData) => {
+    setChartSettings(prev => ({ ...prev, [birdId]: settings }));
+    setEditingChartSettingsForBirdId(null);
+    toast({
+      title: "Chart Settings Updated",
+      description: "Your changes to the weight chart have been saved.",
+    });
+  };
 
   const handleUpdateWeightLog = (updatedLog: WeightLog) => {
     if (!editingWeightLog) return;
@@ -109,6 +122,10 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
     });
   };
 
+  const getDefaultChartSettings = () => {
+    return weightChartSettingsSchema.parse({});
+  };
+  
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
@@ -127,6 +144,8 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
         birds.map((bird, index) => {
             const birdWeightLogs = weightLogs[bird.id] || [];
             const birdForEditing = editingWeightLog && Object.keys(weightLogs).find(id => weightLogs[id].some(l => l.datetime === editingWeightLog.datetime)) === bird.id ? editingWeightLog : null;
+            const currentChartSettings = chartSettings[bird.id] || getDefaultChartSettings();
+            const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
             return (
                 <div key={bird.id}>
                     <BirdProfileHeader bird={bird} />
@@ -137,12 +156,12 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                                     <CardTitle className="flex items-center gap-2 text-lg">
                                         <Scale className="w-5 h-5" /> Weight Trend
                                     </CardTitle>
-                                    <Button variant="ghost" size="icon">
+                                    <Button variant="ghost" size="icon" onClick={() => setEditingChartSettingsForBirdId(bird.id)}>
                                         <Settings className="w-4 h-4" />
                                     </Button>
                                 </CardHeader>
                                 <CardContent className="h-[250px]">
-                                    <WeightChart data={birdWeightLogs} />
+                                    <WeightChart data={birdWeightLogs} settings={currentChartSettings} />
                                 </CardContent>
                             </Card>
                         </div>
@@ -195,6 +214,15 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                             </Card>
                         </div>
                     </div>
+                     {editingChartSettingsForBirdId === bird.id && (
+                        <WeightChartSettings
+                            open={editingChartSettingsForBirdId === bird.id}
+                            onOpenChange={(isOpen) => !isOpen && setEditingChartSettingsForBirdId(null)}
+                            settings={currentChartSettings}
+                            onSave={(settings) => handleSaveChartSettings(bird.id, settings)}
+                            averageWeight={averageWeight}
+                        />
+                    )}
                     {index < birds.length - 1 && <Separator className="my-8" />}
                 </div>
             )
