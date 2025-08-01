@@ -9,7 +9,7 @@ import {
   LayoutDashboard,
   Settings,
 } from "lucide-react";
-import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, HuntingLog } from "@/lib/types";
+import type { Bird as BirdType, LogEntry } from "@/lib/types";
 import { usePathname, useRouter } from 'next/navigation';
 
 import {
@@ -34,12 +34,7 @@ import { useToast } from "@/hooks/use-toast";
 interface FalconryJournalClientProps {
   initialData: {
     birds: BirdType[];
-    feedingLogs: { [birdId: string]: FeedingLog[] };
-    husbandryLogs: { [birdId: string]: HusbandryTask[] };
-    trainingLogs: { [birdId: string]: TrainingLog[] };
-    muteLogs: { [birdId: string]: MuteLog[] };
-    weightLogs: { [birdId: string]: WeightLog[] };
-    huntingLogs: { [birdId: string]: HuntingLog[] };
+    logs: { [birdId: string]: LogEntry[] };
   };
   view: 'overview' | 'detail';
   selectedBirdId?: string | null;
@@ -47,6 +42,7 @@ interface FalconryJournalClientProps {
 
 export function FalconryJournalClient({ initialData, view, selectedBirdId: initialSelectedBirdId }: FalconryJournalClientProps) {
   const [birds, setBirds] = useState(initialData.birds);
+  const [logs, setLogs] = useState(initialData.logs);
   const router = useRouter();
   const pathname = usePathname();
   const [isManageBirdsOpen, setIsManageBirdsOpen] = useState(false);
@@ -148,8 +144,7 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
             {view === 'overview' ? (
                 <AllBirdsOverview initialData={{
                     birds: initialData.birds,
-                    weightLogs: initialData.weightLogs,
-                    feedingLogs: initialData.feedingLogs
+                    logs: initialData.logs
                 }} />
             ) : (
                 <BirdDetailView 

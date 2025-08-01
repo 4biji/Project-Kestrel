@@ -20,7 +20,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface AddFeedingLogFormProps {
   birdName: string;
-  onSubmit: (data: Omit<FeedingLog, "id" | "datetime">) => void;
+  onSubmit: (data: Omit<FeedingLog, "id" | "datetime" | "logType">) => void;
   onCancel: () => void;
 }
 

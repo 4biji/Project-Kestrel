@@ -1,5 +1,5 @@
 
-import type { Bird, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog } from './types';
+import type { Bird, LogEntry, NutritionInfo } from './types';
 
 export const birds: Bird[] = [
   {
@@ -31,90 +31,55 @@ export const birds: Bird[] = [
   },
 ];
 
-type FeedingLogData = { [birdId: string]: FeedingLog[] };
-export const feedingLogs: FeedingLogData = {
+type LogData = { [birdId: string]: LogEntry[] };
+export const logs: LogData = {
   'b1': [
-    { id: 'f1', datetime: '2024-07-20T08:30:00', foodItem: 'Quail', amount: 50, notes: 'Eager to eat.' },
-    { id: 'f2', datetime: '2024-07-19T09:00:00', foodItem: 'Chicken heart', amount: 45, notes: '' },
-    { id: 'f5', datetime: '2024-07-21T08:30:00', foodItem: 'Quail', amount: 55, notes: 'Very hungry today.' },
-    { id: 'f6', datetime: '2024-07-22T09:00:00', foodItem: 'Chicken liver', amount: 40, notes: '' },
+    { logType: 'feeding', id: 'f1', datetime: '2024-07-20T08:30:00', foodItem: 'Quail', amount: 50, notes: 'Eager to eat.' },
+    { logType: 'feeding', id: 'f2', datetime: '2024-07-19T09:00:00', foodItem: 'Chicken heart', amount: 45, notes: '' },
+    { logType: 'feeding', id: 'f5', datetime: '2024-07-21T08:30:00', foodItem: 'Quail', amount: 55, notes: 'Very hungry today.' },
+    { logType: 'feeding', id: 'f6', datetime: '2024-07-22T09:00:00', foodItem: 'Chicken liver', amount: 40, notes: '' },
+    { logType: 'husbandry', id: 'h1', datetime: '2024-07-23T09:00:00', task: 'Clean mews', completed: true },
+    { logType: 'husbandry', id: 'h2', datetime: '2024-07-23T09:00:00', task: 'Check equipment (jesses, leash)', completed: true },
+    { logType: 'husbandry', id: 'h3', datetime: '2024-07-23T09:00:00', task: 'Weigh bird', completed: false },
+    { logType: 'training', id: 't1', datetime: '2024-07-20T17:00:00', behavior: 'Lure stooping', duration: 15, notes: '10 stoops, good speed.', imageUrl: 'https://placehold.co/600x400.png' },
+    { logType: 'training', id: 't2', datetime: '2024-07-18T16:45:00', behavior: 'Fist calling', duration: 10, notes: 'Responsive, came from 50 yards.', imageUrl: 'https://placehold.co/600x400.png' },
+    { logType: 'mute', id: 'm1', datetime: '2024-07-20T07:00:00', condition: 'Normal', notes: 'Healthy looking mute.' },
+    { logType: 'mute', id: 'm2', datetime: '2024-07-19T07:15:00', condition: 'Greenish', notes: 'Slightly off color, monitor.', imageUrl: 'https://placehold.co/600x400.png' },
+    { logType: 'weight', id: 'w1', datetime: '2024-07-15T08:00:00', weight: 655 },
+    { logType: 'weight', id: 'w2', datetime: '2024-07-16T08:05:00', weight: 652 },
+    { logType: 'weight', id: 'w3', datetime: '2024-07-17T07:55:00', weight: 653 },
+    { logType: 'weight', id: 'w4', datetime: '2024-07-18T08:00:00', weight: 651 },
+    { logType: 'weight', id: 'w5', datetime: '2024-07-19T08:02:00', weight: 650 },
+    { logType: 'weight', id: 'w6', datetime: '2024-07-20T07:58:00', weight: 648 },
+    { logType: 'weight', id: 'w7', datetime: '2024-07-21T08:01:00', weight: 650 },
+    { logType: 'hunting', id: 'hunt1', datetime: '2024-07-21T18:00:00', prey: 'Rabbit', outcome: 'Successful', notes: 'Clean catch.', imageUrl: 'https://placehold.co/600x400.png' },
+    { logType: 'hunting', id: 'hunt2', datetime: '2024-07-19T17:45:00', prey: 'Squirrel', outcome: 'Unsuccessful', notes: 'Prey escaped into a tree.' },
   ],
   'b2': [
-    { id: 'f3', datetime: '2024-07-20T08:00:00', foodItem: 'Pigeon', amount: 120, notes: 'Full crop.' },
-    { id: 'f7', datetime: '2024-07-21T08:00:00', foodItem: 'Rabbit', amount: 150, notes: 'Ate well.' },
+    { logType: 'feeding', id: 'f3', datetime: '2024-07-20T08:00:00', foodItem: 'Pigeon', amount: 120, notes: 'Full crop.' },
+    { logType: 'feeding', id: 'f7', datetime: '2024-07-21T08:00:00', foodItem: 'Rabbit', amount: 150, notes: 'Ate well.' },
+    { logType: 'husbandry', id: 'h4', datetime: '2024-07-23T09:00:00', task: 'Clean mews', completed: true },
+    { logType: 'husbandry', id: 'h5', datetime: '2024-07-23T09:00:00', task: 'Check equipment', completed: false },
+    { logType: 'training', id: 't3', datetime: '2024-07-19T17:30:00', behavior: 'Kite work', duration: 20, notes: 'Followed kite well, needs more height.' },
+    { logType: 'weight', id: 'w8', datetime: '2024-07-15T08:30:00', weight: 1110 },
+    { logType: 'weight', id: 'w9', datetime: '2024-07-16T08:35:00', weight: 1105 },
+    { logType: 'weight', id: 'w10', datetime: '2024-07-17T08:25:00', weight: 1108 },
+    { logType: 'weight', id: 'w11', datetime: '2024-07-18T08:30:00', weight: 1102 },
+    { logType: 'weight', id: 'w12', datetime: '2024-07-19T08:32:00', weight: 1100 },
+    { logType: 'weight', id: 'w13', datetime: '2024-07-20T08:28:00', weight: 1098 },
+    { logType: 'weight', id: 'w14', datetime: '2024-07-21T08:31:00', weight: 1100 },
   ],
   'b3': [
-      { id: 'f8', datetime: '2024-07-22T08:45:00', foodItem: 'Mouse', amount: 30, notes: 'First meal with us.' },
+      { logType: 'feeding', id: 'f8', datetime: '2024-07-22T08:45:00', foodItem: 'Mouse', amount: 30, notes: 'First meal with us.' },
+      { logType: 'weight', id: 'w15', datetime: '2024-07-15T09:00:00', weight: 715 },
+      { logType: 'weight', id: 'w16', datetime: '2024-07-16T09:05:00', weight: 712 },
+      { logType: 'weight', id: 'w17', datetime: '2024-07-17T08:55:00', weight: 714 },
+      { logType: 'weight', id: 'w18', datetime: '2024-07-18T09:00:00', weight: 710 },
+      { logType: 'weight', id: 'w19', datetime: '2024-07-19T09:02:00', weight: 708 },
+      { logType: 'weight', id: 'w20', datetime: '2024-07-20T08:58:00', weight: 709 },
+      { logType: 'weight', id: 'w21', datetime: '2024-07-21T09:01:00', weight: 710 },
   ],
 };
-
-type HusbandryLogData = { [birdId: string]: HusbandryTask[] };
-export const husbandryLogs: HusbandryLogData = {
-  'b1': [
-    { id: 'h1', task: 'Clean mews', completed: true },
-    { id: 'h2', task: 'Check equipment (jesses, leash)', completed: true },
-    { id: 'h3', task: 'Weigh bird', completed: false },
-  ],
-  'b2': [
-    { id: 'h4', task: 'Clean mews', completed: true },
-    { id: 'h5', task: 'Check equipment', completed: false },
-  ],
-  'b3': [],
-};
-
-type TrainingLogData = { [birdId: string]: TrainingLog[] };
-export const trainingLogs: TrainingLogData = {
-  'b1': [
-    { id: 't1', datetime: '2024-07-20T17:00:00', behavior: 'Lure stooping', duration: 15, notes: '10 stoops, good speed.', imageUrl: 'https://placehold.co/600x400.png' },
-    { id: 't2', datetime: '2024-07-18T16:45:00', behavior: 'Fist calling', duration: 10, notes: 'Responsive, came from 50 yards.', imageUrl: 'https://placehold.co/600x400.png' },
-  ],
-  'b2': [
-     { id: 't3', datetime: '2024-07-19T17:30:00', behavior: 'Kite work', duration: 20, notes: 'Followed kite well, needs more height.' },
-  ],
-  'b3': [],
-};
-
-type MuteLogData = { [birdId: string]: MuteLog[] };
-export const muteLogs: MuteLogData = {
-  'b1': [
-    { id: 'm1', datetime: '2024-07-20T07:00:00', condition: 'Normal', notes: 'Healthy looking mute.' },
-    { id: 'm2', datetime: '2024-07-19T07:15:00', condition: 'Greenish', notes: 'Slightly off color, monitor.', imageUrl: 'https://placehold.co/600x400.png' },
-  ],
-  'b2': [],
-  'b3': [],
-};
-
-
-type WeightLogData = { [birdId: string]: WeightLog[] };
-export const weightLogs: WeightLogData = {
-    'b1': [
-        { datetime: '2024-07-15T08:00:00', weight: 655 },
-        { datetime: '2024-07-16T08:05:00', weight: 652 },
-        { datetime: '2024-07-17T07:55:00', weight: 653 },
-        { datetime: '2024-07-18T08:00:00', weight: 651 },
-        { datetime: '2024-07-19T08:02:00', weight: 650 },
-        { datetime: '2024-07-20T07:58:00', weight: 648 },
-        { datetime: '2024-07-21T08:01:00', weight: 650 },
-    ],
-    'b2': [
-        { datetime: '2024-07-15T08:30:00', weight: 1110 },
-        { datetime: '2024-07-16T08:35:00', weight: 1105 },
-        { datetime: '2024-07-17T08:25:00', weight: 1108 },
-        { datetime: '2024-07-18T08:30:00', weight: 1102 },
-        { datetime: '2024-07-19T08:32:00', weight: 1100 },
-        { datetime: '2024-07-20T08:28:00', weight: 1098 },
-        { datetime: '2024-07-21T08:31:00', weight: 1100 },
-    ],
-    'b3': [
-        { datetime: '2024-07-15T09:00:00', weight: 715 },
-        { datetime: '2024-07-16T09:05:00', weight: 712 },
-        { datetime: '2024-07-17T08:55:00', weight: 714 },
-        { datetime: '2024-07-18T09:00:00', weight: 710 },
-        { datetime: '2024-07-19T09:02:00', weight: 708 },
-        { datetime: '2024-07-20T08:58:00', weight: 709 },
-        { datetime: '2024-07-21T09:01:00', weight: 710 },
-    ],
-}
 
 export const nutritionInfo: NutritionInfo[] = [
     { id: 'n1', foodType: 'Quail', proteinPer100g: 22 },
@@ -122,13 +87,3 @@ export const nutritionInfo: NutritionInfo[] = [
     { id: 'n3', foodType: 'Pigeon', proteinPer100g: 21 },
     { id: 'n4', foodType: 'Rabbit', proteinPer100g: 21 },
 ];
-
-type HuntingLogData = { [birdId: string]: HuntingLog[] };
-export const huntingLogs: HuntingLogData = {
-  'b1': [
-    { id: 'hunt1', datetime: '2024-07-21T18:00:00', prey: 'Rabbit', outcome: 'Successful', notes: 'Clean catch.', imageUrl: 'https://placehold.co/600x400.png' },
-    { id: 'hunt2', datetime: '2024-07-19T17:45:00', prey: 'Squirrel', outcome: 'Unsuccessful', notes: 'Prey escaped into a tree.' },
-  ],
-  'b2': [],
-  'b3': [],
-};

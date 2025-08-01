@@ -9,52 +9,52 @@ export interface Bird {
   dateCaptured: string;
 }
 
-export interface WeightLog {
+export type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting';
+export type MuteCondition = 'Normal' | 'Urinate Only' | 'Greenish' | 'Blackish' | 'Yellowish';
+
+export interface BaseLog {
+  id: string;
   datetime: string;
+  logType: LogType;
+  notes?: string;
+  imageUrl?: string;
+}
+
+export interface WeightLog extends BaseLog {
+  logType: 'weight';
   weight: number;
 }
 
-export interface FeedingLog {
-  id: string;
-  datetime: string;
+export interface FeedingLog extends BaseLog {
+  logType: 'feeding';
   foodItem: string;
   amount: number; // in grams
-  notes?: string;
 }
 
-export interface HusbandryTask {
-  id: string;
+export interface HusbandryTask extends BaseLog {
+  logType: 'husbandry';
   task: string;
   completed: boolean;
 }
 
-export interface TrainingLog {
-  id:string;
-  datetime: string;
+export interface TrainingLog extends BaseLog {
+  logType: 'training';
   behavior: string;
   duration: number; // in minutes
-  notes: string;
-  imageUrl?: string;
 }
 
-export type MuteCondition = 'Normal' | 'Urinate Only' | 'Greenish' | 'Blackish' | 'Yellowish';
-
-export interface MuteLog {
-  id: string;
-  datetime: string;
+export interface MuteLog extends BaseLog {
+  logType: 'mute';
   condition: MuteCondition;
-  imageUrl?: string;
-  notes?: string;
 }
 
-export interface HuntingLog {
-  id: string;
-  datetime: string;
+export interface HuntingLog extends BaseLog {
+  logType: 'hunting';
   prey: string;
   outcome: 'Successful' | 'Unsuccessful';
-  notes?: string;
-  imageUrl?: string;
 }
+
+export type LogEntry = WeightLog | FeedingLog | HusbandryTask | TrainingLog | MuteLog | HuntingLog;
 
 export interface NutritionInfo {
     id: string;
@@ -63,12 +63,5 @@ export interface NutritionInfo {
 }
 
 export type AllLogs = {
-  [birdId: string]: {
-    feedingLogs: FeedingLog[];
-    husbandryLogs: HusbandryTask[];
-    trainingLogs: TrainingLog[];
-    muteLogs: MuteLog[];
-    weightLogs: WeightLog[];
-    huntingLogs: HuntingLog[];
-  }
+  [birdId: string]: LogEntry[];
 }

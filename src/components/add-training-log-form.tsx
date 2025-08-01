@@ -22,7 +22,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface AddTrainingLogFormProps {
   birdName: string;
-  onSubmit: (data: Omit<TrainingLog, "id" | "datetime">) => void;
+  onSubmit: (data: Omit<TrainingLog, "id" | "datetime" | "logType">) => void;
   onCancel: () => void;
 }
 

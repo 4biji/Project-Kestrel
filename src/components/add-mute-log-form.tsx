@@ -23,7 +23,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface AddMuteLogFormProps {
   birdName: string;
-  onSubmit: (data: Omit<MuteLog, "id" | "datetime">) => void;
+  onSubmit: (data: Omit<MuteLog, "id" | "datetime" | "logType">) => void;
   onCancel: () => void;
 }
 

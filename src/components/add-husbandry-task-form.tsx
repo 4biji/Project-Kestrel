@@ -17,7 +17,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface AddHusbandryTaskFormProps {
   birdName: string;
-  onSubmit: (data: Omit<HusbandryTask, "id" | "completed">) => void;
+  onSubmit: (data: Omit<HusbandryTask, "id" | "completed" | "datetime" | "logType">) => void;
   onCancel: () => void;
 }
 

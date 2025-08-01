@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Bird as BirdType, WeightLog, FeedingLog } from "@/lib/types";
+import type { Bird as BirdType, WeightLog, FeedingLog, LogEntry } from "@/lib/types";
 import { format } from 'date-fns';
 
 import { BirdProfileHeader } from "@/components/bird-profile-header";
@@ -35,16 +35,14 @@ import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsS
 interface AllBirdsOverviewProps {
   initialData: {
     birds: BirdType[];
-    weightLogs: { [birdId: string]: WeightLog[] };
-    feedingLogs: { [birdId: string]: FeedingLog[] };
+    logs: { [birdId: string]: LogEntry[] };
   };
 }
 
 export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
   const [birds, setBirds] = useState(initialData.birds);
-  const [weightLogs, setWeightLogs] = useState(initialData.weightLogs);
-  const [feedingLogs, setFeedingLogs] = useState(initialData.feedingLogs);
-  const [editingWeightLog, setEditingWeightLog] = useState<WeightLog | null>(null);
+  const [logs, setLogs] = useState(initialData.logs);
+  const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
   const [addingWeightLogToBirdId, setAddingWeightLogToBirdId] = useState<string | null>(null);
   const [overviewTitle, setOverviewTitle] = useState("All Birds Weight Overview");
   const { toast } = useToast();
@@ -62,46 +60,46 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
     });
   };
 
-  const handleUpdateWeightLog = (updatedLog: WeightLog) => {
-    if (!editingWeightLog) return;
+  const handleUpdateLog = (updatedLog: LogEntry) => {
+    if (!editingLog) return;
     
-    const birdId = Object.keys(weightLogs).find(id => 
-        weightLogs[id].some(log => log.datetime === editingWeightLog.datetime)
+    const birdId = Object.keys(logs).find(id => 
+        logs[id].some(log => log.id === editingLog.id)
     );
 
     if (!birdId) return;
 
-    setWeightLogs(prevLogs => {
+    setLogs(prevLogs => {
       const newLogs = { ...prevLogs };
       const logsForBird = newLogs[birdId].map(log => 
-        log.datetime === editingWeightLog.datetime ? updatedLog : log
+        log.id === editingLog.id ? updatedLog : log
       );
       newLogs[birdId] = logsForBird.sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
       return newLogs;
     });
 
-    setEditingWeightLog(null);
+    setEditingLog(null);
     toast({
       title: "Weight Log Updated",
       description: `The entry for ${format(new Date(updatedLog.datetime), "MMMM d, yyyy")} has been updated.`,
     });
   };
 
-  const handleDeleteWeightLog = (logToDelete: WeightLog) => {
+  const handleDeleteLog = (logToDelete: LogEntry) => {
      if (!confirm('Are you sure you want to delete this weight log entry?')) {
       return;
     }
     
-    const birdId = Object.keys(weightLogs).find(id => 
-        weightLogs[id].some(log => log.datetime === logToDelete.datetime)
+    const birdId = Object.keys(logs).find(id => 
+        logs[id].some(log => log.id === logToDelete.id)
     );
     
     if (!birdId) return;
 
-    setWeightLogs(prevLogs => {
+    setLogs(prevLogs => {
       const newLogs = { ...prevLogs };
       newLogs[birdId] = newLogs[birdId].filter(
-        log => log.datetime !== logToDelete.datetime
+        log => log.id !== logToDelete.id
       );
       return newLogs;
     });
@@ -113,15 +111,16 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
     });
   };
   
-  const handleAddWeightLog = (newLog: Omit<WeightLog, 'datetime'>, birdId: string) => {
-    const logWithDate: WeightLog = {
-        ...newLog,
-        datetime: new Date().toISOString(),
+  const handleAddWeightLog = (newLogData: Omit<WeightLog, 'id' | 'datetime' | 'logType'> & { datetime: string }, birdId: string) => {
+    const newLog: WeightLog = {
+      ...newLogData,
+      id: `w${Date.now()}`,
+      logType: 'weight',
     };
 
-    setWeightLogs(prev => ({
-        ...prev,
-        [birdId]: [logWithDate, ...(prev[birdId] || [])].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime())
+    setLogs(prev => ({
+      ...prev,
+      [birdId]: [newLog, ...(prev[birdId] || [])].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime())
     }));
 
     setAddingWeightLogToBirdId(null);
@@ -155,9 +154,10 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
 
     {birds.length > 0 ? (
         birds.map((bird, index) => {
-            const birdWeightLogs = weightLogs[bird.id] || [];
-            const birdFeedingLogs = feedingLogs[bird.id] || [];
-            const birdForEditing = editingWeightLog && Object.keys(weightLogs).find(id => weightLogs[id].some(l => l.datetime === editingWeightLog.datetime)) === bird.id ? editingWeightLog : null;
+            const birdLogs = logs[bird.id] || [];
+            const birdWeightLogs = birdLogs.filter(l => l.logType === 'weight') as WeightLog[];
+            const birdFeedingLogs = birdLogs.filter(l => l.logType === 'feeding') as FeedingLog[];
+            const birdForEditing = editingLog && editingLog.logType === 'weight' && Object.keys(logs).find(id => logs[id].some(l => l.id === editingLog.id)) === bird.id ? editingLog as WeightLog : null;
             const currentChartSettings = chartSettings[bird.id] || getDefaultChartSettings(bird.id);
             const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
             return (
@@ -228,14 +228,14 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                                     {birdForEditing ? (
                                         <EditWeightLogForm
                                             log={birdForEditing}
-                                            onSubmit={handleUpdateWeightLog}
-                                            onCancel={() => setEditingWeightLog(null)}
+                                            onSubmit={handleUpdateLog as (log: WeightLog) => void}
+                                            onCancel={() => setEditingLog(null)}
                                         />
                                     ) : (
                                         <WeightLogComponent 
                                             logs={birdWeightLogs} 
-                                            onEdit={setEditingWeightLog}
-                                            onDelete={handleDeleteWeightLog}
+                                            onEdit={(log) => setEditingLog(log)}
+                                            onDelete={(log) => handleDeleteLog(log)}
                                         />
                                     )}
                                 </CardContent>
@@ -256,8 +256,8 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                             open={viewingAllLogsForBirdId === bird.id}
                             onOpenChange={(isOpen) => !isOpen && setViewingAllLogsForBirdId(null)}
                             logs={birdWeightLogs}
-                            onEdit={setEditingWeightLog}
-                            onDelete={handleDeleteWeightLog}
+                            onEdit={(log) => setEditingLog(log)}
+                            onDelete={(log) => handleDeleteLog(log)}
                         />
                     )}
                     {index < birds.length - 1 && <Separator className="my-8" />}

@@ -1,6 +1,6 @@
 
 import { FalconryJournalClient } from "@/components/falconry-journal-client";
-import { birds, feedingLogs, husbandryLogs, trainingLogs, muteLogs, weightLogs, huntingLogs } from "@/lib/data";
+import { birds, logs } from "@/lib/data";
 import { notFound } from 'next/navigation';
 
 export default function BirdPage({ params }: { params: { birdId: string } }) {
@@ -12,12 +12,7 @@ export default function BirdPage({ params }: { params: { birdId: string } }) {
 
   const appData = {
     birds,
-    feedingLogs,
-    husbandryLogs,
-    trainingLogs,
-    muteLogs,
-    weightLogs,
-    huntingLogs,
+    logs,
   };
 
   return <FalconryJournalClient initialData={appData} view="detail" selectedBirdId={params.birdId} />;
