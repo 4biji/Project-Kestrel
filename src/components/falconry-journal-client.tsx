@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -36,7 +37,6 @@ import { FeedingLogComponent } from "@/components/feeding-log";
 import { HusbandryLog } from "@/components/husbandry-log";
 import { TrainingLogComponent } from "@/components/training-log";
 import { MuteLogComponent } from "@/components/mute-log";
-import { AvgWeightLossCalculator } from "@/components/avg-weight-loss-calculator";
 import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
@@ -118,16 +118,6 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
                         </CardHeader>
                         <CardContent>
                             <WeightChart data={birdWeightLogs} />
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle className="flex items-center gap-2 text-lg">
-                                <Bot className="w-5 h-5" /> AI Weight Analysis
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                           <AvgWeightLossCalculator birdId={selectedBird.id} />
                         </CardContent>
                     </Card>
                 </div>
