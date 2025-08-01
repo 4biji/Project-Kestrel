@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { isToday, isThisWeek, isThisMonth, parseISO } from "date-fns";
+import { isToday, isThisWeek, isThisMonth, parseISO, format } from "date-fns";
 import type { HusbandryTask, PredefinedHusbandryTask } from "@/lib/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -45,6 +45,7 @@ export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks, onEdit,
                                         checked={task.completed}
                                         disabled
                                     />
+                                    <div className="flex flex-col">
                                     <Label
                                         htmlFor={`dialog-${task.id}`}
                                         className={`text-sm ${
@@ -53,6 +54,12 @@ export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks, onEdit,
                                     >
                                         {task.task}
                                     </Label>
+                                     {task.completed && (
+                                        <span className="text-xs text-muted-foreground">
+                                            {format(parseISO(task.datetime), 'MMM d, yyyy HH:mm')}
+                                        </span>
+                                    )}
+                                    </div>
                                 </div>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
