@@ -261,6 +261,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
       { i: 'feeding-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
       { i: 'husbandry', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
       { i: 'mutes-castings', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
+      { i: 'add-log', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 2},
     ],
     md: [
       { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
@@ -269,28 +270,9 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
       { i: 'feeding-log', x: 0, y: 4, w: 1, h: 2 },
       { i: 'husbandry', x: 1, y: 4, w: 1, h: 2 },
       { i: 'mutes-castings', x: 0, y: 6, w: 1, h: 2 },
+      { i: 'add-log', x: 1, y: 6, w: 1, h: 2},
     ],
   };
-
-  const getLayouts = () => {
-    if (!addingLogType) {
-        return layouts || initialLayouts;
-    }
-    
-    const newLayouts = JSON.parse(JSON.stringify(layouts || initialLayouts));
-    const newItem = {
-        i: `add-${addingLogType}-log`,
-        x: 0,
-        y: Infinity, // place at the bottom
-        w: 1,
-        h: 2,
-    };
-    
-    newLayouts.lg.push(newItem);
-    newLayouts.md.push(newItem);
-
-    return newLayouts;
-  }
   
   const getAddLogCardTitle = (logType: LogType | null) => {
     switch (logType) {
@@ -313,8 +295,9 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
       
       <ResponsiveGridLayout 
         className="layout"
-        layouts={getLayouts()}
+        layouts={layouts || initialLayouts}
         onLayoutChange={onLayoutChange}
+        key={addingLogType ? `with-add-${addingLogType}` : 'default'}
         breakpoints={{lg: 1200, md: 768, sm: 640, xs: 0}}
         cols={{lg: 3, md: 2, sm: 1, xs: 1}}
         rowHeight={150}
@@ -536,7 +519,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
             </Card>
         </div>
         {addingLogType && (
-            <div key={`add-${addingLogType}-log`}>
+             <div key="add-log">
                 <Card className="h-full">
                     <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
                         <CardTitle>{getAddLogCardTitle(addingLogType)}</CardTitle>
@@ -622,5 +605,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
     </div>
   );
 }
+
+    
 
     
