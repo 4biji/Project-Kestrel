@@ -6,6 +6,7 @@ export interface Bird {
   gender: 'Male' | 'Female';
   imageUrl: string;
   weight: number; // Current weight in grams
+  dateCaptured: string;
 }
 
 export interface WeightLog {

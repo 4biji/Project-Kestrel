@@ -9,6 +9,7 @@ export const birds: Bird[] = [
     gender: 'Male',
     imageUrl: 'https://placehold.co/400x400.png',
     weight: 650,
+    dateCaptured: '2022-09-15T00:00:00.000Z',
   },
   {
     id: 'b2',
@@ -17,6 +18,7 @@ export const birds: Bird[] = [
     gender: 'Female',
     imageUrl: 'https://placehold.co/400x400.png',
     weight: 1100,
+    dateCaptured: '2021-10-20T00:00:00.000Z',
   },
   {
     id: 'b3',
@@ -25,6 +27,7 @@ export const birds: Bird[] = [
     gender: 'Male',
     imageUrl: 'https://placehold.co/400x400.png',
     weight: 710,
+    dateCaptured: '2023-04-01T00:00:00.000Z',
   },
 ];
 
@@ -33,11 +36,16 @@ export const feedingLogs: FeedingLogData = {
   'b1': [
     { id: 'f1', datetime: '2024-07-20T08:30:00', foodItem: 'Quail', amount: 50, notes: 'Eager to eat.' },
     { id: 'f2', datetime: '2024-07-19T09:00:00', foodItem: 'Chicken heart', amount: 45, notes: '' },
+    { id: 'f5', datetime: '2024-07-21T08:30:00', foodItem: 'Quail', amount: 55, notes: 'Very hungry today.' },
+    { id: 'f6', datetime: '2024-07-22T09:00:00', foodItem: 'Chicken liver', amount: 40, notes: '' },
   ],
   'b2': [
     { id: 'f3', datetime: '2024-07-20T08:00:00', foodItem: 'Pigeon', amount: 120, notes: 'Full crop.' },
+    { id: 'f7', datetime: '2024-07-21T08:00:00', foodItem: 'Rabbit', amount: 150, notes: 'Ate well.' },
   ],
-  'b3': [],
+  'b3': [
+      { id: 'f8', datetime: '2024-07-22T08:45:00', foodItem: 'Mouse', amount: 30, notes: 'First meal with us.' },
+  ],
 };
 
 type HusbandryLogData = { [birdId: string]: HusbandryTask[] };
