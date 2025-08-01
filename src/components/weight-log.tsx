@@ -1,11 +1,12 @@
 
 "use client";
 
+import { useState } from "react";
 import { format, parseISO, differenceInHours } from "date-fns";
 import type { WeightLog } from "@/lib/types";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { TrendingUp, TrendingDown, MoreVertical, Pencil, Trash2, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, MoreVertical, Pencil, Trash2, Activity, ScrollText, ChevronUp, ChevronDown } from "lucide-react";
 
 interface WeightLogComponentProps {
   logs: WeightLog[];
@@ -14,6 +15,7 @@ interface WeightLogComponentProps {
 }
 
 export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponentProps) {
+  const [showAll, setShowAll] = useState(false);
   const sortedLogs = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
   const displayLogs = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
   
@@ -102,6 +104,52 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
                 {averageHourlyLoss.toFixed(2)}g / hour
              </div>
           </div>
+          <div className="text-center">
+            <Button variant="link" size="sm" onClick={() => setShowAll(!showAll)} className="text-muted-foreground gap-1">
+                {showAll ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                {showAll ? "Hide All Logs" : "View All Logs"}
+            </Button>
+          </div>
+           {showAll && (
+            <div className="space-y-2 pt-2 border-t mt-2">
+                 {displayLogs.map(log => (
+                     <div key={log.datetime} className="group flex items-center justify-between p-2 bg-secondary/50 rounded-lg text-sm">
+                        <div>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span>{log.weight}g</span>
+                                <span className="text-muted-foreground/50">{format(parseISO(log.datetime), 'MMM d, HH:mm:ss')}</span>
+                                {(log => {
+                                const weightChange = getChangeForLog(log);
+                                return weightChange !== null && !isNaN(weightChange) && (
+                                    <span className={`flex items-center ${weightChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                                    {weightChange >= 0 ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}
+                                    {weightChange.toFixed(1)}g
+                                    </span>
+                                );
+                                })(log)}
+                            </div>
+                        </div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <MoreVertical className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => onEdit(log)}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                <span>Edit</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => onDelete(log)} className="text-red-500 focus:text-red-500">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                <span>Delete</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                 ))}
+            </div>
+           )}
         </>
       ) : (
         <p className="text-sm text-center text-muted-foreground py-10">No weight records yet.</p>
