@@ -17,6 +17,7 @@ import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollT
 import { SidebarTrigger } from "./ui/sidebar";
 import { FeedingLogComponent, ViewAllFeedingLogsDialog } from "./feeding-log";
 import { EditFeedingLogForm } from "./edit-feeding-log-form";
+import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { HusbandryLog, ViewAllHusbandryTasksDialog } from "./husbandry-log";
 import { AddHusbandryTaskForm } from "./add-husbandry-task-form";
 import { EditHusbandryTaskForm } from "./edit-husbandry-task-form";
@@ -44,7 +45,6 @@ import {
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 import { NutritionTable } from "./nutrition-table";
 import { nutritionInfo as initialNutritionInfo } from "@/lib/data";
-import { AddFeedingLogForm } from "./add-feeding-log-form";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -396,7 +396,18 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <TrainingLogComponent logs={birdTrainingLogs} onEdit={setEditingTrainingLog} onDelete={handleDeleteTrainingLog} />
+                    {editingTrainingLog ? (
+                        <EditTrainingLogForm
+                            log={editingTrainingLog}
+                            onSubmit={(data) => {
+                                handleUpdateTrainingLog(data);
+                                setEditingTrainingLog(null);
+                            }}
+                            onCancel={() => setEditingTrainingLog(null)}
+                        />
+                    ) : (
+                        <TrainingLogComponent logs={birdTrainingLogs} onEdit={setEditingTrainingLog} onDelete={handleDeleteTrainingLog} />
+                    )}
                 </CardContent>
             </Card>
         </div>
@@ -429,7 +440,18 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <FeedingLogComponent logs={birdFeedingLogs} onEdit={setEditingFeedingLog} onDelete={handleDeleteFeedingLog} />
+                    {editingFeedingLog ? (
+                        <EditFeedingLogForm
+                            log={editingFeedingLog}
+                            onSubmit={(data) => {
+                                handleUpdateFeedingLog(data);
+                                setEditingFeedingLog(null);
+                            }}
+                            onCancel={() => setEditingFeedingLog(null)}
+                        />
+                    ) : (
+                        <FeedingLogComponent logs={birdFeedingLogs} onEdit={setEditingFeedingLog} onDelete={handleDeleteFeedingLog} />
+                    )}
                 </CardContent>
             </Card>
         </div>
@@ -458,7 +480,18 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <HusbandryLog tasks={birdHusbandryLogs} onEdit={setEditingHusbandryTask} onDelete={handleDeleteHusbandryTask} />
+                    {editingHusbandryTask ? (
+                         <EditHusbandryTaskForm
+                            task={editingHusbandryTask}
+                            onSubmit={(data) => {
+                                handleUpdateHusbandryTask(data);
+                                setEditingHusbandryTask(null);
+                            }}
+                            onCancel={() => setEditingHusbandryTask(null)}
+                        />
+                    ) : (
+                        <HusbandryLog tasks={birdHusbandryLogs} onEdit={setEditingHusbandryTask} onDelete={handleDeleteHusbandryTask} />
+                    )}
                 </CardContent>
             </Card>
         </div>
@@ -487,7 +520,18 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <MuteLogComponent logs={birdMuteLogs} onEdit={setEditingMuteLog} onDelete={handleDeleteMuteLog} />
+                    {editingMuteLog ? (
+                        <EditMuteLogForm
+                            log={editingMuteLog}
+                            onSubmit={(data) => {
+                                handleUpdateMuteLog(data);
+                                setEditingMuteLog(null);
+                            }}
+                            onCancel={() => setEditingMuteLog(null)}
+                        />
+                    ) : (
+                        <MuteLogComponent logs={birdMuteLogs} onEdit={setEditingMuteLog} onDelete={handleDeleteMuteLog} />
+                    )}
                 </CardContent>
             </Card>
         </div>
@@ -530,21 +574,6 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
             onDelete={handleDeleteWeightLog}
         />
       )}
-      {editingFeedingLog && (
-        <Dialog open={!!editingFeedingLog} onOpenChange={(isOpen) => !isOpen && setEditingFeedingLog(null)}>
-            <DialogContent>
-                <DialogHeader><DialogTitle>Edit Feeding Log</DialogTitle></DialogHeader>
-                <EditFeedingLogForm 
-                    log={editingFeedingLog}
-                    onSubmit={(data) => {
-                        handleUpdateFeedingLog(data);
-                        setEditingFeedingLog(null);
-                    }}
-                    onCancel={() => setEditingFeedingLog(null)}
-                />
-            </DialogContent>
-        </Dialog>
-      )}
       {isViewingAllFeedingLogs && (
         <ViewAllFeedingLogsDialog
             open={isViewingAllFeedingLogs}
@@ -553,21 +582,6 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
             onEdit={setEditingFeedingLog}
             onDelete={handleDeleteFeedingLog}
         />
-      )}
-      {editingHusbandryTask && (
-        <Dialog open={!!editingHusbandryTask} onOpenChange={(isOpen) => !isOpen && setEditingHusbandryTask(null)}>
-            <DialogContent>
-                <DialogHeader><DialogTitle>Edit Husbandry Task</DialogTitle></DialogHeader>
-                <EditHusbandryTaskForm
-                    task={editingHusbandryTask}
-                    onSubmit={(data) => {
-                        handleUpdateHusbandryTask(data);
-                        setEditingHusbandryTask(null);
-                    }}
-                    onCancel={() => setEditingHusbandryTask(null)}
-                />
-            </DialogContent>
-        </Dialog>
       )}
       {isViewingAllHusbandryLogs && (
         <ViewAllHusbandryTasksDialog
@@ -578,21 +592,6 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
             onDelete={handleDeleteHusbandryTask}
         />
        )}
-       {editingTrainingLog && (
-        <Dialog open={!!editingTrainingLog} onOpenChange={(isOpen) => !isOpen && setEditingTrainingLog(null)}>
-            <DialogContent>
-                <DialogHeader><DialogTitle>Edit Training Log</DialogTitle></DialogHeader>
-                <EditTrainingLogForm
-                    log={editingTrainingLog}
-                    onSubmit={(data) => {
-                        handleUpdateTrainingLog(data);
-                        setEditingTrainingLog(null);
-                    }}
-                    onCancel={() => setEditingTrainingLog(null)}
-                />
-            </DialogContent>
-        </Dialog>
-       )}
       {isViewingAllTrainingLogs && (
         <ViewAllTrainingLogsDialog
             open={isViewingAllTrainingLogs}
@@ -601,21 +600,6 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
             onEdit={setEditingTrainingLog}
             onDelete={handleDeleteTrainingLog}
         />
-      )}
-      {editingMuteLog && (
-        <Dialog open={!!editingMuteLog} onOpenChange={(isOpen) => !isOpen && setEditingMuteLog(null)}>
-            <DialogContent>
-                <DialogHeader><DialogTitle>Edit Mute/Casting Log</DialogTitle></DialogHeader>
-                <EditMuteLogForm
-                    log={editingMuteLog}
-                    onSubmit={(data) => {
-                        handleUpdateMuteLog(data);
-                        setEditingMuteLog(null);
-                    }}
-                    onCancel={() => setEditingMuteLog(null)}
-                />
-            </DialogContent>
-        </Dialog>
       )}
        {isViewingAllMuteLogs && (
         <ViewAllMuteLogsDialog
@@ -638,3 +622,5 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
     </div>
   );
 }
+
+    

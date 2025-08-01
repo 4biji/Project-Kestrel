@@ -59,18 +59,17 @@ export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks, onEdit,
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DialogClose asChild>
+                                        
                                             <DropdownMenuItem onClick={() => onEdit(task)}>
                                                 <Pencil className="mr-2 h-4 w-4" />
                                                 <span>Edit</span>
                                             </DropdownMenuItem>
-                                        </DialogClose>
-                                        <DialogClose asChild>
+                                        
                                             <DropdownMenuItem onClick={() => onDelete(task)} className="text-red-500 focus:text-red-500">
                                                 <Trash2 className="mr-2 h-4 w-4" />
                                                 <span>Delete</span>
                                             </DropdownMenuItem>
-                                        </DialogClose>
+                                        
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
@@ -126,5 +125,7 @@ export function HusbandryLog({ tasks: initialTasks, onEdit, onDelete }: Husbandr
     </div>
   );
 }
+
+    
 
     
