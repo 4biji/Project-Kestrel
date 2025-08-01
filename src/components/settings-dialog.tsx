@@ -90,6 +90,26 @@ export function SettingsDialog({
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
                 <div className="space-y-4 rounded-lg border p-4">
+                    <h3 className="font-medium text-foreground flex items-center gap-2">
+                        <Bird className="w-4 h-4" />
+                        Data Management
+                    </h3>
+                    <div className="flex flex-row items-center justify-between">
+                        <div className="space-y-0.5">
+                            <FormLabel>
+                                Manage Birds
+                            </FormLabel>
+                            <p className="text-sm text-muted-foreground">
+                                Add, edit, or remove birds from your journal.
+                            </p>
+                        </div>
+                        <Button type="button" variant="outline" onClick={onManageBirdsClick}>
+                            Manage
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="space-y-4 rounded-lg border p-4">
                      <h3 className="font-medium text-foreground flex items-center gap-2">
                         <View className="w-4 h-4" />
                         Dashboard
@@ -143,27 +163,6 @@ export function SettingsDialog({
                         </div>
                     </div>
                 </div>
-                
-                <div className="space-y-4 rounded-lg border p-4">
-                    <h3 className="font-medium text-foreground flex items-center gap-2">
-                        <Bird className="w-4 h-4" />
-                        Data Management
-                    </h3>
-                    <div className="flex flex-row items-center justify-between">
-                        <div className="space-y-0.5">
-                            <FormLabel>
-                                Manage Birds
-                            </FormLabel>
-                            <p className="text-sm text-muted-foreground">
-                                Add, edit, or remove birds from your journal.
-                            </p>
-                        </div>
-                        <Button type="button" variant="outline" onClick={onManageBirdsClick}>
-                            Manage
-                        </Button>
-                    </div>
-                </div>
-
 
                 <DialogFooter>
                     <DialogClose asChild>
