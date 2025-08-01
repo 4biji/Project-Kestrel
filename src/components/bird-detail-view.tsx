@@ -61,8 +61,8 @@ const defaultLayouts: Responsive.Layouts = {
       { i: 'feeding-log', x: 1, y: 2, w: 1, h: 3 },
       { i: 'training-log', x: 2, y: 2, w: 1, h: 3 },
       { i: 'hunting-log', x: 3, y: 2, w: 1, h: 3 },
-      { i: 'husbandry', x: 0, y: 5, w: 2, h: 3 },
-      { i: 'mutes-castings', x: 2, y: 5, w: 2, h: 3 },
+      { i: 'husbandry', x: 0, y: 5, w: 1, h: 3 },
+      { i: 'mutes-castings', x: 1, y: 5, w: 3, h: 3 },
     ],
 };
 
