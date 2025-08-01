@@ -13,9 +13,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 interface MuteLogProps {
   logs: MuteLog[];
+  onEdit: (log: MuteLog) => void;
+  onDelete: (log: MuteLog) => void;
 }
 
-interface CommonProps extends MuteLogProps {
+interface CommonProps {
+    logs: MuteLog[];
     onEdit: (log: MuteLog) => void;
     onDelete: (log: MuteLog) => void;
 }
@@ -103,7 +106,7 @@ export function ViewAllMuteLogsDialog({ open, onOpenChange, logs, onEdit, onDele
     );
 }
 
-export function MuteLogComponent({ logs }: MuteLogProps) {
+export function MuteLogComponent({ logs, onEdit, onDelete }: MuteLogProps) {
   return (
     <div className="space-y-4">
       {logs.length > 0 ? (

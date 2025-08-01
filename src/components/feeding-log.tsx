@@ -11,9 +11,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 interface FeedingLogProps {
   logs: FeedingLog[];
+  onEdit: (log: FeedingLog) => void;
+  onDelete: (log: FeedingLog) => void;
 }
 
-interface CommonProps extends FeedingLogProps {
+interface CommonProps {
+    logs: FeedingLog[];
     onEdit: (log: FeedingLog) => void;
     onDelete: (log: FeedingLog) => void;
 }
@@ -83,7 +86,7 @@ export function ViewAllFeedingLogsDialog({ open, onOpenChange, logs, onEdit, onD
 }
 
 
-export function FeedingLogComponent({ logs }: FeedingLogProps) {
+export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps) {
   return (
     <div className="space-y-4">
       {logs.length > 0 ? (

@@ -13,9 +13,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 interface TrainingLogProps {
   logs: TrainingLog[];
+  onEdit: (log: TrainingLog) => void;
+  onDelete: (log: TrainingLog) => void;
 }
 
-interface CommonProps extends TrainingLogProps {
+interface CommonProps {
+    logs: TrainingLog[];
     onEdit: (log: TrainingLog) => void;
     onDelete: (log: TrainingLog) => void;
 }
@@ -88,7 +91,7 @@ export function ViewAllTrainingLogsDialog({ open, onOpenChange, logs, onEdit, on
 }
 
 
-export function TrainingLogComponent({ logs }: TrainingLogProps) {
+export function TrainingLogComponent({ logs, onEdit, onDelete }: TrainingLogProps) {
   return (
     <div className="space-y-4">
       {logs.length > 0 ? (

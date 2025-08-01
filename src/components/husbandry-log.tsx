@@ -13,9 +13,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 interface HusbandryLogProps {
   tasks: HusbandryTask[];
+  onEdit: (task: HusbandryTask) => void;
+  onDelete: (task: HusbandryTask) => void;
 }
 
-interface CommonProps extends HusbandryLogProps {
+interface CommonProps {
+    tasks: HusbandryTask[];
     onEdit: (task: HusbandryTask) => void;
     onDelete: (task: HusbandryTask) => void;
 }
@@ -86,7 +89,7 @@ export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks, onEdit,
     );
 }
 
-export function HusbandryLog({ tasks: initialTasks }: HusbandryLogProps) {
+export function HusbandryLog({ tasks: initialTasks, onEdit, onDelete }: HusbandryLogProps) {
   const [tasks, setTasks] = useState(initialTasks);
 
   const handleCheckedChange = (taskId: string) => {

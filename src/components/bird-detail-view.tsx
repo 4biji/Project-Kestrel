@@ -395,7 +395,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <TrainingLogComponent logs={birdTrainingLogs} />
+                    <TrainingLogComponent logs={birdTrainingLogs} onEdit={setEditingTrainingLog} onDelete={handleDeleteTrainingLog} />
                 </CardContent>
             </Card>
         </div>
@@ -434,7 +434,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <FeedingLogComponent logs={birdFeedingLogs} />
+                    <FeedingLogComponent logs={birdFeedingLogs} onEdit={setEditingFeedingLog} onDelete={handleDeleteFeedingLog} />
                 </CardContent>
             </Card>
         </div>
@@ -469,7 +469,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <HusbandryLog tasks={birdHusbandryLogs} />
+                    <HusbandryLog tasks={birdHusbandryLogs} onEdit={setEditingHusbandryTask} onDelete={handleDeleteHusbandryTask} />
                 </CardContent>
             </Card>
         </div>
@@ -504,7 +504,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <MuteLogComponent logs={birdMuteLogs} />
+                    <MuteLogComponent logs={birdMuteLogs} onEdit={setEditingMuteLog} onDelete={handleDeleteMuteLog} />
                 </CardContent>
             </Card>
         </div>
