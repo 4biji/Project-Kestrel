@@ -120,7 +120,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
             {settings.alertBelowAverage.enabled && (
                 <ReferenceLine
                     y={alertBelowAverageWeight}
-                    label={{ value: `${settings.alertBelowAverage.percentage}% Below Avg`, position: 'right', fill: 'hsl(var(--destructive))', fontSize: 12 }}
+                    label={{ value: `Alert: ${settings.alertBelowAverage.percentage}% Below Avg`, position: 'right', fill: 'hsl(var(--destructive))', fontSize: 12 }}
                     stroke="hsl(var(--destructive))"
                     strokeDasharray="4 4"
                 />
@@ -128,7 +128,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
             {settings.presetAlert.enabled && settings.presetAlert.weight > 0 && (
                  <ReferenceLine
                     y={settings.presetAlert.weight}
-                    label={{ value: `Alert at ${settings.presetAlert.weight}g`, position: 'right', fill: 'hsl(var(--destructive))', fontSize: 12 }}
+                    label={{ value: `Alert: ${settings.presetAlert.weight}g`, position: 'right', fill: 'hsl(var(--destructive))', fontSize: 12 }}
                     stroke="hsl(var(--destructive))"
                     strokeDasharray="4 4"
                 />
