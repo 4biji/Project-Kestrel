@@ -17,7 +17,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, Rabbit } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { AddFeedingLogForm } from "./add-feeding-log-form";
-import { AddHusbandryTaskForm } from "./add-husbandry-task-form";
 import { AddMuteLogForm } from "./add-mute-log-form";
 import { AddTrainingLogForm } from "./add-training-log-form";
 import { AddHuntingLogForm } from "./add-hunting-log-form";
@@ -49,6 +48,7 @@ import { NutritionTable } from "./nutrition-table";
 import { nutritionInfo as initialNutritionInfo } from "@/lib/data";
 import { type SettingsData } from "./settings-dialog";
 import { HusbandrySettingsDialog } from "./husbandry-settings-dialog";
+import { LogHusbandryTaskForm } from "./log-husbandry-task-form";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -235,7 +235,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     switch (logType) {
         case 'weight': return 'Add Weight Log';
         case 'feeding': return 'Add Feeding Log';
-        case 'husbandry': return 'Add Husbandry Task';
+        case 'husbandry': return 'Log Husbandry Task';
         case 'training': return 'Add Training Log';
         case 'mute': return 'Add Mute/Casting Log';
         case 'hunting': return 'Add Hunting Log';
@@ -532,7 +532,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </DialogHeader>
                 {addingLogType === 'weight' && <AddWeightLogForm onSubmit={(data) => handleAddLog(data, 'weight')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'feeding' && <AddFeedingLogForm birdName={selectedBird.name} nutritionInfo={nutritionInfo} onSubmit={(data) => handleAddLog(data, 'feeding')} onCancel={() => setAddingLogType(null)} />}
-                {addingLogType === 'husbandry' && <AddHusbandryTaskForm birdName={selectedBird.name} predefinedTasks={predefinedHusbandryTasks} onSubmit={(data) => handleAddLog(data, 'husbandry')} onCancel={() => setAddingLogType(null)} />}
+                {addingLogType === 'husbandry' && <LogHusbandryTaskForm birdName={selectedBird.name} predefinedTasks={predefinedHusbandryTasks} onSubmit={(data) => handleAddLog(data, 'husbandry')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'training' && <AddTrainingLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'training')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'mute' && <AddMuteLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'mute')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'hunting' && <AddHuntingLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'hunting')} onCancel={() => setAddingLogType(null)} />}
