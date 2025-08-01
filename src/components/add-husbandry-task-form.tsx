@@ -8,7 +8,6 @@ import type { HusbandryTask } from "@/lib/types";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
-import { DialogDescription } from "./ui/dialog";
 
 const formSchema = z.object({
   task: z.string().min(1, "Task description is required."),
@@ -33,9 +32,9 @@ export function AddHusbandryTaskForm({ birdName, onSubmit, onCancel }: AddHusban
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <DialogDescription>
+        <p className="text-sm text-muted-foreground">
             Add a new husbandry task for {birdName}.
-        </DialogDescription>
+        </p>
         <FormField
           control={form.control}
           name="task"

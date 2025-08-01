@@ -10,7 +10,6 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { DialogDescription } from "./ui/dialog";
 
 const muteConditions: MuteCondition[] = ['Normal', 'Urinate Only', 'Greenish', 'Blackish', 'Yellowish'];
 
@@ -41,9 +40,9 @@ export function AddMuteLogForm({ birdName, onSubmit, onCancel }: AddMuteLogFormP
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-         <DialogDescription>
+         <p className="text-sm text-muted-foreground">
             Log a new mute/casting observation for {birdName}.
-        </DialogDescription>
+        </p>
         <FormField
             control={form.control}
             name="condition"

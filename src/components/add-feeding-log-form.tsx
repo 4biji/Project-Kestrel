@@ -9,7 +9,6 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
-import { DialogDescription } from "./ui/dialog";
 
 const formSchema = z.object({
   foodItem: z.string().min(1, "Food item is required."),
@@ -38,9 +37,9 @@ export function AddFeedingLogForm({ birdName, onSubmit, onCancel }: AddFeedingLo
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <DialogDescription>
+        <p className="text-sm text-muted-foreground">
             Log a new feeding for {birdName}.
-        </DialogDescription>
+        </p>
         <FormField
           control={form.control}
           name="foodItem"
