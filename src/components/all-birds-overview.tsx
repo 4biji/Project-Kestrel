@@ -131,20 +131,20 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                 <div key={bird.id}>
                     <BirdProfileHeader bird={bird} />
                     <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div className="lg:col-span-2 flex flex-col gap-6">
-                            <Card className="flex flex-col h-[220px]">
-                                <CardHeader className="flex flex-row items-center justify-between">
+                        <div className="lg:col-span-2">
+                            <Card>
+                                <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-lg">
                                         <Scale className="w-5 h-5" /> Weight Trend
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="flex-grow">
+                                <CardContent className="h-[250px]">
                                     <WeightChart data={birdWeightLogs} />
                                 </CardContent>
                             </Card>
                         </div>
-                        <div className="lg:col-span-1 flex flex-col gap-6">
-                            <Card className="flex flex-col h-[220px]">
+                        <div className="lg:col-span-1">
+                             <Card>
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <CardTitle className="flex items-center gap-2 text-lg">
                                         <Scale className="w-5 h-5" /> Weight Log
@@ -169,7 +169,7 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                                         </DialogContent>
                                     </Dialog>
                                 </CardHeader>
-                                <CardContent className="h-[188px]">
+                                <CardContent>
                                     {birdForEditing ? (
                                         <EditWeightLogForm
                                             log={birdForEditing}

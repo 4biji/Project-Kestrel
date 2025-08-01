@@ -130,16 +130,16 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
         <SidebarTrigger />
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-        <Card className="flex flex-col">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
             </CardHeader>
-            <CardContent className="flex-grow h-[300px]">
+            <CardContent className="h-[300px]">
                 <WeightChart data={birdWeightLogs} />
             </CardContent>
         </Card>
-        <Card className="flex flex-col">
+        <Card>
            <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex flex-col space-y-1.5">
                     <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
@@ -162,7 +162,7 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     </DialogContent>
                   </Dialog>
             </CardHeader>
-            <CardContent className="flex-grow">
+            <CardContent>
                 {editingWeightLog ? (
                     <EditWeightLogForm
                         log={editingWeightLog}
