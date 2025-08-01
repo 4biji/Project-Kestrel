@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog } from "@/lib/types";
+import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo } from "@/lib/types";
 import { format } from 'date-fns';
 
 import { BirdProfileHeader } from "@/components/bird-profile-header";
@@ -12,7 +12,7 @@ import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText } from "lucide-react";
+import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { FeedingLogComponent, ViewAllFeedingLogsDialog } from "./feeding-log";
 import { HusbandryLog, ViewAllHusbandryTasksDialog } from "./husbandry-log";
@@ -34,6 +34,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
+import { NutritionTable } from "./nutrition-table";
+import { nutritionInfo as initialNutritionInfo } from "@/lib/data";
 
 interface BirdDetailViewProps {
   initialData: {
@@ -69,7 +71,17 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
   const [isViewingAllFeedingLogs, setIsViewingAllFeedingLogs] = useState(false);
   const [isViewingAllHusbandryLogs, setIsViewingAllHusbandryLogs] = useState(false);
   const [isViewingAllMuteLogs, setIsViewingAllMuteLogs] = useState(false);
+  const [isViewingNutritionTable, setIsViewingNutritionTable] = useState(false);
 
+  const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
+
+  const handleUpdateNutritionInfo = (newInfo: NutritionInfo[]) => {
+    setNutritionInfo(newInfo);
+    toast({
+        title: "Nutrition Table Updated",
+        description: "The food nutrition information has been saved.",
+    });
+  }
 
   const selectedBird = birds.find(b => b.id === birdId);
 
@@ -264,6 +276,10 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                         <DropdownMenuItem onSelect={() => setIsViewingNutritionTable(true)}>
+                            <ClipboardList className="mr-2 h-4 w-4" />
+                            <span>Nutrition Table</span>
+                        </DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => setIsViewingAllFeedingLogs(true)}>
                             <ScrollText className="mr-2 h-4 w-4" />
                             <span>View All Logs</span>
@@ -369,6 +385,14 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
             open={isViewingAllMuteLogs}
             onOpenChange={setIsViewingAllMuteLogs}
             logs={birdMuteLogs}
+        />
+       )}
+       {isViewingNutritionTable && (
+        <NutritionTable
+            open={isViewingNutritionTable}
+            onOpenChange={setIsViewingNutritionTable}
+            initialData={nutritionInfo}
+            onSave={handleUpdateNutritionInfo}
         />
        )}
 

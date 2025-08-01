@@ -1,4 +1,5 @@
-import type { Bird, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog } from './types';
+
+import type { Bird, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo } from './types';
 
 export const birds: Bird[] = [
   {
@@ -106,3 +107,10 @@ export const weightLogs: WeightLogData = {
         { datetime: '2024-07-21T09:01:00', weight: 710 },
     ],
 }
+
+export const nutritionInfo: NutritionInfo[] = [
+    { id: 'n1', foodType: 'Quail', proteinPer100g: 22 },
+    { id: 'n2', foodType: 'Chicken Heart', proteinPer100g: 16 },
+    { id: 'n3', foodType: 'Pigeon', proteinPer100g: 21 },
+    { id: 'n4', foodType: 'Rabbit', proteinPer100g: 21 },
+];

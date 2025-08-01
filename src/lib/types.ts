@@ -1,3 +1,4 @@
+
 export interface Bird {
   id: string;
   name: string;
@@ -43,6 +44,12 @@ export interface MuteLog {
   condition: MuteCondition;
   imageUrl?: string;
   notes?: string;
+}
+
+export interface NutritionInfo {
+    id: string;
+    foodType: string;
+    proteinPer100g: number;
 }
 
 export type AllLogs = {
