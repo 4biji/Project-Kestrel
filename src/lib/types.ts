@@ -47,6 +47,15 @@ export interface MuteLog {
   notes?: string;
 }
 
+export interface HuntingLog {
+  id: string;
+  datetime: string;
+  prey: string;
+  outcome: 'Successful' | 'Unsuccessful';
+  notes?: string;
+  imageUrl?: string;
+}
+
 export interface NutritionInfo {
     id: string;
     foodType: string;
@@ -60,5 +69,6 @@ export type AllLogs = {
     trainingLogs: TrainingLog[];
     muteLogs: MuteLog[];
     weightLogs: WeightLog[];
+    huntingLogs: HuntingLog[];
   }
 }

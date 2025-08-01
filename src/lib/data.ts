@@ -1,5 +1,5 @@
 
-import type { Bird, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo } from './types';
+import type { Bird, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog } from './types';
 
 export const birds: Bird[] = [
   {
@@ -122,3 +122,13 @@ export const nutritionInfo: NutritionInfo[] = [
     { id: 'n3', foodType: 'Pigeon', proteinPer100g: 21 },
     { id: 'n4', foodType: 'Rabbit', proteinPer100g: 21 },
 ];
+
+type HuntingLogData = { [birdId: string]: HuntingLog[] };
+export const huntingLogs: HuntingLogData = {
+  'b1': [
+    { id: 'hunt1', datetime: '2024-07-21T18:00:00', prey: 'Rabbit', outcome: 'Successful', notes: 'Clean catch.', imageUrl: 'https://placehold.co/600x400.png' },
+    { id: 'hunt2', datetime: '2024-07-19T17:45:00', prey: 'Squirrel', outcome: 'Unsuccessful', notes: 'Prey escaped into a tree.' },
+  ],
+  'b2': [],
+  'b3': [],
+};

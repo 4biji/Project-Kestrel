@@ -9,7 +9,7 @@ import {
   LayoutDashboard,
   Settings,
 } from "lucide-react";
-import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog } from "@/lib/types";
+import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, HuntingLog } from "@/lib/types";
 import { usePathname, useRouter } from 'next/navigation';
 
 import {
@@ -39,6 +39,7 @@ interface FalconryJournalClientProps {
     trainingLogs: { [birdId: string]: TrainingLog[] };
     muteLogs: { [birdId: string]: MuteLog[] };
     weightLogs: { [birdId: string]: WeightLog[] };
+    huntingLogs: { [birdId: string]: HuntingLog[] };
   };
   view: 'overview' | 'detail';
   selectedBirdId?: string | null;
@@ -175,5 +176,3 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
     </SidebarProvider>
   );
 }
-
-    

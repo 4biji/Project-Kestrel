@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo } from "@/lib/types";
+import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog } from "@/lib/types";
 import { format } from 'date-fns';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -13,20 +13,23 @@ import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, X } from "lucide-react";
+import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, X, Rabbit } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { AddHusbandryTaskForm } from "./add-husbandry-task-form";
 import { AddMuteLogForm } from "./add-mute-log-form";
 import { AddTrainingLogForm } from "./add-training-log-form";
+import { AddHuntingLogForm } from "./add-hunting-log-form";
 import { EditFeedingLogForm } from "./edit-feeding-log-form";
 import { EditHusbandryTaskForm } from "./edit-husbandry-task-form";
 import { EditMuteLogForm } from "./edit-mute-log-form";
 import { EditTrainingLogForm } from "./edit-training-log-form";
+import { EditHuntingLogForm } from "./edit-hunting-log-form";
 import { FeedingLogComponent, ViewAllFeedingLogsDialog } from "./feeding-log";
 import { HusbandryLog, ViewAllHusbandryTasksDialog } from "./husbandry-log";
 import { MuteLogComponent, ViewAllMuteLogsDialog } from "./mute-log";
 import { TrainingLogComponent, ViewAllTrainingLogsDialog } from "./training-log";
+import { HuntingLogComponent, ViewAllHuntingLogsDialog } from "./hunting-log";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -49,7 +52,7 @@ import { type SettingsData } from "./settings-dialog";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute';
+type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting';
 
 interface BirdDetailViewProps {
   initialData: {
@@ -59,6 +62,7 @@ interface BirdDetailViewProps {
     trainingLogs: { [birdId: string]: TrainingLog[] };
     muteLogs: { [birdId: string]: MuteLog[] };
     weightLogs: { [birdId: string]: WeightLog[] };
+    huntingLogs: { [birdId: string]: HuntingLog[] };
   };
   birdId: string;
   settings: SettingsData;
@@ -71,12 +75,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const [trainingLogs, setTrainingLogs] = useState(initialData.trainingLogs);
   const [muteLogs, setMuteLogs] = useState(initialData.muteLogs);
   const [weightLogs, setWeightLogs] = useState(initialData.weightLogs);
+  const [huntingLogs, setHuntingLogs] = useState(initialData.huntingLogs);
   
   const [editingWeightLog, setEditingWeightLog] = useState<WeightLog | null>(null);
   const [editingFeedingLog, setEditingFeedingLog] = useState<FeedingLog | null>(null);
   const [editingHusbandryTask, setEditingHusbandryTask] = useState<HusbandryTask | null>(null);
   const [editingTrainingLog, setEditingTrainingLog] = useState<TrainingLog | null>(null);
   const [editingMuteLog, setEditingMuteLog] = useState<MuteLog | null>(null);
+  const [editingHuntingLog, setEditingHuntingLog] = useState<HuntingLog | null>(null);
 
   const [addingLogType, setAddingLogType] = useState<LogType | null>(null);
   const { toast } = useToast();
@@ -96,6 +102,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const [isViewingAllFeedingLogs, setIsViewingAllFeedingLogs] = useState(false);
   const [isViewingAllHusbandryLogs, setIsViewingAllHusbandryLogs] = useState(false);
   const [isViewingAllMuteLogs, setIsViewingAllMuteLogs] = useState(false);
+  const [isViewingAllHuntingLogs, setIsViewingAllHuntingLogs] = useState(false);
   const [isViewingNutritionTable, setIsViewingNutritionTable] = useState(false);
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
@@ -104,7 +111,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
 
 
   const onLayoutChange = (layout: any, allLayouts: any) => {
-    // You can save layouts to state or local storage here if needed
     setLayouts(allLayouts);
   };
 
@@ -128,6 +134,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const birdHusbandryLogs = husbandryLogs[selectedBird.id] || [];
   const birdTrainingLogs = trainingLogs[selectedBird.id] || [];
   const birdMuteLogs = muteLogs[selectedBird.id] || [];
+  const birdHuntingLogs = huntingLogs[selectedBird.id] || [];
 
   const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
 
@@ -141,7 +148,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     });
   };
 
-  // Generic update/delete handlers
   const createUpdater = <T extends { id: string }>(setter: React.Dispatch<React.SetStateAction<{ [key: string]: T[] }>>, type: string) => (updatedItem: T) => {
     setter(prev => ({
         ...prev,
@@ -167,6 +173,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const handleDeleteTrainingLog = createDeleter(setTrainingLogs, "Training Log");
   const handleUpdateMuteLog = createUpdater(setMuteLogs, "Mute Log");
   const handleDeleteMuteLog = createDeleter(setMuteLogs, "Mute Log");
+  const handleUpdateHuntingLog = createUpdater(setHuntingLogs, "Hunting Log");
+  const handleDeleteHuntingLog = createDeleter(setHuntingLogs, "Hunting Log");
 
 
   const handleUpdateWeightLog = (updatedLog: WeightLog) => {
@@ -245,23 +253,32 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     toast({ title: "Mute/Casting Log Added" });
   };
 
+  const handleAddHuntingLog = (data: Omit<HuntingLog, 'id' | 'datetime'>) => {
+    const newLog: HuntingLog = { ...data, id: `hunt${Date.now()}`, datetime: new Date().toISOString() };
+    setHuntingLogs(prev => ({...prev, [birdId]: [newLog, ...(prev[birdId] || [])]}));
+    setAddingLogType(null);
+    toast({ title: "Hunting Log Added" });
+  };
+
   const defaultLayouts = {
     lg: [
       { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 1 },
       { i: 'weight-log', x: 2, y: 0, w: 1, h: 2, minW: 1, minH: 2 },
       { i: 'training-log', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
       { i: 'feeding-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
+      { i: 'hunting-log', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
       { i: 'husbandry', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
       { i: 'mutes-castings', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'add-log', x: 1, y: 4, w: 2, h: 2, minW: 1, minH: 2},
+      { i: 'add-log', x: 1, y: 6, w: 2, h: 2, minW: 1, minH: 2},
     ],
     md: [
       { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
       { i: 'weight-log', x: 0, y: 2, w: 1, h: 2 },
       { i: 'training-log', x: 1, y: 2, w: 1, h: 2 },
       { i: 'feeding-log', x: 0, y: 4, w: 1, h: 2 },
-      { i: 'husbandry', x: 1, y: 4, w: 1, h: 2 },
-      { i: 'mutes-castings', x: 0, y: 6, w: 1, h: 2 },
+      { i: 'hunting-log', x: 1, y: 4, w: 1, h: 2 },
+      { i: 'husbandry', x: 0, y: 6, w: 1, h: 2 },
+      { i: 'mutes-castings', x: 1, y: 6, w: 1, h: 2 },
       { i: 'add-log', x: 0, y: 8, w: 2, h: 2},
     ],
   };
@@ -291,6 +308,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         case 'husbandry': return 'Add Husbandry Task';
         case 'training': return 'Add Training Log';
         case 'mute': return 'Add Mute/Casting Log';
+        case 'hunting': return 'Add Hunting Log';
         default: return '';
     }
   }
@@ -457,6 +475,48 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </Card>
             </div>
         )}
+        {settings.visibleCards['hunting-log'] && (
+            <div key="hunting-log">
+                <Card className="h-full">
+                    <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
+                        <div>
+                            <CardTitle className="flex items-center gap-2 text-lg"><Rabbit className="w-5 h-5"/> Hunting Log</CardTitle>
+                            <CardDescription>Records of hunting sessions.</CardDescription>
+                        </div>
+                        <div className="flex items-center">
+                            <Button variant="ghost" size="icon" onClick={() => setAddingLogType('hunting')}><Plus className="w-4 h-4"/></Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <Settings className="w-4 h-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onSelect={() => setIsViewingAllHuntingLogs(true)}>
+                                        <ScrollText className="mr-2 h-4 w-4" />
+                                        <span>View All Logs</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {editingHuntingLog ? (
+                            <EditHuntingLogForm
+                                log={editingHuntingLog}
+                                onSubmit={(data) => {
+                                    handleUpdateHuntingLog(data);
+                                    setEditingHuntingLog(null);
+                                }}
+                                onCancel={() => setEditingHuntingLog(null)}
+                            />
+                        ) : (
+                            <HuntingLogComponent logs={birdHuntingLogs} onEdit={setEditingHuntingLog} onDelete={handleDeleteHuntingLog} />
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+        )}
         {settings.visibleCards['husbandry'] && (
             <div key="husbandry">
                 <Card className="h-full">
@@ -556,6 +616,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                         {addingLogType === 'husbandry' && <AddHusbandryTaskForm birdName={selectedBird.name} onSubmit={handleAddHusbandryTask} onCancel={() => setAddingLogType(null)} />}
                         {addingLogType === 'training' && <AddTrainingLogForm birdName={selectedBird.name} onSubmit={handleAddTrainingLog} onCancel={() => setAddingLogType(null)} />}
                         {addingLogType === 'mute' && <AddMuteLogForm birdName={selectedBird.name} onSubmit={handleAddMuteLog} onCancel={() => setAddingLogType(null)} />}
+                        {addingLogType === 'hunting' && <AddHuntingLogForm birdName={selectedBird.name} onSubmit={handleAddHuntingLog} onCancel={() => setAddingLogType(null)} />}
                     </CardContent>
                 </Card>
             </div>
@@ -587,6 +648,15 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             logs={birdFeedingLogs}
             onEdit={setEditingFeedingLog}
             onDelete={handleDeleteFeedingLog}
+        />
+      )}
+      {isViewingAllHuntingLogs && (
+        <ViewAllHuntingLogsDialog
+            open={isViewingAllHuntingLogs}
+            onOpenChange={setIsViewingAllHuntingLogs}
+            logs={birdHuntingLogs}
+            onEdit={setEditingHuntingLog}
+            onDelete={handleDeleteHuntingLog}
         />
       )}
       {isViewingAllHusbandryLogs && (
@@ -628,7 +698,3 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     </div>
   );
 }
-
-    
-
-    

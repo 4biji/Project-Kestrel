@@ -26,6 +26,7 @@ export const settingsSchema = z.object({
     'weight-log': z.boolean().default(true),
     'training-log': z.boolean().default(true),
     'feeding-log': z.boolean().default(true),
+    'hunting-log': z.boolean().default(true),
     'husbandry': z.boolean().default(true),
     'mutes-castings': z.boolean().default(true),
   }).default({
@@ -33,6 +34,7 @@ export const settingsSchema = z.object({
     'weight-log': true,
     'training-log': true,
     'feeding-log': true,
+    'hunting-log': true,
     'husbandry': true,
     'mutes-castings': true,
   }),
@@ -53,6 +55,7 @@ const cardOptions = [
     { id: 'weight-log', label: 'Weight Log Summary' },
     { id: 'training-log', label: 'Training Log' },
     { id: 'feeding-log', label: 'Feeding Log' },
+    { id: 'hunting-log', label: 'Hunting Log' },
     { id: 'husbandry', label: 'Husbandry Tasks' },
     { id: 'mutes-castings', label: 'Mutes & Castings Log' },
 ] as const;
@@ -174,5 +177,3 @@ export function SettingsDialog({
     </Dialog>
   );
 }
-
-    
