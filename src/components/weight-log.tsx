@@ -98,9 +98,6 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
                 <Activity className="w-4 h-4 text-primary"/>
                 Avg. Hourly Weight Loss
              </div>
-             <div className="text-xs text-muted-foreground mt-1">
-                Based on periods of weight loss only.
-             </div>
              <div className="text-2xl font-bold text-primary mt-2">
                 {averageHourlyLoss.toFixed(2)}g / hour
              </div>
