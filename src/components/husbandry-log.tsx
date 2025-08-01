@@ -9,9 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Calendar, CalendarCheck, CalendarClock } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "./ui/separator";
 
 interface HusbandryLogProps {
   predefinedTasks: PredefinedHusbandryTask[];
@@ -105,13 +105,12 @@ export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: H
     });
   };
 
-  const renderTaskList = (frequency: 'daily' | 'weekly' | 'monthly') => {
-    const tasks = predefinedTasks.filter(t => t.frequency === frequency);
+  const renderTaskList = (tasks: PredefinedHusbandryTask[], frequency: 'daily' | 'weekly' | 'monthly') => {
     if (tasks.length === 0) {
-      return <p className="text-sm text-center text-muted-foreground py-10">No {frequency} tasks defined.</p>;
+      return <p className="text-xs text-center text-muted-foreground py-2">No {frequency} tasks defined.</p>;
     }
     return (
-      <div className="space-y-4">
+      <div className="space-y-2">
         {tasks.map(task => {
           const isCompleted = getIsTaskCompleted(task.task, frequency);
           return (
@@ -137,22 +136,39 @@ export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: H
     );
   };
 
+  const dailyTasks = predefinedTasks.filter(t => t.frequency === 'daily');
+  const weeklyTasks = predefinedTasks.filter(t => t.frequency === 'weekly');
+  const monthlyTasks = predefinedTasks.filter(t => t.frequency === 'monthly');
+
   return (
-    <Tabs defaultValue="daily" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="daily">Daily</TabsTrigger>
-        <TabsTrigger value="weekly">Weekly</TabsTrigger>
-        <TabsTrigger value="monthly">Monthly</TabsTrigger>
-      </TabsList>
-      <TabsContent value="daily" className="pt-4">
-        {renderTaskList('daily')}
-      </TabsContent>
-      <TabsContent value="weekly" className="pt-4">
-        {renderTaskList('weekly')}
-      </TabsContent>
-      <TabsContent value="monthly" className="pt-4">
-        {renderTaskList('monthly')}
-      </TabsContent>
-    </Tabs>
+    <div className="space-y-2 -mt-2">
+        <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+            <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                <Calendar className="w-4 h-4 text-primary"/>
+                Daily Tasks
+            </div>
+            <div className="mt-2">
+                {renderTaskList(dailyTasks, 'daily')}
+            </div>
+        </div>
+        <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+            <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                <CalendarCheck className="w-4 h-4 text-primary"/>
+                Weekly Tasks
+            </div>
+            <div className="mt-2">
+                {renderTaskList(weeklyTasks, 'weekly')}
+            </div>
+        </div>
+        <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+            <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                <CalendarClock className="w-4 h-4 text-primary"/>
+                Monthly Tasks
+            </div>
+            <div className="mt-2">
+                {renderTaskList(monthlyTasks, 'monthly')}
+            </div>
+        </div>
+    </div>
   );
 }
