@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, ReferenceLine } from "recharts"
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, ReferenceLine, Label } from "recharts"
 import type { WeightLog } from "@/lib/types"
 import type { WeightChartSettingsData } from './weight-chart-settings';
 
@@ -19,7 +19,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
     ...log,
     // Format for display
     name: new Date(log.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  })).sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+  })).sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
 
   const averageWeight = data.reduce((acc, log) => acc + log.weight, 0) / data.length;
 
@@ -31,7 +31,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
             <LineChart
             data={chartData}
             margin={{
-                top: 5,
+                top: 20,
                 right: 20,
                 left: 0,
                 bottom: 5,
@@ -64,6 +64,13 @@ export function WeightChart({ data, settings }: WeightChartProps) {
                     const log = chartData.find(d => d.name === label);
                     return log ? new Date(log.datetime).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : label
                 }}
+            />
+             <Label 
+                value={`${settings.style.charAt(0).toUpperCase() + settings.style.slice(1)} View`}
+                position="top"
+                offset={15}
+                className="text-xs text-muted-foreground"
+                style={{ textAnchor: 'middle', dominantBaseline: 'hanging' }}
             />
             <Line 
                 type={settings.style} 
