@@ -8,7 +8,7 @@ import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter, DialogTrigger } from "./ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
-import { TrendingUp, TrendingDown, MoreVertical, Pencil, Trash2, Activity, ScrollText, GitCommitHorizontal } from "lucide-react";
+import { TrendingUp, TrendingDown, MoreVertical, Pencil, Trash2, Activity, ScrollText, GitCommitHorizontal, Hourglass } from "lucide-react";
 
 interface WeightLogComponentProps {
   logs: WeightLog[];
@@ -22,6 +22,7 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
   const [lastLog, setLastLog] = useState<WeightLog | null>(null);
   const [averageHourlyLoss, setAverageHourlyLoss] = useState(0);
   const [lastWeightChange, setLastWeightChange] = useState<number | null>(null);
+  const [lastHourlyChange, setLastHourlyChange] = useState<number | null>(null);
 
 
   useEffect(() => {
@@ -35,11 +36,25 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
     setLastLog(display.length > 0 ? display[0] : null);
 
     if (display.length >= 2) {
-        const last = display[0].weight;
-        const secondLast = display[1].weight;
-        setLastWeightChange(last - secondLast);
+        const last = display[0];
+        const secondLast = display[1];
+        setLastWeightChange(last.weight - secondLast.weight);
+
+        const hoursApart = differenceInHours(parseISO(last.datetime), parseISO(secondLast.datetime));
+        if (hoursApart > 0) {
+            const weightChange = secondLast.weight - last.weight;
+            if (weightChange > 0) { // only show loss
+              setLastHourlyChange(weightChange / hoursApart);
+            } else {
+              setLastHourlyChange(0);
+            }
+        } else {
+            setLastHourlyChange(null);
+        }
+
     } else {
         setLastWeightChange(null);
+        setLastHourlyChange(null);
     }
 
 
@@ -108,9 +123,17 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
                     <GitCommitHorizontal className="w-4 h-4 text-primary"/>
                     Last Change
                   </div>
-                  <div className={`text-xl font-bold mt-2 flex items-center ${lastWeightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                    {lastWeightChange >= 0 ? <TrendingUp className="w-4 h-4 mr-0.5" /> : <TrendingDown className="w-4 h-4 mr-0.5" />}
-                    {lastWeightChange.toFixed(1)}g
+                  <div className="flex items-end gap-4">
+                    <div className={`text-xl font-bold mt-2 flex items-center ${lastWeightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {lastWeightChange >= 0 ? <TrendingUp className="w-4 h-4 mr-0.5" /> : <TrendingDown className="w-4 h-4 mr-0.5" />}
+                        {lastWeightChange.toFixed(1)}g
+                    </div>
+                    {lastHourlyChange !== null && lastHourlyChange > 0 && (
+                        <div className="flex items-center text-sm text-red-500">
+                             <Hourglass className="w-3 h-3 mr-1" />
+                            {lastHourlyChange.toFixed(2)}g/hr
+                        </div>
+                    )}
                   </div>
             </div>
           )}
