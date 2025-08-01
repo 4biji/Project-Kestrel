@@ -2,17 +2,10 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import {
   Bird,
   Feather,
   Plus,
-  Bot,
-  Scale,
-  Beef,
-  ClipboardList,
-  Dumbbell,
-  Droplets,
 } from "lucide-react";
 import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog } from "@/lib/types";
 import { format } from 'date-fns';
@@ -34,15 +27,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 
 import { BirdProfileHeader } from "@/components/bird-profile-header";
-import { FeedingLogComponent } from "@/components/feeding-log";
-import { HusbandryLog } from "@/components/husbandry-log";
-import { TrainingLogComponent } from "@/components/training-log";
-import { MuteLogComponent } from "@/components/mute-log";
 import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { WeightLogComponent } from "./weight-log";
 import { EditWeightLogForm } from "./edit-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
+import { Scale } from "lucide-react";
 
 interface FalconryJournalClientProps {
   initialData: {
@@ -59,32 +49,27 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
   const [birds, setBirds] = useState(initialData.birds);
   const [selectedBirdId, setSelectedBirdId] = useState(birds[0]?.id || null);
 
-  const [feedingLogs, setFeedingLogs] = useState(initialData.feedingLogs);
-  const [husbandryLogs, setHusbandryLogs] = useState(initialData.husbandryLogs);
-  const [trainingLogs, setTrainingLogs] = useState(initialData.trainingLogs);
-  const [muteLogs, setMuteLogs] = useState(initialData.muteLogs);
   const [weightLogs, setWeightLogs] = useState(initialData.weightLogs);
   
   const [editingWeightLog, setEditingWeightLog] = useState<WeightLog | null>(null);
   const { toast } = useToast();
 
-
-  const selectedBird = birds.find((b) => b.id === selectedBirdId);
-  const birdFeedingLogs = selectedBird ? feedingLogs[selectedBird.id] || [] : [];
-  const birdHusbandryLogs = selectedBird ? husbandryLogs[selectedBird.id] || [] : [];
-  const birdTrainingLogs = selectedBird ? trainingLogs[selectedBird.id] || [] : [];
-  const birdMuteLogs = selectedBird ? muteLogs[selectedBird.id] || [] : [];
-  const birdWeightLogs = selectedBird ? weightLogs[selectedBird.id] || [] : [];
-
   const handleUpdateWeightLog = (updatedLog: WeightLog) => {
-    if (!selectedBirdId) return;
+    if (!editingWeightLog) return;
+    
+    // Find which bird this log belongs to
+    const birdId = Object.keys(weightLogs).find(id => 
+        weightLogs[id].some(log => log.datetime === editingWeightLog.datetime)
+    );
+
+    if (!birdId) return;
 
     setWeightLogs(prevLogs => {
       const newLogs = { ...prevLogs };
-      const logsForBird = newLogs[selectedBirdId].map(log => 
-        log.datetime === editingWeightLog?.datetime ? updatedLog : log
+      const logsForBird = newLogs[birdId].map(log => 
+        log.datetime === editingWeightLog.datetime ? updatedLog : log
       );
-      newLogs[selectedBirdId] = logsForBird.sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+      newLogs[birdId] = logsForBird.sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
       return newLogs;
     });
 
@@ -96,15 +81,20 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
   };
 
   const handleDeleteWeightLog = (logToDelete: WeightLog) => {
-    if (!selectedBirdId) return;
-
      if (!confirm('Are you sure you want to delete this weight log entry?')) {
       return;
     }
+    
+    // Find which bird this log belongs to
+    const birdId = Object.keys(weightLogs).find(id => 
+        weightLogs[id].some(log => log.datetime === logToDelete.datetime)
+    );
+    
+    if (!birdId) return;
 
     setWeightLogs(prevLogs => {
       const newLogs = { ...prevLogs };
-      newLogs[selectedBirdId] = newLogs[selectedBirdId].filter(
+      newLogs[birdId] = newLogs[birdId].filter(
         log => log.datetime !== logToDelete.datetime
       );
       return newLogs;
@@ -129,23 +119,16 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
               <h1 className="text-xl font-semibold font-headline">Falconry Journal</h1>
             </div>
           </SidebarHeader>
-          <SidebarMenu>
-            {birds.map((bird) => (
-              <SidebarMenuItem key={bird.id}>
-                <SidebarMenuButton
-                  onClick={() => setSelectedBirdId(bird.id)}
-                  isActive={selectedBirdId === bird.id}
-                >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={bird.imageUrl} alt={bird.name} data-ai-hint="falcon bird" />
-                    <AvatarFallback>
-                      <Bird />
-                    </AvatarFallback>
-                  </Avatar>
-                  <span>{bird.name}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+           <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                onClick={() => {}}
+                isActive={true}
+              >
+                <Bird />
+                <span>All Birds Overview</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
@@ -157,100 +140,75 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
       </Sidebar>
       <SidebarInset>
         <main className="min-h-screen p-4 sm:p-6 lg:p-8">
-          {selectedBird ? (
             <div className="flex flex-col gap-8">
               <div className="flex items-center justify-between">
-                <BirdProfileHeader bird={selectedBird} />
+                 <h1 className="text-3xl font-bold font-headline">All Birds Weight Overview</h1>
                 <SidebarTrigger />
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 flex flex-col gap-6">
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle className="flex items-center gap-2 text-lg">
-                                <Scale className="w-5 h-5" /> Weight Trend
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <WeightChart data={birdWeightLogs} />
-                        </CardContent>
-                    </Card>
-                </div>
-                <div className="lg:col-span-1 flex flex-col gap-6">
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle className="flex items-center gap-2 text-lg">
-                                <Scale className="w-5 h-5" /> Weight Log
-                            </CardTitle>
-                            <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
-                        </CardHeader>
-                        <CardContent>
-                            {editingWeightLog ? (
-                                <EditWeightLogForm
-                                    log={editingWeightLog}
-                                    onSubmit={handleUpdateWeightLog}
-                                    onCancel={() => setEditingWeightLog(null)}
-                                />
-                            ) : (
-                                <WeightLogComponent 
-                                    logs={birdWeightLogs} 
-                                    onEdit={setEditingWeightLog}
-                                    onDelete={handleDeleteWeightLog}
-                                />
-                            )}
-                        </CardContent>
-                    </Card>
-                </div>
-              </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                 <Card>
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                            <Beef className="w-5 h-5" /> Feeding Log
-                        </CardTitle>
-                        <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
-                    </CardHeader>
-                    <CardContent>
-                        <FeedingLogComponent logs={birdFeedingLogs} />
-                    </CardContent>
-                </Card>
-                 <Card>
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                            <Dumbbell className="w-5 h-5" /> Training Log
-                        </CardTitle>
-                         <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
-                    </CardHeader>
-                    <CardContent>
-                        <TrainingLogComponent logs={birdTrainingLogs} />
-                    </CardContent>
-                </Card>
-                 <Card>
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                            <Droplets className="w-5 h-5" /> Mute & Casting Log
-                        </CardTitle>
-                         <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
-                    </CardHeader>
-                    <CardContent>
-                        <MuteLogComponent logs={birdMuteLogs} />
-                    </CardContent>
-                </Card>
-              </div>
+            {birds.length > 0 ? (
+                birds.map((bird, index) => {
+                    const birdWeightLogs = weightLogs[bird.id] || [];
+                    const birdForEditing = editingWeightLog && Object.keys(weightLogs).find(id => weightLogs[id].some(l => l.datetime === editingWeightLog.datetime)) === bird.id ? editingWeightLog : null;
+                    return (
+                        <div key={bird.id}>
+                            <BirdProfileHeader bird={bird} />
+                            <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div className="lg:col-span-2 flex flex-col gap-6">
+                                    <Card>
+                                        <CardHeader className="flex flex-row items-center justify-between">
+                                            <CardTitle className="flex items-center gap-2 text-lg">
+                                                <Scale className="w-5 h-5" /> Weight Trend
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <WeightChart data={birdWeightLogs} />
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                                <div className="lg:col-span-1 flex flex-col gap-6">
+                                    <Card>
+                                        <CardHeader className="flex flex-row items-center justify-between">
+                                            <CardTitle className="flex items-center gap-2 text-lg">
+                                                <Scale className="w-5 h-5" /> Weight Log
+                                            </CardTitle>
+                                            <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
+                                        </CardHeader>
+                                        <CardContent>
+                                            {birdForEditing ? (
+                                                <EditWeightLogForm
+                                                    log={birdForEditing}
+                                                    onSubmit={handleUpdateWeightLog}
+                                                    onCancel={() => setEditingWeightLog(null)}
+                                                />
+                                            ) : (
+                                                <WeightLogComponent 
+                                                    logs={birdWeightLogs} 
+                                                    onEdit={setEditingWeightLog}
+                                                    onDelete={handleDeleteWeightLog}
+                                                />
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </div>
+                            {index < birds.length - 1 && <Separator className="my-8" />}
+                        </div>
+                    )
+                })
+            ) : (
+                <div className="flex flex-col items-center justify-center h-full text-center">
+                <Feather className="w-16 h-16 text-muted-foreground" />
+                <h2 className="mt-4 text-2xl font-semibold">No Birds Available</h2>
+                <p className="mt-2 text-muted-foreground">
+                    Add a bird to begin tracking their weight.
+                </p>
+                <Button className="mt-4">
+                    <Plus className="mr-2 h-4 w-4" /> Add Bird
+                </Button>
+                </div>
+            )}
             </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <Feather className="w-16 h-16 text-muted-foreground" />
-              <h2 className="mt-4 text-2xl font-semibold">No Bird Selected</h2>
-              <p className="mt-2 text-muted-foreground">
-                Please select a bird from the sidebar or add a new one to begin.
-              </p>
-              <Button className="mt-4">
-                <Plus className="mr-2 h-4 w-4" /> Add Bird
-              </Button>
-            </div>
-          )}
         </main>
       </SidebarInset>
     </SidebarProvider>
