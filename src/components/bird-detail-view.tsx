@@ -54,6 +54,20 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting';
 
+const defaultLayouts: Responsive.Layouts = {
+    lg: [
+      { i: 'weight-trend', x: 0, y: 0, w: 4, h: 2, minW: 2, minH: 2 },
+      { i: 'weight-log', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'training-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'feeding-log', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'hunting-log', x: 3, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'husbandry', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'mutes-castings', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'add-log', x: 2, y: 4, w: 1, h: 2, minW: 1, minH: 2},
+    ],
+};
+
+
 interface BirdDetailViewProps {
   initialData: {
     birds: BirdType[];
@@ -107,40 +121,10 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
-  const [layouts, setLayouts] = useState<Responsive.Layouts>({
-    lg: [
-      { i: 'weight-trend', x: 0, y: 0, w: 4, h: 2, minW: 2, minH: 2 },
-      { i: 'weight-log', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'training-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'feeding-log', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'hunting-log', x: 3, y: 2, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'husbandry', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'mutes-castings', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'add-log', x: 2, y: 4, w: 1, h: 2, minW: 1, minH: 2},
-    ],
-  });
-
-  useEffect(() => {
-    try {
-      const savedLayouts = localStorage.getItem(`layouts_${birdId}`);
-      if (savedLayouts) {
-        setLayouts(JSON.parse(savedLayouts));
-      }
-    } catch (error) {
-      console.error("Could not load layouts from local storage", error);
-    }
-  }, [birdId]);
-
+  const [layouts, setLayouts] = useState<Responsive.Layouts>(defaultLayouts);
 
   const onLayoutChange = (layout: any, allLayouts: Responsive.Layouts) => {
-    try {
-      if (settings.isLayoutEditable) {
-        localStorage.setItem(`layouts_${birdId}`, JSON.stringify(allLayouts));
-        setLayouts(allLayouts);
-      }
-    } catch (error) {
-      console.error("Could not save layouts to local storage", error);
-    }
+      setLayouts(allLayouts);
   };
 
 
@@ -333,7 +317,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         rowHeight={settings.rowHeight}
         draggableHandle=".card-header"
         isDraggable={settings.isLayoutEditable}
-        isResizable={settings.isLayoutEditable}
+        isResizable={false}
       >
         {settings.visibleCards['weight-trend'] && (
             <div key="weight-trend">
@@ -701,3 +685,5 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     </div>
   );
 }
+
+    
