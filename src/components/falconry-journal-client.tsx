@@ -90,6 +90,12 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
         description: "Your changes have been saved."
     })
   }
+  
+  const openManageBirds = () => {
+    setIsSettingsOpen(false);
+    setIsManageBirdsOpen(true);
+  }
+
 
   return (
     <SidebarProvider>
@@ -127,23 +133,15 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
                 </SidebarMenuItem>
               ))}
                <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => setIsManageBirdsOpen(true)}>
+                <SidebarMenuButton onClick={() => setIsSettingsOpen(true)}>
                     <Settings className="w-4 h-4" />
-                    Manage Birds
+                    Settings
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarGroup>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => setIsSettingsOpen(true)}>
-                        <Settings className="w-4 h-4" />
-                        Settings
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
@@ -174,6 +172,7 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
         onOpenChange={setIsSettingsOpen}
         settings={settings}
         onSave={handleSaveSettings}
+        onManageBirdsClick={openManageBirds}
       />
     </SidebarProvider>
   );
