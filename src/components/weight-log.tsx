@@ -47,7 +47,7 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
                        <span>{log.weight}g</span>
                        <span className="text-muted-foreground/50">{format(parseISO(log.datetime), 'HH:mm:ss')}</span>
                        {weightChange !== null && !isNaN(weightChange) && (
-                           <span className={`flex items-center ${weightChange >= 0 ? 'text-red-500' : 'text-green-500'}`}>
+                           <span className={`flex items-center ${weightChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                             {weightChange >= 0 ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}
                             {weightChange.toFixed(1)}g
                            </span>
