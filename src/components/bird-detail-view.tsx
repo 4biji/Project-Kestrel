@@ -104,15 +104,27 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
-  const [layouts, setLayouts] = useState<Responsive.Layouts>(() => {
-    if (typeof window !== 'undefined') {
-      const savedLayouts = localStorage.getItem(`layouts_${birdId}`);
-      if (savedLayouts) {
-        return JSON.parse(savedLayouts);
+  const [layouts, setLayouts] = useState<Responsive.Layouts>(defaultLayouts);
+
+  useEffect(() => {
+    const savedLayouts = localStorage.getItem(`layouts_${birdId}`);
+    if (savedLayouts) {
+      try {
+        const parsedLayouts = JSON.parse(savedLayouts);
+        // Basic validation to make sure we're not loading garbage
+        if (parsedLayouts.lg) {
+          setLayouts(parsedLayouts);
+        }
+      } catch (error) {
+        console.error("Failed to parse layouts from local storage", error);
+        // If parsing fails, fall back to default
+        setLayouts(defaultLayouts);
       }
+    } else {
+        setLayouts(defaultLayouts);
     }
-    return defaultLayouts;
-  });
+  }, [birdId]);
+
 
   const onLayoutChange = (layout: any, allLayouts: Responsive.Layouts) => {
     if (settings.isLayoutEditable) {
@@ -641,5 +653,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
 }
 
 
+
+    
 
     
