@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 import { NutritionTable } from "./nutrition-table";
-import { nutritionInfo as initialNutritionInfo } from "@/lib/data";
+import { nutritionInfo as initialNutritionInfo, predefinedHusbandryTasks as initialPredefinedHusbandryTasks, predefinedTraining as initialPredefinedTraining } from "@/lib/data";
 import { type SettingsData } from "./settings-dialog";
 import { HusbandrySettingsDialog } from "./husbandry-settings-dialog";
 import { LogHusbandryTaskForm } from "./log-husbandry-task-form";
@@ -106,8 +106,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const [isEditingHusbandrySettings, setIsEditingHusbandrySettings] = useState(false);
   const [isEditingTrainingSettings, setIsEditingTrainingSettings] = useState(false);
 
-  const [predefinedHusbandryTasks, setPredefinedHusbandryTasks] = useState<PredefinedHusbandryTask[]>([]);
-  const [predefinedTraining, setPredefinedTraining] = useState<PredefinedTraining[]>([]);
+  const [predefinedHusbandryTasks, setPredefinedHusbandryTasks] = useState<PredefinedHusbandryTask[]>(initialPredefinedHusbandryTasks);
+  const [predefinedTraining, setPredefinedTraining] = useState<PredefinedTraining[]>(initialPredefinedTraining);
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
@@ -647,6 +647,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
 }
 
 
+
+    
 
     
 
