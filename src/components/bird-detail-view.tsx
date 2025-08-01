@@ -55,13 +55,13 @@ type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunti
 
 const defaultLayouts: Responsive.Layouts = {
     lg: [
-      { i: 'weight-trend', x: 0, y: 0, w: 4, h: 2, minW: 2, minH: 2 },
-      { i: 'weight-log', x: 0, y: 2, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'training-log', x: 1, y: 2, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'feeding-log', x: 2, y: 2, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'hunting-log', x: 3, y: 2, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'husbandry', x: 0, y: 5, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'mutes-castings', x: 1, y: 5, w: 1, h: 3, minW: 1, minH: 2 },
+      { i: 'weight-trend', x: 0, y: 0, w: 4, h: 2, isResizable: false },
+      { i: 'weight-log', x: 0, y: 2, w: 2, h: 2, isResizable: false },
+      { i: 'feeding-log', x: 2, y: 2, w: 2, h: 2, isResizable: false },
+      { i: 'training-log', x: 0, y: 4, w: 2, h: 2, isResizable: false },
+      { i: 'hunting-log', x: 2, y: 4, w: 2, h: 2, isResizable: false },
+      { i: 'husbandry', x: 0, y: 6, w: 2, h: 2, isResizable: false },
+      { i: 'mutes-castings', x: 2, y: 6, w: 2, h: 2, isResizable: false },
     ],
 };
 
@@ -104,35 +104,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
-  const [layouts, setLayouts] = useState<Responsive.Layouts>(defaultLayouts);
-
-  useEffect(() => {
-    const savedLayouts = localStorage.getItem(`layouts_${birdId}`);
-    if (savedLayouts) {
-      try {
-        const parsedLayouts = JSON.parse(savedLayouts);
-        // Basic validation to make sure we're not loading garbage
-        if (parsedLayouts.lg) {
-          setLayouts(parsedLayouts);
-        }
-      } catch (error) {
-        console.error("Failed to parse layouts from local storage", error);
-        // If parsing fails, fall back to default
-        setLayouts(defaultLayouts);
-      }
-    } else {
-        setLayouts(defaultLayouts);
-    }
-  }, [birdId]);
-
-
-  const onLayoutChange = (layout: any, allLayouts: Responsive.Layouts) => {
-    if (settings.isLayoutEditable) {
-        setLayouts(allLayouts);
-        localStorage.setItem(`layouts_${birdId}`, JSON.stringify(allLayouts));
-    }
-  };
-
 
   const handleUpdateNutritionInfo = (newInfo: NutritionInfo[]) => {
     setNutritionInfo(newInfo);
@@ -255,7 +226,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
       .map(([key]) => key);
 
     const filteredLayouts: Responsive.Layouts = {
-      lg: layouts.lg?.filter(l => visibleCardKeys.includes(l.i)) || [],
+      lg: defaultLayouts.lg?.filter(l => visibleCardKeys.includes(l.i)) || [],
     };
     return filteredLayouts;
   };
@@ -283,18 +254,16 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
       <ResponsiveGridLayout 
         className="layout"
         layouts={getFilteredLayouts()}
-        onLayoutChange={onLayoutChange}
         breakpoints={{lg: 1200, md: 768, sm: 640, xs: 0}}
         cols={{lg: 4, md: 2, sm: 1, xs: 1}}
         rowHeight={settings.rowHeight}
-        draggableHandle=".card-header"
-        isDraggable={settings.isLayoutEditable}
+        isDraggable={false}
         isResizable={false}
       >
         {settings.visibleCards['weight-trend'] && (
             <div key="weight-trend">
                 <Card className="flex flex-col h-full">
-                    <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
                         <Button variant="ghost" size="icon" onClick={() => setIsEditingChartSettings(true)}>
                             <Settings className="w-4 h-4" />
@@ -309,7 +278,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         {settings.visibleCards['weight-log'] && (
             <div key="weight-log">
                <Card className="flex flex-col h-full">
-               <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
+               <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
                     <div className="flex items-center">
                       <Button variant="ghost" size="icon" onClick={() => setAddingLogType('weight')}><Plus className="w-4 h-4"/></Button>
@@ -349,7 +318,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         {settings.visibleCards['training-log'] && (
             <div key="training-log">
                 <Card className="h-full">
-                    <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <div>
                             <CardTitle className="flex items-center gap-2 text-lg"><Footprints className="w-5 h-5"/> Training Log</CardTitle>
                             <CardDescription>Records of training sessions and behaviors.</CardDescription>
@@ -391,7 +360,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         {settings.visibleCards['feeding-log'] && (
             <div key="feeding-log">
                 <Card className="h-full">
-                    <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <div>
                             <CardTitle className="flex items-center gap-2 text-lg"><Bone className="w-5 h-5"/> Feeding Log</CardTitle>
                             <CardDescription>Daily food intake and notes.</CardDescription>
@@ -437,7 +406,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         {settings.visibleCards['hunting-log'] && (
             <div key="hunting-log">
                 <Card className="h-full">
-                    <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <div>
                             <CardTitle className="flex items-center gap-2 text-lg"><Rabbit className="w-5 h-5"/> Hunting Log</CardTitle>
                             <CardDescription>Records of hunting sessions.</CardDescription>
@@ -479,7 +448,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         {settings.visibleCards['husbandry'] && (
             <div key="husbandry">
                 <Card className="h-full">
-                    <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <div>
                             <CardTitle className="flex items-center gap-2 text-lg"><ShieldCheck className="w-5 h-5"/> Husbandry</CardTitle>
                             <CardDescription>Daily care and equipment checks.</CardDescription>
@@ -521,7 +490,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         {settings.visibleCards['mutes-castings'] && (
             <div key="mutes-castings">
                 <Card className="h-full">
-                    <CardHeader className="flex flex-row items-center justify-between card-header cursor-move">
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <div>
                             <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes & Castings</CardTitle>
                             <CardDescription>Health monitoring through droppings.</CardDescription>

@@ -148,6 +148,7 @@ export function SettingsDialog({
                                         <Switch
                                             checked={field.value}
                                             onCheckedChange={field.onChange}
+                                            disabled
                                         />
                                     </FormControl>
                                 </FormItem>
