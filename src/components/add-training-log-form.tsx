@@ -4,7 +4,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import type { TrainingLog, PredefinedTraining } from "@/lib/types";
+import type { TrainingLog, PredefinedTraining, PerformanceRating } from "@/lib/types";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -12,10 +12,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Separator } from "./ui/separator";
 
+const performanceRatings: PerformanceRating[] = ["Positive", "Neutral", "Negative"];
+
 const formSchema = z.object({
   behavior: z.string().min(1, "Behavior is required."),
   duration: z.coerce.number().positive("Duration must be a positive number."),
   notes: z.string().min(1, "Notes are required."),
+  performance: z.enum(performanceRatings).optional(),
   imageUrl: z.string().url().optional().or(z.literal('')),
 });
 
@@ -35,6 +38,7 @@ export function AddTrainingLogForm({ birdName, predefinedTraining, onSubmit, onC
       behavior: "",
       duration: 10,
       notes: "",
+      performance: "Neutral",
       imageUrl: "",
     },
   });
@@ -91,6 +95,26 @@ export function AddTrainingLogForm({ birdName, predefinedTraining, onSubmit, onC
               <FormControl>
                 <Input type="number" placeholder="e.g., 15" {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="performance"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Performance</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select performance rating" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {performanceRatings.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

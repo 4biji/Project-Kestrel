@@ -23,6 +23,14 @@ interface CommonProps {
     onDelete: (log: TrainingLog) => void;
 }
 
+const getPerformanceBadgeVariant = (performance?: string) => {
+    switch (performance) {
+      case 'Positive': return 'default';
+      case 'Negative': return 'destructive';
+      default: return 'secondary';
+    }
+}
+
 
 export function ViewAllTrainingLogsDialog({ open, onOpenChange, logs, onEdit, onDelete }: { open: boolean, onOpenChange: (open: boolean) => void } & CommonProps) {
     const displayLogs = [...logs].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
@@ -48,7 +56,12 @@ export function ViewAllTrainingLogsDialog({ open, onOpenChange, logs, onEdit, on
                                 <div className="font-medium">{log.behavior}</div>
                                 <div className="flex justify-between items-center text-xs text-muted-foreground">
                                     <span>{format(parseISO(log.datetime), 'MMM d, yyyy HH:mm:ss')}</span>
-                                    <Badge variant="outline">{log.duration} min</Badge>
+                                    <div className="flex items-center gap-2">
+                                        {log.performance && (
+                                            <Badge variant={getPerformanceBadgeVariant(log.performance)}>{log.performance}</Badge>
+                                        )}
+                                        <Badge variant="outline">{log.duration} min</Badge>
+                                    </div>
                                 </div>
                                 <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>
                                 <div className="absolute top-1 right-1">
@@ -106,7 +119,12 @@ export function TrainingLogComponent({ logs, onEdit, onDelete }: TrainingLogProp
               <div className="font-medium">{log.behavior}</div>
               <div className="flex justify-between items-center text-xs text-muted-foreground">
                 <span>{format(parseISO(log.datetime), 'MMM d, yyyy HH:mm:ss')}</span>
-                <Badge variant="outline">{log.duration} min</Badge>
+                 <div className="flex items-center gap-2">
+                    {log.performance && (
+                        <Badge variant={getPerformanceBadgeVariant(log.performance)}>{log.performance}</Badge>
+                    )}
+                    <Badge variant="outline">{log.duration} min</Badge>
+                </div>
               </div>
               <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>
             </div>

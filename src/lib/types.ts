@@ -11,6 +11,7 @@ export interface Bird {
 
 export type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting';
 export type MuteCondition = 'Normal' | 'Urinate Only' | 'Greenish' | 'Blackish' | 'Yellowish';
+export type PerformanceRating = 'Positive' | 'Neutral' | 'Negative';
 
 export interface BaseLog {
   id: string;
@@ -42,6 +43,7 @@ export interface TrainingLog extends BaseLog {
   logType: 'training';
   behavior: string;
   duration: number; // in minutes
+  performance?: PerformanceRating;
 }
 
 export interface MuteLog extends BaseLog {
