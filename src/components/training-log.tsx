@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "./ui/button";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 interface TrainingLogProps {
   logs: TrainingLog[];
@@ -31,6 +32,29 @@ const getPerformanceBadgeVariant = (performance?: string) => {
     }
 }
 
+const getPerformanceBgColor = (performance?: string) => {
+    switch (performance) {
+        case 'Positive': return 'bg-green-100 dark:bg-green-900/30';
+        case 'Negative': return 'bg-red-100 dark:bg-red-900/30';
+        default: return 'bg-secondary/50';
+    }
+}
+
+const getPerformanceTextColor = (performance?: string) => {
+    switch (performance) {
+        case 'Positive': return 'text-green-900 dark:text-green-100';
+        case 'Negative': return 'text-red-900 dark:text-red-100';
+        default: return 'text-foreground';
+    }
+}
+
+const getPerformanceMutedTextColor = (performance?: string) => {
+    switch (performance) {
+        case 'Positive': return 'text-green-700 dark:text-green-300';
+        case 'Negative': return 'text-red-700 dark:text-red-300';
+        default: return 'text-muted-foreground';
+    }
+}
 
 export function ViewAllTrainingLogsDialog({ open, onOpenChange, logs, onEdit, onDelete }: { open: boolean, onOpenChange: (open: boolean) => void } & CommonProps) {
     const displayLogs = [...logs].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
@@ -103,21 +127,22 @@ export function ViewAllTrainingLogsDialog({ open, onOpenChange, logs, onEdit, on
 }
 
 
-export function TrainingLogComponent({ logs, onEdit, onDelete }: TrainingLogProps) {
+export function TrainingLogComponent({ logs }: TrainingLogProps) {
+    const sortedLogs = [...logs].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+
   return (
-    <div className="space-y-4">
-      {logs.length > 0 ? (
-        <ScrollArea className="h-64">
-          <div className="space-y-4 pr-4">
-          {logs.slice(0, 3).map((log) => (
-            <div key={log.id} className="p-3 bg-secondary/50 rounded-lg text-sm space-y-2">
+    <div className="space-y-2 -mt-2">
+      {sortedLogs.length > 0 ? (
+          <div className="space-y-2">
+          {sortedLogs.slice(0, 3).map((log) => (
+            <div key={log.id} className={cn("p-3 rounded-lg text-sm space-y-2", getPerformanceBgColor(log.performance))}>
               {log.imageUrl && (
                 <div className="relative aspect-video rounded-md overflow-hidden">
                     <Image src={log.imageUrl} alt={log.behavior} layout="fill" objectFit="cover" data-ai-hint="falcon training" />
                 </div>
               )}
-              <div className="font-medium">{log.behavior}</div>
-              <div className="flex justify-between items-center text-xs text-muted-foreground">
+              <div className={cn("font-medium", getPerformanceTextColor(log.performance))}>{log.behavior}</div>
+              <div className={cn("flex justify-between items-center text-xs", getPerformanceMutedTextColor(log.performance))}>
                 <span>{format(parseISO(log.datetime), 'MMM d, yyyy HH:mm:ss')}</span>
                  <div className="flex items-center gap-2">
                     {log.performance && (
@@ -126,18 +151,13 @@ export function TrainingLogComponent({ logs, onEdit, onDelete }: TrainingLogProp
                     <Badge variant="outline">{log.duration} min</Badge>
                 </div>
               </div>
-              <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>
+              {log.notes && <p className={cn("text-xs mt-1 italic", getPerformanceMutedTextColor(log.performance))}>"{log.notes}"</p>}
             </div>
           ))}
           </div>
-        </ScrollArea>
       ) : (
         <p className="text-sm text-center text-muted-foreground py-10">No training records yet.</p>
       )}
     </div>
   );
 }
-
-    
-
-    
