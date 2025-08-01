@@ -28,6 +28,7 @@ import {
 import { AllBirdsOverview } from "@/components/all-birds-overview";
 import { BirdDetailView } from "@/components/bird-detail-view";
 import { ManageBirdsDialog } from "./manage-birds-dialog";
+import { SettingsDialog, type SettingsData } from "./settings-dialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface FalconryJournalClientProps {
@@ -48,6 +49,10 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
   const router = useRouter();
   const pathname = usePathname();
   const [isManageBirdsOpen, setIsManageBirdsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settings, setSettings] = useState<SettingsData>({
+    isLayoutEditable: true,
+  });
   const { toast } = useToast();
 
   const handleNavigate = (path: string) => {
@@ -76,6 +81,15 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
         toast({ title: "Bird Updated", description: `${updatedBirdInfo.name}'s information has been updated.` });
     }
   };
+
+  const handleSaveSettings = (newSettings: SettingsData) => {
+    setSettings(newSettings);
+    setIsSettingsOpen(false);
+    toast({
+        title: "Settings Saved",
+        description: "Your changes have been saved."
+    })
+  }
 
   return (
     <SidebarProvider>
@@ -122,6 +136,14 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
+            <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton onClick={() => setIsSettingsOpen(true)}>
+                        <Settings className="w-4 h-4" />
+                        Settings
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
@@ -136,6 +158,7 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
                 <BirdDetailView 
                     initialData={initialData} 
                     birdId={initialSelectedBirdId!}
+                    settings={settings}
                 />
             )}
         </main>
@@ -145,6 +168,12 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
         onOpenChange={setIsManageBirdsOpen}
         birds={birds}
         onSave={handleSaveBirds}
+      />
+      <SettingsDialog
+        open={isSettingsOpen}
+        onOpenChange={setIsSettingsOpen}
+        settings={settings}
+        onSave={handleSaveSettings}
       />
     </SidebarProvider>
   );

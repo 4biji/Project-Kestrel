@@ -15,18 +15,18 @@ import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
 import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, X } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
-import { FeedingLogComponent, ViewAllFeedingLogsDialog } from "./feeding-log";
-import { EditFeedingLogForm } from "./edit-feeding-log-form";
 import { AddFeedingLogForm } from "./add-feeding-log-form";
-import { HusbandryLog, ViewAllHusbandryTasksDialog } from "./husbandry-log";
 import { AddHusbandryTaskForm } from "./add-husbandry-task-form";
-import { EditHusbandryTaskForm } from "./edit-husbandry-task-form";
-import { TrainingLogComponent, ViewAllTrainingLogsDialog } from "./training-log";
-import { AddTrainingLogForm } from "./add-training-log-form";
-import { EditTrainingLogForm } from "./edit-training-log-form";
-import { MuteLogComponent, ViewAllMuteLogsDialog } from "./mute-log";
 import { AddMuteLogForm } from "./add-mute-log-form";
+import { AddTrainingLogForm } from "./add-training-log-form";
+import { EditFeedingLogForm } from "./edit-feeding-log-form";
+import { EditHusbandryTaskForm } from "./edit-husbandry-task-form";
 import { EditMuteLogForm } from "./edit-mute-log-form";
+import { EditTrainingLogForm } from "./edit-training-log-form";
+import { FeedingLogComponent, ViewAllFeedingLogsDialog } from "./feeding-log";
+import { HusbandryLog, ViewAllHusbandryTasksDialog } from "./husbandry-log";
+import { MuteLogComponent, ViewAllMuteLogsDialog } from "./mute-log";
+import { TrainingLogComponent, ViewAllTrainingLogsDialog } from "./training-log";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -45,6 +45,7 @@ import {
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 import { NutritionTable } from "./nutrition-table";
 import { nutritionInfo as initialNutritionInfo } from "@/lib/data";
+import { type SettingsData } from "./settings-dialog";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -60,9 +61,10 @@ interface BirdDetailViewProps {
     weightLogs: { [birdId: string]: WeightLog[] };
   };
   birdId: string;
+  settings: SettingsData;
 }
 
-export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
+export function BirdDetailView({ initialData, birdId, settings }: BirdDetailViewProps) {
   const [birds, setBirds] = useState(initialData.birds);
   const [feedingLogs, setFeedingLogs] = useState(initialData.feedingLogs);
   const [husbandryLogs, setHusbandryLogs] = useState(initialData.husbandryLogs);
@@ -300,6 +302,8 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
         cols={{lg: 3, md: 2, sm: 1, xs: 1}}
         rowHeight={150}
         draggableHandle=".card-header"
+        isDraggable={settings.isLayoutEditable}
+        isResizable={settings.isLayoutEditable}
       >
         <div key="weight-trend">
             <Card className="flex flex-col h-full">
