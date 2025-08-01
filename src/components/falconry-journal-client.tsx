@@ -143,12 +143,12 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
         <main className="min-h-screen p-4 sm:p-6 lg:p-8">
             {view === 'overview' ? (
                 <AllBirdsOverview initialData={{
-                    birds: initialData.birds,
-                    logs: initialData.logs
+                    birds: birds,
+                    logs: logs
                 }} />
             ) : (
                 <BirdDetailView 
-                    initialData={initialData} 
+                    initialData={{birds, logs}} 
                     birdId={initialSelectedBirdId!}
                     settings={settings}
                 />
