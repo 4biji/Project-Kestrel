@@ -28,7 +28,7 @@ import {
 import { AllBirdsOverview } from "@/components/all-birds-overview";
 import { BirdDetailView } from "@/components/bird-detail-view";
 import { ManageBirdsDialog } from "./manage-birds-dialog";
-import { SettingsDialog, type SettingsData } from "./settings-dialog";
+import { SettingsDialog, type SettingsData, settingsSchema } from "./settings-dialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface FalconryJournalClientProps {
@@ -50,9 +50,7 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
   const pathname = usePathname();
   const [isManageBirdsOpen, setIsManageBirdsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [settings, setSettings] = useState<SettingsData>({
-    isLayoutEditable: true,
-  });
+  const [settings, setSettings] = useState<SettingsData>(() => settingsSchema.parse({}));
   const { toast } = useToast();
 
   const handleNavigate = (path: string) => {
@@ -177,3 +175,5 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
     </SidebarProvider>
   );
 }
+
+    

@@ -17,11 +17,25 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
-import { Separator } from "./ui/separator";
-import { Bird } from "lucide-react";
+import { Bird, View } from "lucide-react";
 
-const settingsSchema = z.object({
+export const settingsSchema = z.object({
   isLayoutEditable: z.boolean().default(true),
+  visibleCards: z.object({
+    'weight-trend': z.boolean().default(true),
+    'weight-log': z.boolean().default(true),
+    'training-log': z.boolean().default(true),
+    'feeding-log': z.boolean().default(true),
+    'husbandry': z.boolean().default(true),
+    'mutes-castings': z.boolean().default(true),
+  }).default({
+    'weight-trend': true,
+    'weight-log': true,
+    'training-log': true,
+    'feeding-log': true,
+    'husbandry': true,
+    'mutes-castings': true,
+  }),
 });
 
 export type SettingsData = z.infer<typeof settingsSchema>;
@@ -33,6 +47,16 @@ interface SettingsDialogProps {
   onSave: (settings: SettingsData) => void;
   onManageBirdsClick: () => void;
 }
+
+const cardOptions = [
+    { id: 'weight-trend', label: 'Weight Trend Chart' },
+    { id: 'weight-log', label: 'Weight Log Summary' },
+    { id: 'training-log', label: 'Training Log' },
+    { id: 'feeding-log', label: 'Feeding Log' },
+    { id: 'husbandry', label: 'Husbandry Tasks' },
+    { id: 'mutes-castings', label: 'Mutes & Castings Log' },
+] as const;
+
 
 export function SettingsDialog({
   open,
@@ -53,7 +77,7 @@ export function SettingsDialog({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>
@@ -62,8 +86,11 @@ export function SettingsDialog({
         </DialogHeader>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
-                 <div className="space-y-4 rounded-lg border p-4">
-                    <h3 className="font-medium text-foreground">General</h3>
+                <div className="space-y-4 rounded-lg border p-4">
+                     <h3 className="font-medium text-foreground flex items-center gap-2">
+                        <View className="w-4 h-4" />
+                        Dashboard
+                    </h3>
                     <FormField
                         control={form.control}
                         name="isLayoutEditable"
@@ -74,7 +101,7 @@ export function SettingsDialog({
                                         Enable Layout Editing
                                     </FormLabel>
                                     <p className="text-sm text-muted-foreground">
-                                        Allow moving and resizing dashboard cards.
+                                        Allow moving and resizing cards.
                                     </p>
                                 </div>
                                 <FormControl>
@@ -86,10 +113,39 @@ export function SettingsDialog({
                             </FormItem>
                         )}
                     />
+                     <div className="space-y-2">
+                        <FormLabel>Visible Cards</FormLabel>
+                         <p className="text-sm text-muted-foreground">
+                            Choose which cards to display on the dashboard.
+                        </p>
+                        <div className="space-y-2 pt-2">
+                            {cardOptions.map(card => (
+                                <FormField
+                                    key={card.id}
+                                    control={form.control}
+                                    name={`visibleCards.${card.id}`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between">
+                                            <FormLabel className="font-normal">{card.label}</FormLabel>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </div>
                 
                 <div className="space-y-4 rounded-lg border p-4">
-                    <h3 className="font-medium text-foreground">Data Management</h3>
+                    <h3 className="font-medium text-foreground flex items-center gap-2">
+                        <Bird className="w-4 h-4" />
+                        Data Management
+                    </h3>
                     <div className="flex flex-row items-center justify-between">
                         <div className="space-y-0.5">
                             <FormLabel>
@@ -100,7 +156,7 @@ export function SettingsDialog({
                             </p>
                         </div>
                         <Button type="button" variant="outline" onClick={onManageBirdsClick}>
-                            <Bird className="mr-2 h-4 w-4" /> Manage
+                            Manage
                         </Button>
                     </div>
                 </div>
@@ -118,3 +174,5 @@ export function SettingsDialog({
     </Dialog>
   );
 }
+
+    
