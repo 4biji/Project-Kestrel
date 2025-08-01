@@ -44,6 +44,7 @@ import {
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 import { NutritionTable } from "./nutrition-table";
 import { nutritionInfo as initialNutritionInfo } from "@/lib/data";
+import { AddFeedingLogForm } from "./add-feeding-log-form";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -209,10 +210,9 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
     });
   };
   
-  const handleAddWeightLog = (newLog: Omit<WeightLog, 'datetime'>) => {
+  const handleAddWeightLog = (newLog: Omit<WeightLog, 'datetime'> & { datetime: string }) => {
     const logWithDate: WeightLog = {
       ...newLog,
-      datetime: new Date().toISOString(),
     };
     setWeightLogs(prev => ({
       ...prev,
