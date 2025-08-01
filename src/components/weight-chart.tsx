@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts"
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, ReferenceLine } from "recharts"
 import type { WeightLog } from "@/lib/types"
 
 interface WeightChartProps {
@@ -18,6 +18,8 @@ export function WeightChart({ data }: WeightChartProps) {
     // Format for display
     name: new Date(log.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   })).sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+
+  const averageWeight = data.reduce((acc, log) => acc + log.weight, 0) / data.length;
 
   return (
     <div className="h-[250px] w-full">
@@ -66,6 +68,12 @@ export function WeightChart({ data }: WeightChartProps) {
                 strokeWidth={2}
                 dot={{ r: 4, fill: "hsl(var(--primary))" }}
                 activeDot={{ r: 6, fill: "hsl(var(--primary))" }}
+            />
+            <ReferenceLine 
+                y={averageWeight} 
+                label={{ value: `Avg: ${averageWeight.toFixed(0)}g`, position: 'insideTopLeft', fill: 'hsl(var(--accent-foreground))', background: {fill: 'hsl(var(--accent))', padding: 4,  borderRadius: 4} }} 
+                stroke="hsl(var(--accent))" 
+                strokeDasharray="3 3" 
             />
             </LineChart>
         </ResponsiveContainer>
