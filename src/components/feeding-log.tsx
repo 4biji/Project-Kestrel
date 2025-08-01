@@ -129,30 +129,32 @@ export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps)
       {lastLog ? (
         <>
             <div className="group flex flex-col p-2.5 bg-secondary/50 rounded-lg text-sm -mt-2">
-                <div className="font-medium whitespace-nowrap">Last Feeding</div>
-                <div className="flex items-baseline gap-2 mt-1">
-                    <div className="text-2xl font-bold text-primary">{lastLog.amount}g</div>
-                    <div className="text-lg font-semibold">{lastLog.foodItem}</div>
+                 <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                    <Activity className="w-4 h-4 text-primary"/>
+                    Avg. Hourly Consumption
                 </div>
-                 <div className="text-xs text-muted-foreground mt-1 flex justify-between">
-                    <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm')}</span>
-                    {lastLog.protein && <span>{lastLog.protein.toFixed(1)}g protein</span>}
+                <div className="flex items-baseline gap-2 mt-1">
+                    <div className="text-2xl font-bold text-primary">
+                        {averageFoodPerHour.toFixed(1)}g/hr
+                    </div>
+                    <div className="text-lg font-semibold">
+                        {averageProteinPerHour.toFixed(1)}p/hr
+                    </div>
                 </div>
             </div>
 
             <div className="p-3 bg-secondary/50 rounded-lg text-sm">
-              <div className="font-medium flex items-center gap-2 whitespace-nowrap">
-                  <Activity className="w-4 h-4 text-primary"/>
-                  Avg. Hourly Consumption
-              </div>
-              <div className="flex items-baseline gap-4 mt-2">
-                <div className="text-xl font-bold text-primary">
-                    {averageFoodPerHour.toFixed(1)}g/hr
+                <div className="font-medium whitespace-nowrap">Last Feeding</div>
+                <div className="flex justify-between items-baseline mt-2">
+                    <div className="flex items-baseline gap-2">
+                        <div className="text-xl font-bold text-primary">{lastLog.amount}g</div>
+                        <div className="text-md font-semibold">{lastLog.foodItem}</div>
+                    </div>
+                    {lastLog.protein && <span className="text-sm text-muted-foreground">{lastLog.protein.toFixed(1)}g p</span>}
                 </div>
-                 <div className="text-md font-semibold text-muted-foreground">
-                    {averageProteinPerHour.toFixed(1)}p/hr
+                 <div className="text-xs text-muted-foreground mt-1 flex justify-between">
+                    <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm')}</span>
                 </div>
-              </div>
           </div>
         </>
       ) : (
