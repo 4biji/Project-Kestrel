@@ -17,9 +17,8 @@ export function WeightChart({ data, settings }: WeightChartProps) {
 
   const chartData = data.map(log => ({
     ...log,
-    // Format for display
     name: new Date(log.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  })).sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
+  })).sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
   const averageWeight = data.reduce((acc, log) => acc + log.weight, 0) / data.length;
 
@@ -32,7 +31,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
             data={chartData}
             margin={{
                 top: 20,
-                right: 20,
+                right: 30,
                 left: 0,
                 bottom: 5,
             }}
@@ -45,7 +44,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
                 axisLine={{ stroke: 'hsl(var(--border))' }}
             />
             <YAxis 
-                domain={['dataMin - 5', 'dataMax + 5']}
+                domain={['dataMin - 10', 'dataMax + 10']}
                 tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
                 tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
@@ -69,7 +68,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
                 value={`${settings.style.charAt(0).toUpperCase() + settings.style.slice(1)} View`}
                 position="top"
                 offset={15}
-                className="text-xs text-muted-foreground"
+                className="text-xs text-muted-foreground fill-current"
                 style={{ textAnchor: 'middle', dominantBaseline: 'hanging' }}
             />
             <Line 
@@ -83,7 +82,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
             {settings.showAverage && (
                 <ReferenceLine 
                     y={averageWeight} 
-                    label={{ value: `Avg: ${averageWeight.toFixed(0)}g`, position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} 
+                    label={{ value: `Avg: ${averageWeight.toFixed(0)}g`, position: 'right', fill: 'hsl(var(--muted-foreground))' }} 
                     stroke="hsl(var(--muted-foreground))" 
                     strokeDasharray="3 3" 
                 />
@@ -91,7 +90,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
             {settings.alertBelowAverage.enabled && (
                 <ReferenceLine
                     y={alertBelowAverageWeight}
-                    label={{ value: `Alert: ${alertBelowAverageWeight.toFixed(0)}g`, position: 'insideTopLeft', fill: 'hsl(var(--destructive-foreground))', background: {fill: 'hsl(var(--destructive))', padding: 4, borderRadius: 4} }}
+                    label={{ value: `Alert: ${alertBelowAverageWeight.toFixed(0)}g`, position: 'right', fill: 'hsl(var(--destructive))' }}
                     stroke="hsl(var(--destructive))"
                     strokeDasharray="4 4"
                 />
@@ -99,7 +98,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
             {settings.presetAlert.enabled && settings.presetAlert.weight > 0 && (
                  <ReferenceLine
                     y={settings.presetAlert.weight}
-                    label={{ value: `Alert: ${settings.presetAlert.weight}g`, position: 'insideTopLeft', fill: 'hsl(var(--destructive-foreground))', background: {fill: 'hsl(var(--destructive))', padding: 4, borderRadius: 4} }}
+                    label={{ value: `Alert: ${settings.presetAlert.weight}g`, position: 'right', fill: 'hsl(var(--destructive))' }}
                     stroke="hsl(var(--destructive))"
                     strokeDasharray="4 4"
                 />
@@ -107,7 +106,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
              {settings.huntingWeight.enabled && settings.huntingWeight.weight > 0 && (
                  <ReferenceLine
                     y={settings.huntingWeight.weight}
-                    label={{ value: `Hunt: ${settings.huntingWeight.weight}g`, position: 'insideTopLeft', fill: '#fff', background: {fill: 'hsl(140 80% 40%)', padding: 4, borderRadius: 4} }}
+                    label={{ value: `Hunt: ${settings.huntingWeight.weight}g`, position: 'right', fill: 'hsl(140 80% 40%)' }}
                     stroke="hsl(140 80% 40%)"
                     strokeDasharray="4 4"
                 />
