@@ -35,7 +35,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
   const chartData = data.map(log => ({
     datetime: log.datetime,
     weight: log.weight,
-    name: new Date(log.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    name: format(new Date(log.datetime), "MMM d, HH:mm")
   })).sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
   const averageWeight = data.reduce((acc, log) => acc + log.weight, 0) / data.length;
@@ -125,7 +125,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
                         const log = chartData.find(d => d.name === label);
                         return (
                             <div className="rounded-lg border bg-background p-2 shadow-sm text-sm">
-                                <div className="font-bold">{log ? new Date(log.datetime).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : label}</div>
+                                <div className="font-bold">{log ? new Date(log.datetime).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : label}</div>
                                 <div>Weight: {payload[0].value}g</div>
                             </div>
                         )
@@ -183,7 +183,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
             {settings.showFeedingEvents && feedingLogs.map(log => (
                 <ReferenceDot
                     key={log.id}
-                    x={new Date(log.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    x={format(new Date(log.datetime), "MMM d, HH:mm")}
                     y={findWeightAtTime(log.datetime)}
                     r={5}
                     fill="hsl(140 80% 40%)"
