@@ -98,20 +98,8 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
             <div className="text-xs text-muted-foreground mt-1">
               <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm:ss')}</span>
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
-                <div className="font-medium flex items-center gap-2 whitespace-nowrap">
-                    <Activity className="w-4 h-4 text-primary"/>
-                    Avg. Hourly Loss
-                </div>
-                <div className="text-xl font-bold text-primary mt-2">
-                    {averageHourlyLoss.toFixed(2)}g/hr
-                </div>
-            </div>
-             {lastWeightChange !== null && (
-                <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+            {lastWeightChange !== null && (
+                <div className="p-3 bg-secondary/50 rounded-lg text-sm mt-2">
                      <div className="font-medium flex items-center gap-2 whitespace-nowrap">
                         <GitCommitHorizontal className="w-4 h-4 text-primary"/>
                         Last Change
@@ -122,6 +110,16 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
                      </div>
                 </div>
             )}
+          </div>
+
+          <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+              <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                  <Activity className="w-4 h-4 text-primary"/>
+                  Avg. Hourly Loss
+              </div>
+              <div className="text-xl font-bold text-primary mt-2">
+                  {averageHourlyLoss.toFixed(2)}g/hr
+              </div>
           </div>
 
 
