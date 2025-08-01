@@ -104,26 +104,26 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                     <BirdProfileHeader bird={bird} />
                     <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 flex flex-col gap-6">
-                            <Card>
+                            <Card className="flex flex-col">
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <CardTitle className="flex items-center gap-2 text-lg">
                                         <Scale className="w-5 h-5" /> Weight Trend
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="flex-grow">
                                     <WeightChart data={birdWeightLogs} />
                                 </CardContent>
                             </Card>
                         </div>
                         <div className="lg:col-span-1 flex flex-col gap-6">
-                            <Card>
+                            <Card className="flex flex-col">
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <CardTitle className="flex items-center gap-2 text-lg">
                                         <Scale className="w-5 h-5" /> Weight Log
                                     </CardTitle>
                                     <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="h-[188px]">
                                     {birdForEditing ? (
                                         <EditWeightLogForm
                                             log={birdForEditing}
