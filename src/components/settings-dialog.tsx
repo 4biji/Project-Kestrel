@@ -19,19 +19,9 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
-import { Bird, View, Plus, Minus, ShieldCheck, Trash2 } from "lucide-react";
+import { Bird, View, Plus, Minus } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import type { PredefinedHusbandryTask as PredefinedHusbandryTaskType } from "@/lib/types";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { ScrollArea } from "./ui/scroll-area";
 
-
-const predefinedHusbandryTaskSchema = z.object({
-  id: z.string(),
-  task: z.string().min(1, "Task description is required."),
-  frequency: z.enum(["daily", "weekly", "monthly"]),
-});
 
 export const settingsSchema = z.object({
   isLayoutEditable: z.boolean().default(false),
@@ -53,7 +43,6 @@ export const settingsSchema = z.object({
     'husbandry': true,
     'mutes-castings': true,
   }),
-  predefinedHusbandryTasks: z.array(predefinedHusbandryTaskSchema).default([]),
 });
 
 export type SettingsData = z.infer<typeof settingsSchema>;
@@ -76,12 +65,6 @@ const cardOptions = [
     { id: 'mutes-castings', label: 'Mutes & Castings Log' },
 ] as const;
 
-const husbandryTaskFormSchema = z.object({
-  task: z.string().min(1, "Task is required"),
-  frequency: z.enum(["daily", "weekly", "monthly"]),
-});
-
-
 export function SettingsDialog({
   open,
   onOpenChange,
@@ -91,34 +74,12 @@ export function SettingsDialog({
 }: SettingsDialogProps) {
   const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
-  const [isHusbandryOpen, setIsHusbandryOpen] = useState(true);
 
   const form = useForm<SettingsData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: settings,
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "predefinedHusbandryTasks",
-  });
-
-  const husbandryForm = useForm<{task: string, frequency: "daily" | "weekly" | "monthly"}>({
-    resolver: zodResolver(husbandryTaskFormSchema),
-    defaultValues: {
-        task: '',
-        frequency: 'daily',
-    }
-  });
-
-  const onAddHusbandryTask = (data: {task: string, frequency: "daily" | "weekly" | "monthly"}) => {
-    append({
-        id: `task-${Date.now()}`,
-        task: data.task,
-        frequency: data.frequency
-    });
-    husbandryForm.reset();
-  }
 
   const onSubmit = (data: SettingsData) => {
     onSave(data);
@@ -161,66 +122,6 @@ export function SettingsDialog({
                     </CollapsibleContent>
                 </Collapsible>
 
-                <Collapsible open={isHusbandryOpen} onOpenChange={setIsHusbandryOpen} className="space-y-4 rounded-lg border p-4">
-                    <CollapsibleTrigger className="flex w-full items-center justify-between">
-                        <h3 className="font-medium text-foreground flex items-center gap-2">
-                            <ShieldCheck className="w-4 h-4" />
-                            Husbandry
-                        </h3>
-                        {isHusbandryOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="space-y-4">
-                       <Form {...husbandryForm}>
-                            <form onSubmit={husbandryForm.handleSubmit(onAddHusbandryTask)} className="flex items-end gap-2">
-                                <FormField control={husbandryForm.control} name="task" render={({field}) => (
-                                    <FormItem className="flex-grow">
-                                        <FormLabel>New Task</FormLabel>
-                                        <FormControl><Input {...field} placeholder="e.g., Clean mews" /></FormControl>
-                                    </FormItem>
-                                )}/>
-                                 <FormField control={husbandryForm.control} name="frequency" render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel>Frequency</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="daily">Daily</SelectItem>
-                                                <SelectItem value="weekly">Weekly</SelectItem>
-                                                <SelectItem value="monthly">Monthly</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormItem>
-                                )}/>
-                                <Button type="submit">Add</Button>
-                            </form>
-                       </Form>
-                       <p className="text-xs text-muted-foreground">Your predefined tasks. You can add these quickly from the husbandry log.</p>
-                       <ScrollArea className="h-48 border rounded-lg">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Task</TableHead>
-                                        <TableHead>Frequency</TableHead>
-                                        <TableHead className="text-right"></TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {fields.map((field, index) => (
-                                        <TableRow key={field.id}>
-                                            <TableCell>{field.task}</TableCell>
-                                            <TableCell className="capitalize">{field.frequency}</TableCell>
-                                            <TableCell className="text-right">
-                                                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
-                                                    <Trash2 className="h-4 w-4 text-red-500"/>
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                       </ScrollArea>
-                    </CollapsibleContent>
-                </Collapsible>
 
                 <Collapsible open={isDashboardOpen} onOpenChange={setIsDashboardOpen} className="space-y-4 rounded-lg border p-4">
                      <CollapsibleTrigger className="flex w-full items-center justify-between">

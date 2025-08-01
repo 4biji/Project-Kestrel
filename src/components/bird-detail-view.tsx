@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Bird as BirdType, LogEntry, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog } from "@/lib/types";
+import type { Bird as BirdType, LogEntry, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog, PredefinedHusbandryTask } from "@/lib/types";
 import { format } from 'date-fns';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -48,6 +48,7 @@ import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsS
 import { NutritionTable } from "./nutrition-table";
 import { nutritionInfo as initialNutritionInfo } from "@/lib/data";
 import { type SettingsData } from "./settings-dialog";
+import { HusbandrySettingsDialog } from "./husbandry-settings-dialog";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -101,6 +102,9 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const [isViewingAllMuteLogs, setIsViewingAllMuteLogs] = useState(false);
   const [isViewingAllHuntingLogs, setIsViewingAllHuntingLogs] = useState(false);
   const [isViewingNutritionTable, setIsViewingNutritionTable] = useState(false);
+  const [isEditingHusbandrySettings, setIsEditingHusbandrySettings] = useState(false);
+
+  const [predefinedHusbandryTasks, setPredefinedHusbandryTasks] = useState<PredefinedHusbandryTask[]>([]);
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
@@ -110,6 +114,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     toast({
         title: "Nutrition Table Updated",
         description: "The food nutrition information has been saved.",
+    });
+  }
+
+  const handleUpdateHusbandryTasks = (tasks: PredefinedHusbandryTask[]) => {
+    setPredefinedHusbandryTasks(tasks);
+    toast({
+        title: "Husbandry Tasks Updated",
+        description: "Your predefined tasks have been saved.",
     });
   }
 
@@ -440,6 +452,10 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
+                                <DropdownMenuItem onSelect={() => setIsEditingHusbandrySettings(true)}>
+                                    <Settings className="mr-2 h-4 w-4" />
+                                    <span>Manage Tasks</span>
+                                </DropdownMenuItem>
                                 <DropdownMenuItem onSelect={() => setIsViewingAllHusbandryLogs(true)}>
                                     <ScrollText className="mr-2 h-4 w-4" />
                                     <span>View All Logs</span>
@@ -513,7 +529,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </DialogHeader>
                 {addingLogType === 'weight' && <AddWeightLogForm onSubmit={(data) => handleAddLog(data, 'weight')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'feeding' && <AddFeedingLogForm birdName={selectedBird.name} nutritionInfo={nutritionInfo} onSubmit={(data) => handleAddLog(data, 'feeding')} onCancel={() => setAddingLogType(null)} />}
-                {addingLogType === 'husbandry' && <AddHusbandryTaskForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'husbandry')} onCancel={() => setAddingLogType(null)} />}
+                {addingLogType === 'husbandry' && <AddHusbandryTaskForm birdName={selectedBird.name} predefinedTasks={predefinedHusbandryTasks} onSubmit={(data) => handleAddLog(data, 'husbandry')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'training' && <AddTrainingLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'training')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'mute' && <AddMuteLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'mute')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'hunting' && <AddHuntingLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'hunting')} onCancel={() => setAddingLogType(null)} />}
@@ -589,6 +605,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             onOpenChange={setIsViewingNutritionTable}
             initialData={nutritionInfo}
             onSave={handleUpdateNutritionInfo}
+        />
+       )}
+       {isEditingHusbandrySettings && (
+        <HusbandrySettingsDialog
+            open={isEditingHusbandrySettings}
+            onOpenChange={setIsEditingHusbandrySettings}
+            tasks={predefinedHusbandryTasks}
+            onSave={handleUpdateHusbandryTasks}
         />
        )}
 
