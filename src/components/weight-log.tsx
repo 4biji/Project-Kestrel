@@ -25,6 +25,8 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
 
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const sortedByTimeAsc = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
     const display = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
     
@@ -98,19 +100,21 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
             <div className="text-xs text-muted-foreground mt-1">
               <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm:ss')}</span>
             </div>
-            {lastWeightChange !== null && (
-                <div className="p-3 bg-secondary/50 rounded-lg text-sm mt-2">
-                     <div className="font-medium flex items-center gap-2 whitespace-nowrap">
-                        <GitCommitHorizontal className="w-4 h-4 text-primary"/>
-                        Last Change
-                     </div>
-                     <div className={`text-xl font-bold mt-2 flex items-center ${lastWeightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        {lastWeightChange >= 0 ? <TrendingUp className="w-4 h-4 mr-0.5" /> : <TrendingDown className="w-4 h-4 mr-0.5" />}
-                        {lastWeightChange.toFixed(1)}g
-                     </div>
-                </div>
-            )}
           </div>
+          
+          {lastWeightChange !== null && (
+            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                  <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                    <GitCommitHorizontal className="w-4 h-4 text-primary"/>
+                    Last Change
+                  </div>
+                  <div className={`text-xl font-bold mt-2 flex items-center ${lastWeightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    {lastWeightChange >= 0 ? <TrendingUp className="w-4 h-4 mr-0.5" /> : <TrendingDown className="w-4 h-4 mr-0.5" />}
+                    {lastWeightChange.toFixed(1)}g
+                  </div>
+            </div>
+          )}
+
 
           <div className="p-3 bg-secondary/50 rounded-lg text-sm">
               <div className="font-medium flex items-center gap-2 whitespace-nowrap">
