@@ -1,3 +1,4 @@
+
 "use client";
 
 import { format, parseISO } from "date-fns";
@@ -21,7 +22,8 @@ export function FeedingLogComponent({ logs }: FeedingLogProps) {
                     <span>{log.amount}g</span>
                 </div>
                 <div className="text-xs text-muted-foreground flex justify-between">
-                    <span>{format(parseISO(log.date), 'MMMM d')}</span>
+                    <span>{format(parseISO(log.datetime), 'MMM d, yyyy')}</span>
+                    <span>{format(parseISO(log.datetime), 'HH:mm:ss')}</span>
                 </div>
                 {log.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>}
                 </div>

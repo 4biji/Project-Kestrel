@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -40,8 +41,9 @@ export function MuteLogComponent({ logs }: MuteLogProps) {
                 <span className="font-medium">Mute/Casting</span>
                 <Badge variant={getBadgeVariant(log.condition)}>{log.condition}</Badge>
               </div>
-               <div className="text-xs text-muted-foreground">
-                 <span>{format(parseISO(log.date), 'MMMM d')}</span>
+               <div className="text-xs text-muted-foreground flex justify-between">
+                 <span>{format(parseISO(log.datetime), 'MMM d, yyyy')}</span>
+                 <span>{format(parseISO(log.datetime), 'HH:mm:ss')}</span>
                </div>
               {log.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>}
             </div>

@@ -24,7 +24,7 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
     return change;
   };
   
-  const sortedLogs = [...logs].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const sortedLogs = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
 
   const getChangeForLog = (currentLog: WeightLog, index: number) => {
     if(index >= sortedLogs.length - 1) return null;
@@ -40,11 +40,12 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
             {sortedLogs.map((log, index) => {
               const weightChange = getChangeForLog(log, index);
               return (
-                <div key={log.date} className="group flex items-center justify-between p-3 bg-secondary/50 rounded-lg text-sm">
+                <div key={log.datetime} className="group flex items-center justify-between p-3 bg-secondary/50 rounded-lg text-sm">
                   <div>
-                    <div className="font-medium">{format(parseISO(log.date), 'MMMM d, yyyy')}</div>
+                    <div className="font-medium">{format(parseISO(log.datetime), 'MMMM d, yyyy')}</div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                        <span>{log.weight}g</span>
+                       <span className="text-muted-foreground/50">{format(parseISO(log.datetime), 'HH:mm:ss')}</span>
                        {weightChange !== null && !isNaN(weightChange) && (
                            <span className={`flex items-center ${weightChange >= 0 ? 'text-red-500' : 'text-green-500'}`}>
                             {weightChange >= 0 ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}

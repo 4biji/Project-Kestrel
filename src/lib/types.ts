@@ -8,13 +8,13 @@ export interface Bird {
 }
 
 export interface WeightLog {
-  date: string;
+  datetime: string;
   weight: number;
 }
 
 export interface FeedingLog {
   id: string;
-  date: string;
+  datetime: string;
   foodItem: string;
   amount: number; // in grams
   notes?: string;
@@ -28,7 +28,7 @@ export interface HusbandryTask {
 
 export interface TrainingLog {
   id:string;
-  date: string;
+  datetime: string;
   behavior: string;
   duration: number; // in minutes
   notes: string;
@@ -39,7 +39,7 @@ export type MuteCondition = 'Normal' | 'Urinate Only' | 'Greenish' | 'Blackish' 
 
 export interface MuteLog {
   id: string;
-  date: string;
+  datetime: string;
   condition: MuteCondition;
   imageUrl?: string;
   notes?: string;

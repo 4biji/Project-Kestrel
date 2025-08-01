@@ -15,6 +15,7 @@ import {
   Droplets,
 } from "lucide-react";
 import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog } from "@/lib/types";
+import { format } from 'date-fns';
 
 import {
   Sidebar,
@@ -82,16 +83,16 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
     setWeightLogs(prevLogs => {
       const newLogs = { ...prevLogs };
       const logsForBird = newLogs[selectedBirdId].map(log => 
-        log.date === editingWeightLog?.date ? updatedLog : log
+        log.datetime === editingWeightLog?.datetime ? updatedLog : log
       );
-      newLogs[selectedBirdId] = logsForBird.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      newLogs[selectedBirdId] = logsForBird.sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
       return newLogs;
     });
 
     setEditingWeightLog(null);
     toast({
       title: "Weight Log Updated",
-      description: `The entry for ${format(new Date(updatedLog.date), "MMMM d, yyyy")} has been updated.`,
+      description: `The entry for ${format(new Date(updatedLog.datetime), "MMMM d, yyyy")} has been updated.`,
     });
   };
 
@@ -105,14 +106,14 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
     setWeightLogs(prevLogs => {
       const newLogs = { ...prevLogs };
       newLogs[selectedBirdId] = newLogs[selectedBirdId].filter(
-        log => log.date !== logToDelete.date
+        log => log.datetime !== logToDelete.datetime
       );
       return newLogs;
     });
     
     toast({
       title: "Weight Log Deleted",
-      description: `The entry for ${format(new Date(logToDelete.date), "MMMM d, yyyy")} has been removed.`,
+      description: `The entry for ${format(new Date(logToDelete.datetime), "MMMM d, yyyy")} has been removed.`,
       variant: "destructive"
     });
   };

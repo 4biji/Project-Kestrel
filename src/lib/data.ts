@@ -30,11 +30,11 @@ export const birds: Bird[] = [
 type FeedingLogData = { [birdId: string]: FeedingLog[] };
 export const feedingLogs: FeedingLogData = {
   'b1': [
-    { id: 'f1', date: '2024-07-20', foodItem: 'Quail', amount: 50, notes: 'Eager to eat.' },
-    { id: 'f2', date: '2024-07-19', foodItem: 'Chicken heart', amount: 45, notes: '' },
+    { id: 'f1', datetime: '2024-07-20T08:30:00', foodItem: 'Quail', amount: 50, notes: 'Eager to eat.' },
+    { id: 'f2', datetime: '2024-07-19T09:00:00', foodItem: 'Chicken heart', amount: 45, notes: '' },
   ],
   'b2': [
-    { id: 'f3', date: '2024-07-20', foodItem: 'Pigeon', amount: 120, notes: 'Full crop.' },
+    { id: 'f3', datetime: '2024-07-20T08:00:00', foodItem: 'Pigeon', amount: 120, notes: 'Full crop.' },
   ],
   'b3': [],
 };
@@ -56,11 +56,11 @@ export const husbandryLogs: HusbandryLogData = {
 type TrainingLogData = { [birdId: string]: TrainingLog[] };
 export const trainingLogs: TrainingLogData = {
   'b1': [
-    { id: 't1', date: '2024-07-20', behavior: 'Lure stooping', duration: 15, notes: '10 stoops, good speed.', imageUrl: 'https://placehold.co/600x400.png' },
-    { id: 't2', date: '2024-07-18', behavior: 'Fist calling', duration: 10, notes: 'Responsive, came from 50 yards.', imageUrl: 'https://placehold.co/600x400.png' },
+    { id: 't1', datetime: '2024-07-20T17:00:00', behavior: 'Lure stooping', duration: 15, notes: '10 stoops, good speed.', imageUrl: 'https://placehold.co/600x400.png' },
+    { id: 't2', datetime: '2024-07-18T16:45:00', behavior: 'Fist calling', duration: 10, notes: 'Responsive, came from 50 yards.', imageUrl: 'https://placehold.co/600x400.png' },
   ],
   'b2': [
-     { id: 't3', date: '2024-07-19', behavior: 'Kite work', duration: 20, notes: 'Followed kite well, needs more height.' },
+     { id: 't3', datetime: '2024-07-19T17:30:00', behavior: 'Kite work', duration: 20, notes: 'Followed kite well, needs more height.' },
   ],
   'b3': [],
 };
@@ -68,8 +68,8 @@ export const trainingLogs: TrainingLogData = {
 type MuteLogData = { [birdId: string]: MuteLog[] };
 export const muteLogs: MuteLogData = {
   'b1': [
-    { id: 'm1', date: '2024-07-20', condition: 'Normal', notes: 'Healthy looking mute.' },
-    { id: 'm2', date: '2024-07-19', condition: 'Greenish', notes: 'Slightly off color, monitor.', imageUrl: 'https://placehold.co/600x400.png' },
+    { id: 'm1', datetime: '2024-07-20T07:00:00', condition: 'Normal', notes: 'Healthy looking mute.' },
+    { id: 'm2', datetime: '2024-07-19T07:15:00', condition: 'Greenish', notes: 'Slightly off color, monitor.', imageUrl: 'https://placehold.co/600x400.png' },
   ],
   'b2': [],
   'b3': [],
@@ -79,30 +79,30 @@ export const muteLogs: MuteLogData = {
 type WeightLogData = { [birdId: string]: WeightLog[] };
 export const weightLogs: WeightLogData = {
     'b1': [
-        { date: '2024-07-15', weight: 655 },
-        { date: '2024-07-16', weight: 652 },
-        { date: '2024-07-17', weight: 653 },
-        { date: '2024-07-18', weight: 651 },
-        { date: '2024-07-19', weight: 650 },
-        { date: '2024-07-20', weight: 648 },
-        { date: '2024-07-21', weight: 650 },
+        { datetime: '2024-07-15T08:00:00', weight: 655 },
+        { datetime: '2024-07-16T08:05:00', weight: 652 },
+        { datetime: '2024-07-17T07:55:00', weight: 653 },
+        { datetime: '2024-07-18T08:00:00', weight: 651 },
+        { datetime: '2024-07-19T08:02:00', weight: 650 },
+        { datetime: '2024-07-20T07:58:00', weight: 648 },
+        { datetime: '2024-07-21T08:01:00', weight: 650 },
     ],
     'b2': [
-        { date: '2024-07-15', weight: 1110 },
-        { date: '2024-07-16', weight: 1105 },
-        { date: '2024-07-17', weight: 1108 },
-        { date: '2024-07-18', weight: 1102 },
-        { date: '2024-07-19', weight: 1100 },
-        { date: '2024-07-20', weight: 1098 },
-        { date: '2024-07-21', weight: 1100 },
+        { datetime: '2024-07-15T08:30:00', weight: 1110 },
+        { datetime: '2024-07-16T08:35:00', weight: 1105 },
+        { datetime: '2024-07-17T08:25:00', weight: 1108 },
+        { datetime: '2024-07-18T08:30:00', weight: 1102 },
+        { datetime: '2024-07-19T08:32:00', weight: 1100 },
+        { datetime: '2024-07-20T08:28:00', weight: 1098 },
+        { datetime: '2024-07-21T08:31:00', weight: 1100 },
     ],
     'b3': [
-        { date: '2024-07-15', weight: 715 },
-        { date: '2024-07-16', weight: 712 },
-        { date: '2024-07-17', weight: 714 },
-        { date: '2024-07-18', weight: 710 },
-        { date: '2024-07-19', weight: 708 },
-        { date: '2024-07-20', weight: 709 },
-        { date: '2024-07-21', weight: 710 },
+        { datetime: '2024-07-15T09:00:00', weight: 715 },
+        { datetime: '2024-07-16T09:05:00', weight: 712 },
+        { datetime: '2024-07-17T08:55:00', weight: 714 },
+        { datetime: '2024-07-18T09:00:00', weight: 710 },
+        { datetime: '2024-07-19T09:02:00', weight: 708 },
+        { datetime: '2024-07-20T08:58:00', weight: 709 },
+        { datetime: '2024-07-21T09:01:00', weight: 710 },
     ],
 }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -25,7 +26,7 @@ export function TrainingLogComponent({ logs }: TrainingLogProps) {
               )}
               <div className="font-medium">{log.behavior}</div>
               <div className="flex justify-between items-center text-xs text-muted-foreground">
-                <span>{format(parseISO(log.date), 'MMMM d')}</span>
+                <span>{format(parseISO(log.datetime), 'MMM d, yyyy HH:mm:ss')}</span>
                 <Badge variant="outline">{log.duration} min</Badge>
               </div>
               <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>

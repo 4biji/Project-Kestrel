@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts"
@@ -12,11 +13,17 @@ export function WeightChart({ data }: WeightChartProps) {
         return <div className="text-center text-muted-foreground py-10">No weight data available.</div>
     }
 
+  const chartData = data.map(log => ({
+    ...log,
+    // Format for display
+    name: new Date(log.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  })).sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+
   return (
     <div className="h-[250px] w-full">
         <ResponsiveContainer width="100%" height="100%">
             <LineChart
-            data={data}
+            data={chartData}
             margin={{
                 top: 5,
                 right: 20,
@@ -26,17 +33,17 @@ export function WeightChart({ data }: WeightChartProps) {
             >
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
             <XAxis 
-                dataKey="date" 
+                dataKey="name"
                 tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
                 tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
-                tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
             />
             <YAxis 
                 domain={['dataMin - 5', 'dataMax + 5']}
                 tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
                 tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
+                width={30}
             />
             <Tooltip
                 contentStyle={{
@@ -47,6 +54,10 @@ export function WeightChart({ data }: WeightChartProps) {
                 }}
                 labelStyle={{ fontWeight: 'bold' }}
                 formatter={(value: number) => [`${value}g`, "Weight"]}
+                labelFormatter={(label) => {
+                    const log = chartData.find(d => d.name === label);
+                    return log ? new Date(log.datetime).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : label
+                }}
             />
             <Line 
                 type="monotone" 

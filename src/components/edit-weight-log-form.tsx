@@ -41,7 +41,7 @@ export function EditWeightLogForm({ log, onSubmit, onCancel }: EditWeightLogForm
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <h3 className="font-semibold text-lg">Edit Weight Log</h3>
         <p className="text-sm text-muted-foreground">
-          Editing entry for {format(new Date(log.date), "MMMM d, yyyy")}
+          Editing entry for {format(new Date(log.datetime), "MMMM d, yyyy 'at' HH:mm:ss")}
         </p>
         <FormField
           control={form.control}

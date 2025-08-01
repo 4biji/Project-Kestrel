@@ -14,7 +14,7 @@ import { z } from 'genkit';
 import {parseISO, differenceInHours} from 'date-fns';
 
 const WeightLogSchema = z.object({
-    date: z.string(),
+    datetime: z.string(),
     weight: z.number(),
 });
 
@@ -51,7 +51,7 @@ const calculateAverageWeightLossFlow = ai.defineFlow(
     const end = parseISO(endDate);
 
     const filteredLogs = weightLogs
-      .map(log => ({ ...log, date: parseISO(log.date) }))
+      .map(log => ({ ...log, date: parseISO(log.datetime) }))
       .filter(log => log.date >= start && log.date <= end)
       .sort((a, b) => a.date.getTime() - b.date.getTime());
 
