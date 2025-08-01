@@ -55,13 +55,13 @@ type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunti
 
 const defaultLayouts: Responsive.Layouts = {
     lg: [
-      { i: 'weight-trend', x: 0, y: 0, w: 4, h: 2, minW: 2, minH: 2 },
-      { i: 'weight-log', x: 0, y: 2, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'training-log', x: 1, y: 2, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'feeding-log', x: 2, y: 2, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'hunting-log', x: 3, y: 2, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'husbandry', x: 0, y: 5, w: 1, h: 3, minW: 1, minH: 2 },
-      { i: 'mutes-castings', x: 1, y: 5, w: 1, h: 3, minW: 1, minH: 2 },
+      { i: 'weight-trend', x: 0, y: 0, w: 4, h: 4, minW: 2, minH: 2 },
+      { i: 'weight-log', x: 0, y: 4, w: 1, h: 3, minW: 1, minH: 2 },
+      { i: 'training-log', x: 1, y: 4, w: 1, h: 3, minW: 1, minH: 2 },
+      { i: 'feeding-log', x: 2, y: 4, w: 1, h: 3, minW: 1, minH: 2 },
+      { i: 'hunting-log', x: 3, y: 4, w: 1, h: 3, minW: 1, minH: 2 },
+      { i: 'husbandry', x: 0, y: 7, w: 1, h: 3, minW: 1, minH: 2 },
+      { i: 'mutes-castings', x: 1, y: 7, w: 1, h: 3, minW: 1, minH: 2 },
     ],
 };
 
