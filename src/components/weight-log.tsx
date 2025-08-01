@@ -70,7 +70,7 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
                 {(log => {
                   const weightChange = getChangeForLog(log);
                   return weightChange !== null && !isNaN(weightChange) && (
-                    <span className={`flex items-center ${weightChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    <span className={`flex items-center ${weightChange < 0 ? 'text-red-500' : 'text-green-500'}`}>
                       {weightChange >= 0 ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}
                       {weightChange.toFixed(1)}g
                     </span>
@@ -78,27 +78,6 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
                 })(lastLog)}
               </div>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DialogClose asChild>
-                    <DropdownMenuItem onClick={() => onEdit(lastLog)}>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        <span>Edit</span>
-                    </DropdownMenuItem>
-                </DialogClose>
-                 <DialogClose asChild>
-                    <DropdownMenuItem onClick={() => onDelete(lastLog)} className="text-red-500 focus:text-red-500">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        <span>Delete</span>
-                    </DropdownMenuItem>
-                 </DialogClose>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
           <div className="p-3 bg-secondary/50 rounded-lg text-sm">
              <div className="font-medium flex items-center gap-2">
@@ -137,7 +116,7 @@ export function WeightLogComponent({ logs, onEdit, onDelete }: WeightLogComponen
                                     {(log => {
                                     const weightChange = getChangeForLog(log);
                                     return weightChange !== null && !isNaN(weightChange) && (
-                                        <span className={`flex items-center ${weightChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                                        <span className={`flex items-center ${weightChange < 0 ? 'text-red-500' : 'text-green-500'}`}>
                                         {weightChange >= 0 ? <TrendingUp className="w-3 h-3 mr-0.5" /> : <TrendingDown className="w-3 h-3 mr-0.5" />}
                                         {weightChange.toFixed(1)}g
                                         </span>
