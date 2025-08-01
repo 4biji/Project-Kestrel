@@ -2,15 +2,16 @@
 "use client";
 
 import Image from "next/image";
-import { format, parseISO } from "date-fns";
-import type { TrainingLog } from "@/lib/types";
+import { format, parseISO, differenceInDays } from "date-fns";
+import type { TrainingLog, PerformanceRating } from "@/lib/types";
 import { ScrollArea } from "./ui/scroll-area";
 import { Badge } from "./ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Footprints, Clock, BarChart3 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import React from "react";
 
 interface TrainingLogProps {
   logs: TrainingLog[];
@@ -29,30 +30,6 @@ const getPerformanceBadgeVariant = (performance?: string) => {
       case 'Positive': return 'default';
       case 'Negative': return 'destructive';
       default: return 'secondary';
-    }
-}
-
-const getPerformanceBgColor = (performance?: string) => {
-    switch (performance) {
-        case 'Positive': return 'bg-green-100 dark:bg-green-900/30';
-        case 'Negative': return 'bg-red-100 dark:bg-red-900/30';
-        default: return 'bg-secondary/50';
-    }
-}
-
-const getPerformanceTextColor = (performance?: string) => {
-    switch (performance) {
-        case 'Positive': return 'text-green-900 dark:text-green-100';
-        case 'Negative': return 'text-red-900 dark:text-red-100';
-        default: return 'text-foreground';
-    }
-}
-
-const getPerformanceMutedTextColor = (performance?: string) => {
-    switch (performance) {
-        case 'Positive': return 'text-green-700 dark:text-green-300';
-        case 'Negative': return 'text-red-700 dark:text-red-300';
-        default: return 'text-muted-foreground';
     }
 }
 
@@ -129,31 +106,55 @@ export function ViewAllTrainingLogsDialog({ open, onOpenChange, logs, onEdit, on
 
 export function TrainingLogComponent({ logs }: TrainingLogProps) {
     const sortedLogs = [...logs].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+    const lastLog = sortedLogs.length > 0 ? sortedLogs[0] : null;
+
+    const weeklyStats = React.useMemo(() => {
+        const now = new Date();
+        const last7DaysLogs = sortedLogs.filter(log => differenceInDays(now, parseISO(log.datetime)) <= 7);
+        const totalDuration = last7DaysLogs.reduce((sum, log) => sum + log.duration, 0);
+        const performanceCounts = last7DaysLogs.reduce((acc, log) => {
+            if (log.performance) {
+                acc[log.performance] = (acc[log.performance] || 0) + 1;
+            }
+            return acc;
+        }, {} as Record<PerformanceRating, number>);
+        return { totalDuration, performanceCounts };
+    }, [sortedLogs]);
+
 
   return (
     <div className="space-y-2 -mt-2">
-      {sortedLogs.length > 0 ? (
+      {logs.length > 0 && lastLog ? (
           <div className="space-y-2">
-          {sortedLogs.slice(0, 3).map((log) => (
-            <div key={log.id} className={cn("p-3 rounded-lg text-sm space-y-2", getPerformanceBgColor(log.performance))}>
-              {log.imageUrl && (
-                <div className="relative aspect-video rounded-md overflow-hidden">
-                    <Image src={log.imageUrl} alt={log.behavior} layout="fill" objectFit="cover" data-ai-hint="falcon training" />
-                </div>
-              )}
-              <div className={cn("font-medium", getPerformanceTextColor(log.performance))}>{log.behavior}</div>
-              <div className={cn("flex justify-between items-center text-xs", getPerformanceMutedTextColor(log.performance))}>
-                <span>{format(parseISO(log.datetime), 'MMM d, yyyy HH:mm:ss')}</span>
-                 <div className="flex items-center gap-2">
-                    {log.performance && (
-                        <Badge variant={getPerformanceBadgeVariant(log.performance)}>{log.performance}</Badge>
+            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                <div className="font-medium flex items-center gap-2 whitespace-nowrap"><Footprints className="w-4 h-4 text-primary"/> Last Session</div>
+                <div className="flex justify-between items-baseline mt-2">
+                    <div className="flex items-baseline gap-2">
+                        <div className="text-lg font-bold text-primary">{lastLog.behavior}</div>
+                    </div>
+                    {lastLog.performance && (
+                        <Badge variant={getPerformanceBadgeVariant(lastLog.performance)}>{lastLog.performance}</Badge>
                     )}
-                    <Badge variant="outline">{log.duration} min</Badge>
                 </div>
-              </div>
-              {log.notes && <p className={cn("text-xs mt-1 italic", getPerformanceMutedTextColor(log.performance))}>"{log.notes}"</p>}
+                 <div className="text-xs text-muted-foreground mt-1 flex justify-between">
+                    <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm')}</span>
+                    <span>{lastLog.duration} min</span>
+                </div>
             </div>
-          ))}
+             <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                <div className="font-medium flex items-center gap-2 whitespace-nowrap"><Clock className="w-4 h-4 text-primary"/> Weekly Total</div>
+                <div className="text-xl font-bold text-primary mt-2">
+                  {weeklyStats.totalDuration} minutes
+              </div>
+            </div>
+             <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                <div className="font-medium flex items-center gap-2 whitespace-nowrap"><BarChart3 className="w-4 h-4 text-primary"/> Weekly Performance</div>
+                <div className="text-xs text-muted-foreground mt-2 space-y-1">
+                    <div className="flex justify-between"><span>Positive</span><span>{weeklyStats.performanceCounts.Positive || 0}</span></div>
+                    <div className="flex justify-between"><span>Neutral</span><span>{weeklyStats.performanceCounts.Neutral || 0}</span></div>
+                    <div className="flex justify-between"><span>Negative</span><span>{weeklyStats.performanceCounts.Negative || 0}</span></div>
+                </div>
+            </div>
           </div>
       ) : (
         <p className="text-sm text-center text-muted-foreground py-10">No training records yet.</p>
