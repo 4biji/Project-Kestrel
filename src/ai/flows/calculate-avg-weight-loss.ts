@@ -10,6 +10,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { weightLogs } from '@/lib/data';
+import { parseISO, isWithinInterval } from 'date-fns';
 
 const CalculateAvgWeightLossInputSchema = z.object({
   birdId: z.string().describe('The ID of the bird.'),
@@ -33,14 +35,37 @@ const calculateAvgWeightLossFlow = ai.defineFlow(
     inputSchema: CalculateAvgWeightLossInputSchema,
     outputSchema: CalculateAvgWeightLossOutputSchema,
   },
-  async input => {
-    // Placeholder implementation, replace with actual logic using a tool or direct calculation.
-    // This example returns a hardcoded value.
-    // In a real application, you would likely fetch weight data from a database
-    // and calculate the average weight loss.
+  async ({ birdId, startDate, endDate }) => {
+    const birdWeightLogs = weightLogs[birdId];
 
-    const averageWeightLoss = 15.5; // Example value in grams.
+    if (!birdWeightLogs) {
+      return { averageWeightLoss: 0 };
+    }
 
-    return {averageWeightLoss};
+    const start = parseISO(startDate);
+    const end = parseISO(endDate);
+
+    const relevantLogs = birdWeightLogs.filter(log =>
+      isWithinInterval(parseISO(log.date), { start, end })
+    ).sort((a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime());
+
+    if (relevantLogs.length < 2) {
+      return { averageWeightLoss: 0 };
+    }
+    
+    let totalLoss = 0;
+    let lossCount = 0;
+
+    for (let i = 1; i < relevantLogs.length; i++) {
+        const weightChange = relevantLogs[i].weight - relevantLogs[i-1].weight;
+        if (weightChange < 0) {
+            totalLoss += Math.abs(weightChange);
+            lossCount++;
+        }
+    }
+    
+    const averageWeightLoss = lossCount > 0 ? totalLoss / lossCount : 0;
+
+    return { averageWeightLoss };
   }
 );
