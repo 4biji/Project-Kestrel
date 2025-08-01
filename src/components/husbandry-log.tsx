@@ -17,6 +17,8 @@ interface HusbandryLogProps {
   predefinedTasks: PredefinedHusbandryTask[];
   loggedTasks: HusbandryTask[];
   onCompleteTask: (task: string) => void;
+  onEdit: (task: HusbandryTask) => void;
+  onDelete: (task: HusbandryTask) => void;
 }
 
 interface CommonProps {

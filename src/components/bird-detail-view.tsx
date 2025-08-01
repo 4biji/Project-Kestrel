@@ -12,7 +12,6 @@ import { BirdProfileHeader } from "@/components/bird-profile-header";
 import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
 import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
-import { EditWeightLogForm } from "./edit-weight-log-form";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
 import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, Rabbit } from "lucide-react";
@@ -21,11 +20,6 @@ import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { AddMuteLogForm } from "./add-mute-log-form";
 import { AddTrainingLogForm } from "./add-training-log-form";
 import { AddHuntingLogForm } from "./add-hunting-log-form";
-import { EditFeedingLogForm } from "./edit-feeding-log-form";
-import { EditHusbandryTaskForm } from "./edit-husbandry-task-form";
-import { EditMuteLogForm } from "./edit-mute-log-form";
-import { EditTrainingLogForm } from "./edit-training-log-form";
-import { EditHuntingLogForm } from "./edit-hunting-log-form";
 import { FeedingLogComponent, ViewAllFeedingLogsDialog } from "./feeding-log";
 import { HusbandryLog, ViewAllHusbandryTasksDialog } from "./husbandry-log";
 import { MuteLogComponent, ViewAllMuteLogsDialog } from "./mute-log";
@@ -51,6 +45,7 @@ import { type SettingsData } from "./settings-dialog";
 import { HusbandrySettingsDialog } from "./husbandry-settings-dialog";
 import { LogHusbandryTaskForm } from "./log-husbandry-task-form";
 import { TrainingSettingsDialog } from "./training-settings-dialog";
+import { EditLogDialog } from "./edit-log-dialog";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -151,14 +146,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const birdMuteLogs = birdLogs.filter(l => l.logType === 'mute') as MuteLog[];
   const birdHuntingLogs = birdLogs.filter(l => l.logType === 'hunting') as HuntingLog[];
   
-  const editingWeightLog = editingLog && editingLog.logType === 'weight' ? editingLog as WeightLog : null;
-  const editingFeedingLog = editingLog && editingLog.logType === 'feeding' ? editingLog as FeedingLog : null;
-  const editingHusbandryTask = editingLog && editingLog.logType === 'husbandry' ? editingLog as HusbandryTask : null;
-  const editingTrainingLog = editingLog && editingLog.logType === 'training' ? editingLog as TrainingLog : null;
-  const editingMuteLog = editingLog && editingLog.logType === 'mute' ? editingLog as MuteLog : null;
-  const editingHuntingLog = editingLog && editingLog.logType === 'hunting' ? editingLog as HuntingLog : null;
-
-
   const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
 
 
@@ -318,19 +305,11 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </div>
             </CardHeader>
             <CardContent className="flex-grow">
-                {editingWeightLog ? (
-                    <EditWeightLogForm
-                        log={editingWeightLog}
-                        onSubmit={handleUpdateLog as (log: WeightLog) => void}
-                        onCancel={() => setEditingLog(null)}
-                    />
-                ) : (
-                    <WeightLogComponent 
-                        logs={birdWeightLogs} 
-                        onEdit={handleEditLog}
-                        onDelete={handleDeleteLog}
-                    />
-                )}
+                <WeightLogComponent 
+                    logs={birdWeightLogs} 
+                    onEdit={handleEditLog}
+                    onDelete={handleDeleteLog}
+                />
             </CardContent>
         </Card>
         </div>
@@ -363,18 +342,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {editingTrainingLog ? (
-                        <EditTrainingLogForm
-                            log={editingTrainingLog}
-                            onSubmit={(data) => {
-                                handleUpdateLog(data);
-                                setEditingLog(null);
-                            }}
-                            onCancel={() => setEditingLog(null)}
-                        />
-                    ) : (
-                        <TrainingLogComponent logs={birdTrainingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
-                    )}
+                    <TrainingLogComponent logs={birdTrainingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                 </CardContent>
             </Card>
         </div>
@@ -407,18 +375,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {editingFeedingLog ? (
-                        <EditFeedingLogForm
-                            log={editingFeedingLog}
-                            onSubmit={(data) => {
-                                handleUpdateLog(data);
-                                setEditingLog(null);
-                            }}
-                            onCancel={() => setEditingLog(null)}
-                        />
-                    ) : (
-                        <FeedingLogComponent logs={birdFeedingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
-                    )}
+                    <FeedingLogComponent logs={birdFeedingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                 </CardContent>
             </Card>
         </div>
@@ -447,18 +404,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {editingHuntingLog ? (
-                        <EditHuntingLogForm
-                            log={editingHuntingLog}
-                            onSubmit={(data) => {
-                                handleUpdateLog(data);
-                                setEditingLog(null);
-                            }}
-                            onCancel={() => setEditingLog(null)}
-                        />
-                    ) : (
-                        <HuntingLogComponent logs={birdHuntingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
-                    )}
+                   <HuntingLogComponent logs={birdHuntingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                 </CardContent>
             </Card>
         </div>
@@ -491,22 +437,13 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {editingHusbandryTask ? (
-                            <EditHusbandryTaskForm
-                            task={editingHusbandryTask}
-                            onSubmit={(data) => {
-                                handleUpdateLog(data);
-                                setEditingLog(null);
-                            }}
-                            onCancel={() => setEditingLog(null)}
-                        />
-                    ) : (
-                        <HusbandryLog 
-                           predefinedTasks={predefinedHusbandryTasks}
-                           loggedTasks={birdHusbandryLogs}
-                           onCompleteTask={(task) => handleAddLog({task, completed: true}, 'husbandry')}
-                        />
-                    )}
+                    <HusbandryLog 
+                        predefinedTasks={predefinedHusbandryTasks}
+                        loggedTasks={birdHusbandryLogs}
+                        onCompleteTask={(task) => handleAddLog({task, completed: true}, 'husbandry')}
+                        onEdit={handleEditLog}
+                        onDelete={handleDeleteLog}
+                    />
                 </CardContent>
             </Card>
         </div>
@@ -535,18 +472,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {editingMuteLog ? (
-                        <EditMuteLogForm
-                            log={editingMuteLog}
-                            onSubmit={(data) => {
-                                handleUpdateLog(data);
-                                setEditingLog(null);
-                            }}
-                            onCancel={() => setEditingLog(null)}
-                        />
-                    ) : (
-                        <MuteLogComponent logs={birdMuteLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
-                    )}
+                    <MuteLogComponent logs={birdMuteLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                 </CardContent>
             </Card>
         </div>
@@ -565,6 +491,13 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 {addingLogType === 'hunting' && <AddHuntingLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'hunting')} onCancel={() => setAddingLogType(null)} />}
             </DialogContent>
         </Dialog>
+        
+        <EditLogDialog 
+            log={editingLog} 
+            open={!!editingLog} 
+            onOpenChange={(isOpen) => !isOpen && setEditingLog(null)}
+            onSubmit={handleUpdateLog}
+        />
 
       {isEditingChartSettings && (
         <WeightChartSettings
