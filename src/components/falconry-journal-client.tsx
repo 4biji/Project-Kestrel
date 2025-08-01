@@ -41,6 +41,8 @@ import { WeightChart } from "@/components/weight-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { AiWeightAnalysis } from "./ai-weight-analysis";
 import { WeightLogComponent } from "./weight-log";
+import { EditWeightLogForm } from "./edit-weight-log-form";
+import { useToast } from "@/hooks/use-toast";
 
 interface FalconryJournalClientProps {
   initialData: {
@@ -57,12 +59,63 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
   const [birds, setBirds] = useState(initialData.birds);
   const [selectedBirdId, setSelectedBirdId] = useState(birds[0]?.id || null);
 
+  const [feedingLogs, setFeedingLogs] = useState(initialData.feedingLogs);
+  const [husbandryLogs, setHusbandryLogs] = useState(initialData.husbandryLogs);
+  const [trainingLogs, setTrainingLogs] = useState(initialData.trainingLogs);
+  const [muteLogs, setMuteLogs] = useState(initialData.muteLogs);
+  const [weightLogs, setWeightLogs] = useState(initialData.weightLogs);
+  
+  const [editingWeightLog, setEditingWeightLog] = useState<WeightLog | null>(null);
+  const { toast } = useToast();
+
+
   const selectedBird = birds.find((b) => b.id === selectedBirdId);
-  const birdFeedingLogs = selectedBird ? initialData.feedingLogs[selectedBird.id] || [] : [];
-  const birdHusbandryLogs = selectedBird ? initialData.husbandryLogs[selectedBird.id] || [] : [];
-  const birdTrainingLogs = selectedBird ? initialData.trainingLogs[selectedBird.id] || [] : [];
-  const birdMuteLogs = selectedBird ? initialData.muteLogs[selectedBird.id] || [] : [];
-  const birdWeightLogs = selectedBird ? initialData.weightLogs[selectedBird.id] || [] : [];
+  const birdFeedingLogs = selectedBird ? feedingLogs[selectedBird.id] || [] : [];
+  const birdHusbandryLogs = selectedBird ? husbandryLogs[selectedBird.id] || [] : [];
+  const birdTrainingLogs = selectedBird ? trainingLogs[selectedBird.id] || [] : [];
+  const birdMuteLogs = selectedBird ? muteLogs[selectedBird.id] || [] : [];
+  const birdWeightLogs = selectedBird ? weightLogs[selectedBird.id] || [] : [];
+
+  const handleUpdateWeightLog = (updatedLog: WeightLog) => {
+    if (!selectedBirdId) return;
+
+    setWeightLogs(prevLogs => {
+      const newLogs = { ...prevLogs };
+      const logsForBird = newLogs[selectedBirdId].map(log => 
+        log.date === editingWeightLog?.date ? updatedLog : log
+      );
+      newLogs[selectedBirdId] = logsForBird.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      return newLogs;
+    });
+
+    setEditingWeightLog(null);
+    toast({
+      title: "Weight Log Updated",
+      description: `The entry for ${format(new Date(updatedLog.date), "MMMM d, yyyy")} has been updated.`,
+    });
+  };
+
+  const handleDeleteWeightLog = (logToDelete: WeightLog) => {
+    if (!selectedBirdId) return;
+
+     if (!confirm('Are you sure you want to delete this weight log entry?')) {
+      return;
+    }
+
+    setWeightLogs(prevLogs => {
+      const newLogs = { ...prevLogs };
+      newLogs[selectedBirdId] = newLogs[selectedBirdId].filter(
+        log => log.date !== logToDelete.date
+      );
+      return newLogs;
+    });
+    
+    toast({
+      title: "Weight Log Deleted",
+      description: `The entry for ${format(new Date(logToDelete.date), "MMMM d, yyyy")} has been removed.`,
+      variant: "destructive"
+    });
+  };
   
   return (
     <SidebarProvider>
@@ -133,7 +186,19 @@ export function FalconryJournalClient({ initialData }: FalconryJournalClientProp
                             <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
                         </CardHeader>
                         <CardContent>
-                            <WeightLogComponent logs={birdWeightLogs} />
+                            {editingWeightLog ? (
+                                <EditWeightLogForm
+                                    log={editingWeightLog}
+                                    onSubmit={handleUpdateWeightLog}
+                                    onCancel={() => setEditingWeightLog(null)}
+                                />
+                            ) : (
+                                <WeightLogComponent 
+                                    logs={birdWeightLogs} 
+                                    onEdit={setEditingWeightLog}
+                                    onDelete={handleDeleteWeightLog}
+                                />
+                            )}
                         </CardContent>
                     </Card>
                 </div>
