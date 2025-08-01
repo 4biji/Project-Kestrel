@@ -204,6 +204,15 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         combinedDateTime.setMinutes(minutes);
         (newLog as WeightLog).datetime = combinedDateTime.toISOString();
     }
+    
+    if (logType === 'feeding') {
+      const feedingData = newLogData as Omit<FeedingLog, 'id' | 'datetime' | 'logType'>;
+      const foodInfo = nutritionInfo.find(ni => ni.foodType.toLowerCase() === feedingData.foodItem.toLowerCase());
+      if (foodInfo) {
+        const protein = (feedingData.amount / 100) * foodInfo.proteinPer100g;
+        (newLog as FeedingLog).protein = Math.round(protein * 10) / 10;
+      }
+    }
 
 
     setLogs(prev => ({

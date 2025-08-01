@@ -38,9 +38,12 @@ export function ViewAllFeedingLogsDialog({ open, onOpenChange, logs, onEdit, onD
                         {displayLogs.map(log => (
                             <div key={log.id} className="group p-3 bg-secondary/50 rounded-lg text-sm flex justify-between items-center">
                                 <div>
-                                    <div className="flex justify-between font-medium">
+                                    <div className="flex justify-between font-medium items-baseline">
                                         <span>{log.foodItem}</span>
-                                        <span>{log.amount}g</span>
+                                        <div className="flex items-baseline gap-2">
+                                            {log.protein && <span className="text-xs text-muted-foreground">{log.protein.toFixed(1)}g p</span>}
+                                            <span className="font-bold">{log.amount}g</span>
+                                        </div>
                                     </div>
                                     <div className="text-xs text-muted-foreground flex justify-between">
                                         <span>{format(parseISO(log.datetime), 'MMM d, yyyy')}</span>
@@ -93,9 +96,12 @@ export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps)
             <div className="space-y-3 pr-4">
             {logs.slice(0, 5).map((log) => (
                 <div key={log.id} className="p-3 bg-secondary/50 rounded-lg text-sm">
-                <div className="flex justify-between font-medium">
+                <div className="flex justify-between font-medium items-baseline">
                     <span>{log.foodItem}</span>
-                    <span>{log.amount}g</span>
+                    <div className="flex items-baseline gap-2">
+                      {log.protein && <span className="text-xs text-muted-foreground">{log.protein.toFixed(1)}g p</span>}
+                      <span className="font-bold">{log.amount}g</span>
+                    </div>
                 </div>
                 <div className="text-xs text-muted-foreground flex justify-between">
                     <span>{format(parseISO(log.datetime), 'MMM d, yyyy')}</span>

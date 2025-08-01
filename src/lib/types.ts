@@ -29,6 +29,7 @@ export interface FeedingLog extends BaseLog {
   logType: 'feeding';
   foodItem: string;
   amount: number; // in grams
+  protein?: number; // in grams
 }
 
 export interface HusbandryTask extends BaseLog {

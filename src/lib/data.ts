@@ -34,10 +34,10 @@ export const birds: Bird[] = [
 type LogData = { [birdId: string]: LogEntry[] };
 export const logs: LogData = {
   'b1': [
-    { logType: 'feeding', id: 'f1', datetime: '2024-07-20T08:30:00', foodItem: 'Quail', amount: 50, notes: 'Eager to eat.' },
-    { logType: 'feeding', id: 'f2', datetime: '2024-07-19T09:00:00', foodItem: 'Chicken heart', amount: 45, notes: '' },
-    { logType: 'feeding', id: 'f5', datetime: '2024-07-21T08:30:00', foodItem: 'Quail', amount: 55, notes: 'Very hungry today.' },
-    { logType: 'feeding', id: 'f6', datetime: '2024-07-22T09:00:00', foodItem: 'Chicken liver', amount: 40, notes: '' },
+    { logType: 'feeding', id: 'f1', datetime: '2024-07-20T08:30:00', foodItem: 'Quail', amount: 50, notes: 'Eager to eat.', protein: 11 },
+    { logType: 'feeding', id: 'f2', datetime: '2024-07-19T09:00:00', foodItem: 'Chicken Heart', amount: 45, notes: '', protein: 7.2 },
+    { logType: 'feeding', id: 'f5', datetime: '2024-07-21T08:30:00', foodItem: 'Quail', amount: 55, notes: 'Very hungry today.', protein: 12.1 },
+    { logType: 'feeding', id: 'f6', datetime: '2024-07-22T09:00:00', foodItem: 'Chicken Heart', amount: 40, notes: '', protein: 6.4 },
     { logType: 'husbandry', id: 'h1', datetime: '2024-07-23T09:00:00', task: 'Clean mews', completed: true },
     { logType: 'husbandry', id: 'h2', datetime: '2024-07-23T09:00:00', task: 'Check equipment (jesses, leash)', completed: true },
     { logType: 'husbandry', id: 'h3', datetime: '2024-07-23T09:00:00', task: 'Weigh bird', completed: false },
@@ -56,8 +56,8 @@ export const logs: LogData = {
     { logType: 'hunting', id: 'hunt2', datetime: '2024-07-19T17:45:00', prey: 'Squirrel', outcome: 'Unsuccessful', notes: 'Prey escaped into a tree.' },
   ],
   'b2': [
-    { logType: 'feeding', id: 'f3', datetime: '2024-07-20T08:00:00', foodItem: 'Pigeon', amount: 120, notes: 'Full crop.' },
-    { logType: 'feeding', id: 'f7', datetime: '2024-07-21T08:00:00', foodItem: 'Rabbit', amount: 150, notes: 'Ate well.' },
+    { logType: 'feeding', id: 'f3', datetime: '2024-07-20T08:00:00', foodItem: 'Pigeon', amount: 120, notes: 'Full crop.', protein: 25.2 },
+    { logType: 'feeding', id: 'f7', datetime: '2024-07-21T08:00:00', foodItem: 'Rabbit', amount: 150, notes: 'Ate well.', protein: 31.5 },
     { logType: 'husbandry', id: 'h4', datetime: '2024-07-23T09:00:00', task: 'Clean mews', completed: true },
     { logType: 'husbandry', id: 'h5', datetime: '2024-07-23T09:00:00', task: 'Check equipment', completed: false },
     { logType: 'training', id: 't3', datetime: '2024-07-19T17:30:00', behavior: 'Kite work', duration: 20, notes: 'Followed kite well, needs more height.' },
