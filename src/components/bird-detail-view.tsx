@@ -104,10 +104,21 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
-  const [layouts, setLayouts] = useState<Responsive.Layouts>(defaultLayouts);
+  const [layouts, setLayouts] = useState<Responsive.Layouts>(() => {
+    if (typeof window !== 'undefined') {
+      const savedLayouts = localStorage.getItem(`layouts_${birdId}`);
+      if (savedLayouts) {
+        return JSON.parse(savedLayouts);
+      }
+    }
+    return defaultLayouts;
+  });
 
   const onLayoutChange = (layout: any, allLayouts: Responsive.Layouts) => {
-      setLayouts(allLayouts);
+    if (settings.isLayoutEditable) {
+        setLayouts(allLayouts);
+        localStorage.setItem(`layouts_${birdId}`, JSON.stringify(allLayouts));
+    }
   };
 
 
@@ -629,3 +640,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   );
 }
 
+
+
+    
