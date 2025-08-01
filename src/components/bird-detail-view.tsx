@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Bird as BirdType, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog } from "@/lib/types";
 import { format } from 'date-fns';
 import { Responsive, WidthProvider } from 'react-grid-layout';
@@ -107,11 +107,55 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
-  const [layouts, setLayouts] = useState<Responsive.Layouts | undefined>(undefined);
+  const [layouts, setLayouts] = useState<Responsive.Layouts>({});
+
+  const defaultLayouts: Responsive.Layouts = {
+    lg: [
+      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 1 },
+      { i: 'weight-log', x: 2, y: 0, w: 1, h: 2, minW: 1, minH: 2 },
+      { i: 'training-log', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
+      { i: 'feeding-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
+      { i: 'hunting-log', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
+      { i: 'husbandry', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
+      { i: 'mutes-castings', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
+      { i: 'add-log', x: 2, y: 4, w: 1, h: 2, minW: 1, minH: 2},
+    ],
+    md: [
+      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
+      { i: 'weight-log', x: 0, y: 2, w: 1, h: 2 },
+      { i: 'training-log', x: 1, y: 2, w: 1, h: 2 },
+      { i: 'feeding-log', x: 0, y: 4, w: 1, h: 2 },
+      { i: 'hunting-log', x: 1, y: 4, w: 1, h: 2 },
+      { i: 'husbandry', x: 0, y: 6, w: 1, h: 2 },
+      { i: 'mutes-castings', x: 1, y: 6, w: 1, h: 2 },
+      { i: 'add-log', x: 0, y: 8, w: 2, h: 2},
+    ],
+  };
+
+  useEffect(() => {
+    try {
+      const savedLayouts = localStorage.getItem(`layouts_${birdId}`);
+      if (savedLayouts) {
+        setLayouts(JSON.parse(savedLayouts));
+      } else {
+        setLayouts(defaultLayouts);
+      }
+    } catch (error) {
+      console.error("Could not load layouts from local storage", error);
+      setLayouts(defaultLayouts);
+    }
+  }, [birdId]);
 
 
-  const onLayoutChange = (layout: any, allLayouts: any) => {
-    setLayouts(allLayouts);
+  const onLayoutChange = (layout: any, allLayouts: Responsive.Layouts) => {
+    try {
+      if (settings.isLayoutEditable) {
+        localStorage.setItem(`layouts_${birdId}`, JSON.stringify(allLayouts));
+        setLayouts(allLayouts);
+      }
+    } catch (error) {
+      console.error("Could not save layouts to local storage", error);
+    }
   };
 
 
@@ -260,46 +304,23 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     toast({ title: "Hunting Log Added" });
   };
 
-  const defaultLayouts = {
-    lg: [
-      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2, minW: 1, minH: 1 },
-      { i: 'weight-log', x: 2, y: 0, w: 1, h: 2, minW: 1, minH: 2 },
-      { i: 'training-log', x: 0, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'feeding-log', x: 1, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'hunting-log', x: 1, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'husbandry', x: 2, y: 2, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'mutes-castings', x: 0, y: 4, w: 1, h: 2, minW: 1, minH: 1 },
-      { i: 'add-log', x: 1, y: 6, w: 2, h: 2, minW: 1, minH: 2},
-    ],
-    md: [
-      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
-      { i: 'weight-log', x: 0, y: 2, w: 1, h: 2 },
-      { i: 'training-log', x: 1, y: 2, w: 1, h: 2 },
-      { i: 'feeding-log', x: 0, y: 4, w: 1, h: 2 },
-      { i: 'hunting-log', x: 1, y: 4, w: 1, h: 2 },
-      { i: 'husbandry', x: 0, y: 6, w: 1, h: 2 },
-      { i: 'mutes-castings', x: 1, y: 6, w: 1, h: 2 },
-      { i: 'add-log', x: 0, y: 8, w: 2, h: 2},
-    ],
-  };
-
   const getFilteredLayouts = () => {
+    if (!layouts.lg) return { lg: [], md: [] };
+
     const visibleCardKeys = Object.entries(settings.visibleCards)
       .filter(([, visible]) => visible)
       .map(([key]) => key);
-    
+
     if (addingLogType) {
-        visibleCardKeys.push('add-log');
+      visibleCardKeys.push('add-log');
     }
 
-    const filteredLayouts = {
-        lg: defaultLayouts.lg.filter(l => visibleCardKeys.includes(l.i)),
-        md: defaultLayouts.md.filter(l => visibleCardKeys.includes(l.i)),
+    const filteredLayouts: Responsive.Layouts = {
+      lg: layouts.lg.filter(l => visibleCardKeys.includes(l.i)),
+      md: layouts.md?.filter(l => visibleCardKeys.includes(l.i)) || [],
     };
     return filteredLayouts;
-  }
-
-  const currentLayouts = getFilteredLayouts();
+  };
   
   const getAddLogCardTitle = (logType: LogType | null) => {
     switch (logType) {
@@ -323,7 +344,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
       
       <ResponsiveGridLayout 
         className="layout"
-        layouts={layouts || currentLayouts}
+        layouts={getFilteredLayouts()}
         onLayoutChange={onLayoutChange}
         breakpoints={{lg: 1200, md: 768, sm: 640, xs: 0}}
         cols={{lg: 3, md: 2, sm: 1, xs: 1}}
@@ -698,3 +719,5 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     </div>
   );
 }
+
+    
