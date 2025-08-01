@@ -245,19 +245,22 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     <CardTitle className="flex items-center gap-2 text-lg"><Footprints className="w-5 h-5"/> Training Log</CardTitle>
                     <CardDescription>Records of training sessions and behaviors.</CardDescription>
                 </div>
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Settings className="w-4 h-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => setIsViewingAllTrainingLogs(true)}>
-                            <ScrollText className="mr-2 h-4 w-4" />
-                            <span>View All Logs</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                 <div className="flex items-center">
+                    <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <Settings className="w-4 h-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onSelect={() => setIsViewingAllTrainingLogs(true)}>
+                                <ScrollText className="mr-2 h-4 w-4" />
+                                <span>View All Logs</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </CardHeader>
             <CardContent>
                 <TrainingLogComponent logs={birdTrainingLogs} />
@@ -269,23 +272,26 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     <CardTitle className="flex items-center gap-2 text-lg"><Bone className="w-5 h-5"/> Feeding Log</CardTitle>
                     <CardDescription>Daily food intake and notes.</CardDescription>
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Settings className="w-4 h-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                         <DropdownMenuItem onSelect={() => setIsViewingNutritionTable(true)}>
-                            <ClipboardList className="mr-2 h-4 w-4" />
-                            <span>Nutrition Table</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => setIsViewingAllFeedingLogs(true)}>
-                            <ScrollText className="mr-2 h-4 w-4" />
-                            <span>View All Logs</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center">
+                    <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <Settings className="w-4 h-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                             <DropdownMenuItem onSelect={() => setIsViewingNutritionTable(true)}>
+                                <ClipboardList className="mr-2 h-4 w-4" />
+                                <span>Nutrition Table</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => setIsViewingAllFeedingLogs(true)}>
+                                <ScrollText className="mr-2 h-4 w-4" />
+                                <span>View All Logs</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </CardHeader>
             <CardContent>
                 <FeedingLogComponent logs={birdFeedingLogs} />
@@ -297,19 +303,22 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     <CardTitle className="flex items-center gap-2 text-lg"><ShieldCheck className="w-5 h-5"/> Husbandry</CardTitle>
                     <CardDescription>Daily care and equipment checks.</CardDescription>
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Settings className="w-4 h-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => setIsViewingAllHusbandryLogs(true)}>
-                            <ScrollText className="mr-2 h-4 w-4" />
-                            <span>View All Logs</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center">
+                    <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <Settings className="w-4 h-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onSelect={() => setIsViewingAllHusbandryLogs(true)}>
+                                <ScrollText className="mr-2 h-4 w-4" />
+                                <span>View All Logs</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </CardHeader>
             <CardContent>
                 <HusbandryLog tasks={birdHusbandryLogs} />
@@ -321,19 +330,22 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
                     <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes & Castings</CardTitle>
                     <CardDescription>Health monitoring through droppings.</CardDescription>
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Settings className="w-4 h-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => setIsViewingAllMuteLogs(true)}>
-                            <ScrollText className="mr-2 h-4 w-4" />
-                            <span>View All Logs</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center">
+                    <Button variant="ghost" size="icon"><Plus className="w-4 h-4"/></Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <Settings className="w-4 h-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onSelect={() => setIsViewingAllMuteLogs(true)}>
+                                <ScrollText className="mr-2 h-4 w-4" />
+                                <span>View All Logs</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </CardHeader>
             <CardContent>
                 <MuteLogComponent logs={birdMuteLogs} />
@@ -399,3 +411,5 @@ export function BirdDetailView({ initialData, birdId }: BirdDetailViewProps) {
     </div>
   );
 }
+
+    
