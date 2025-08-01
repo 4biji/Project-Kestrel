@@ -120,7 +120,7 @@ export function WeightChart({ data, settings }: WeightChartProps) {
             {settings.alertBelowAverage.enabled && (
                 <ReferenceLine
                     y={alertBelowAverageWeight}
-                    label={{ value: `Alert: ${alertBelowAverageWeight.toFixed(0)}g`, position: 'right', fill: 'hsl(var(--destructive))', fontSize: 12 }}
+                    label={{ value: `Alert: ${settings.alertBelowAverage.percentage}%`, position: 'right', fill: 'hsl(var(--destructive))', fontSize: 12 }}
                     stroke="hsl(var(--destructive))"
                     strokeDasharray="4 4"
                 />
