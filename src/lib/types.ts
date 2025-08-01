@@ -63,6 +63,12 @@ export interface NutritionInfo {
     proteinPer100g: number;
 }
 
+export interface PredefinedHusbandryTask {
+    id: string;
+    task: string;
+    frequency: 'daily' | 'weekly' | 'monthly';
+}
+
 export type AllLogs = {
   [birdId: string]: LogEntry[];
 }
