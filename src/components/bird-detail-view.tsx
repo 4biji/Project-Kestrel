@@ -46,7 +46,6 @@ import { HusbandrySettingsDialog } from "./husbandry-settings-dialog";
 import { LogHusbandryTaskForm } from "./log-husbandry-task-form";
 import { TrainingSettingsDialog } from "./training-settings-dialog";
 import { EditLogDialog } from "./edit-log-dialog";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -72,10 +71,6 @@ interface BirdDetailViewProps {
   };
   birdId: string;
   settings: SettingsData;
-}
-
-type CardVisibilityState = {
-    [key: string]: boolean;
 }
 
 export function BirdDetailView({ initialData, birdId, settings }: BirdDetailViewProps) {
@@ -113,21 +108,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
-  const [cardVisibility, setCardVisibility] = useState<CardVisibilityState>({
-    'weight-trend': true,
-    'weight-log': true,
-    'feeding-log': true,
-    'training-log': true,
-    'hunting-log': true,
-    'husbandry': true,
-    'mutes-castings': true,
-    'first-aid': true,
-  });
-
-  const toggleCardVisibility = (cardId: string) => {
-    setCardVisibility(prev => ({ ...prev, [cardId]: !prev[cardId] }));
-  };
-
   const handleUpdateNutritionInfo = (newInfo: NutritionInfo[]) => {
     setNutritionInfo(newInfo);
     toast({
@@ -291,7 +271,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         isResizable={false}
       >
         <div key="weight-trend" style={{ display: settings.visibleCards['weight-trend'] ? 'block' : 'none' }}>
-           <Collapsible open={cardVisibility['weight-trend']} onOpenChange={() => toggleCardVisibility('weight-trend')}>
             <Card className="flex flex-col h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
@@ -299,23 +278,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                         <Button variant="ghost" size="icon" onClick={() => setIsEditingChartSettings(true)}>
                             <Settings className="w-4 h-4" />
                         </Button>
-                        <CollapsibleTrigger asChild>
-                             <Button variant="ghost" size="icon">
-                                {cardVisibility['weight-trend'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </Button>
-                        </CollapsibleTrigger>
                     </div>
                 </CardHeader>
-                <CollapsibleContent>
-                    <CardContent className="flex-grow">
-                        <WeightChart data={birdWeightLogs} settings={chartSettings} feedingLogs={birdFeedingLogs} />
-                    </CardContent>
-                </CollapsibleContent>
+                <CardContent className="flex-grow">
+                    <WeightChart data={birdWeightLogs} settings={chartSettings} feedingLogs={birdFeedingLogs} />
+                </CardContent>
             </Card>
-            </Collapsible>
         </div>
         <div key="weight-log" style={{ display: settings.visibleCards['weight-log'] ? 'block' : 'none' }}>
-           <Collapsible open={cardVisibility['weight-log']} onOpenChange={() => toggleCardVisibility('weight-log')}>
             <Card className="flex flex-col h-full">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
@@ -334,14 +304,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                     </DropdownMenu>
-                    <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            {cardVisibility['weight-log'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </Button>
-                    </CollapsibleTrigger>
                 </div>
             </CardHeader>
-             <CollapsibleContent>
                 <CardContent className="flex-grow">
                     <WeightLogComponent 
                         logs={birdWeightLogs} 
@@ -349,12 +313,9 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                         onDelete={handleDeleteLog}
                     />
                 </CardContent>
-            </CollapsibleContent>
         </Card>
-        </Collapsible>
         </div>
         <div key="training-log" style={{ display: settings.visibleCards['training-log'] ? 'block' : 'none' }}>
-            <Collapsible open={cardVisibility['training-log']} onOpenChange={() => toggleCardVisibility('training-log')}>
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -380,23 +341,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                         <CollapsibleTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                {cardVisibility['training-log'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </Button>
-                        </CollapsibleTrigger>
                     </div>
                 </CardHeader>
-                <CollapsibleContent>
                 <CardContent>
                     <TrainingLogComponent logs={birdTrainingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                 </CardContent>
-                </CollapsibleContent>
             </Card>
-            </Collapsible>
         </div>
         <div key="feeding-log" style={{ display: settings.visibleCards['feeding-log'] ? 'block' : 'none' }}>
-             <Collapsible open={cardVisibility['feeding-log']} onOpenChange={() => toggleCardVisibility('feeding-log')}>
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -422,23 +374,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                         <CollapsibleTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                {cardVisibility['feeding-log'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </Button>
-                        </CollapsibleTrigger>
                     </div>
                 </CardHeader>
-                 <CollapsibleContent>
                 <CardContent>
                     <FeedingLogComponent logs={birdFeedingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                 </CardContent>
-                </CollapsibleContent>
             </Card>
-            </Collapsible>
         </div>
         <div key="hunting-log" style={{ display: settings.visibleCards['hunting-log'] ? 'block' : 'none' }}>
-            <Collapsible open={cardVisibility['hunting-log']} onOpenChange={() => toggleCardVisibility('hunting-log')}>
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -460,23 +403,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <CollapsibleTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                {cardVisibility['hunting-log'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </Button>
-                        </CollapsibleTrigger>
                     </div>
                 </CardHeader>
-                <CollapsibleContent>
                 <CardContent>
                    <HuntingLogComponent logs={birdHuntingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                 </CardContent>
-                </CollapsibleContent>
             </Card>
-            </Collapsible>
         </div>
         <div key="husbandry" style={{ display: settings.visibleCards['husbandry'] ? 'block' : 'none' }}>
-             <Collapsible open={cardVisibility['husbandry']} onOpenChange={() => toggleCardVisibility('husbandry')}>
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -502,14 +436,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <CollapsibleTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                {cardVisibility['husbandry'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </Button>
-                        </CollapsibleTrigger>
                     </div>
                 </CardHeader>
-                 <CollapsibleContent>
                 <CardContent>
                     <HusbandryLog 
                         predefinedTasks={predefinedHusbandryTasks}
@@ -519,12 +447,9 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                         onDelete={handleDeleteLog}
                     />
                 </CardContent>
-                </CollapsibleContent>
             </Card>
-            </Collapsible>
         </div>
         <div key="mutes-castings" style={{ display: settings.visibleCards['mutes-castings'] ? 'block' : 'none' }}>
-            <Collapsible open={cardVisibility['mutes-castings']} onOpenChange={() => toggleCardVisibility('mutes-castings')}>
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -546,42 +471,25 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <CollapsibleTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                {cardVisibility['mutes-castings'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </Button>
-                        </CollapsibleTrigger>
                     </div>
                 </CardHeader>
-                <CollapsibleContent>
                 <CardContent>
                     <MuteLogComponent logs={birdMuteLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                 </CardContent>
-                </CollapsibleContent>
             </Card>
-            </Collapsible>
         </div>
         <div key="first-aid" style={{ display: settings.visibleCards['first-aid'] ? 'block' : 'none' }}>
-            <Collapsible open={cardVisibility['first-aid']} onOpenChange={() => toggleCardVisibility('first-aid')}>
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle className="flex items-center gap-2 text-lg"><PlusSquare className="w-5 h-5"/> First Aid</CardTitle>
                         <CardDescription>First aid information and logs.</CardDescription>
                     </div>
-                     <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            {cardVisibility['first-aid'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </Button>
-                    </CollapsibleTrigger>
                 </CardHeader>
-                <CollapsibleContent>
                 <CardContent>
                     <p className="text-sm text-center text-muted-foreground py-10">First aid information coming soon.</p>
                 </CardContent>
-                </CollapsibleContent>
             </Card>
-            </Collapsible>
         </div>
       </ResponsiveGridLayout>
       
