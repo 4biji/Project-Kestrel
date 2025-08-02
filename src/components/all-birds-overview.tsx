@@ -156,13 +156,15 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
         birds.map((bird, index) => {
             const birdLogs = logs[bird.id] || [];
             const birdWeightLogs = birdLogs.filter(l => l.logType === 'weight') as WeightLog[];
+            const lastWeightLog = birdWeightLogs[0];
+            const currentWeight = lastWeightLog ? lastWeightLog.weight : bird.weight;
             const birdFeedingLogs = birdLogs.filter(l => l.logType === 'feeding') as FeedingLog[];
             const birdForEditing = editingLog && editingLog.logType === 'weight' && Object.keys(logs).find(id => logs[id].some(l => l.id === editingLog.id)) === bird.id ? editingLog as WeightLog : null;
             const currentChartSettings = chartSettings[bird.id] || getDefaultChartSettings(bird.id);
             const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
             return (
                 <div key={bird.id}>
-                    <BirdProfileHeader bird={bird} />
+                    <BirdProfileHeader bird={{...bird, weight: currentWeight}} />
                     <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2">
                             <Card>

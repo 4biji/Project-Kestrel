@@ -157,14 +157,20 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     });
   }
 
-  const selectedBird = birds.find(b => b.id === birdId);
+  const birdData = birds.find(b => b.id === birdId);
 
-  if (!selectedBird) {
+  if (!birdData) {
     return <p>Bird not found.</p>;
   }
-
-  const birdLogs = logs[selectedBird.id] || [];
+  
+  const birdLogs = logs[birdData.id] || [];
   const birdWeightLogs = birdLogs.filter(l => l.logType === 'weight') as WeightLog[];
+  const lastWeightLog = birdWeightLogs[0];
+  const currentWeight = lastWeightLog ? lastWeightLog.weight : birdData.weight;
+  
+  const selectedBird = {...birdData, weight: currentWeight};
+
+
   const birdFeedingLogs = birdLogs.filter(l => l.logType === 'feeding') as FeedingLog[];
   const birdHusbandryLogs = birdLogs.filter(l => l.logType === 'husbandry') as HusbandryTask[];
   const birdTrainingLogs = birdLogs.filter(l => l.logType === 'training') as TrainingLog[];
