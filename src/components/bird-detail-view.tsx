@@ -63,7 +63,7 @@ const defaultLayouts: Responsive.Layouts = {
       { i: 'training-log', x: 1, y: 5, w: 1, h: 3 },
       { i: 'hunting-log', x: 0, y: 8, w: 1, h: 3 },
       { i: 'mutes-castings', x: 1, y: 8, w: 1, h: 3 },
-      { i: 'health-first-aid', x: 0, y: 11, w: 2, h: 2 },
+      { i: 'health-first-aid', x: 0, y: 11, w: 2, h: 3 },
     ],
 };
 
