@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import Image from "next/image";
@@ -9,7 +8,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Badge } from "./ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, BookOpen } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 interface MuteLogProps {
@@ -111,7 +110,7 @@ export function MuteLogComponent({ logs }: MuteLogProps) {
   return (
     <div className="space-y-2 -mt-2">
       {logs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="space-y-2">
           {lastMute && (
             <div className="p-3 bg-secondary/50 rounded-lg text-sm">
                 <div className="font-medium">Last Mute</div>
@@ -134,8 +133,16 @@ export function MuteLogComponent({ logs }: MuteLogProps) {
           )}
           
           {!lastMute && !lastCasting && (
-             <p className="text-sm text-center text-muted-foreground py-10 col-span-2">No mute or casting records.</p>
+             <p className="text-sm text-center text-muted-foreground py-10">No mute or casting records.</p>
           )}
+
+           <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                <div className="font-medium flex items-center gap-2"><BookOpen className="w-4 h-4 text-primary"/> Resources</div>
+                 <div className="text-xs text-muted-foreground mt-2 space-y-1">
+                    <a href="#" className="block hover:underline text-primary">The Modern Apprentice</a>
+                    <a href="#" className="block hover:underline text-primary">North American Falconers Association</a>
+                </div>
+            </div>
         </div>
       ) : (
         <p className="text-sm text-center text-muted-foreground py-10">No mute or casting records.</p>
