@@ -30,6 +30,7 @@ export const settingsSchema = z.object({
   isLayoutEditable: z.boolean().default(false),
   rowHeight: z.coerce.number().positive().default(125),
   theme: z.enum(['default', 'forest', 'desert', 'coastal', 'lake', 'urban']).default('default'),
+  darkMode: z.boolean().default(false),
   visibleCards: z.object({
     'weight-trend': z.boolean().default(true),
     'weight-log': z.boolean().default(true),
@@ -114,6 +115,21 @@ export function SettingsDialog({
                         {isAppearanceOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                     </CollapsibleTrigger>
                     <CollapsibleContent className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="darkMode"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between">
+                                    <FormLabel>Dark Mode</FormLabel>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
                          <FormField
                             control={form.control}
                             name="theme"

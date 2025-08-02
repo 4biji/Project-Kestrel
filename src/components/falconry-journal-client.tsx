@@ -52,9 +52,15 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
   const { toast } = useToast();
 
   useEffect(() => {
-    document.documentElement.classList.remove('default', 'forest', 'desert', 'coastal', 'lake', 'urban');
-    document.documentElement.classList.add(settings.theme);
-  }, [settings.theme]);
+    const root = document.documentElement;
+    root.classList.remove('default', 'forest', 'desert', 'coastal', 'lake', 'urban');
+    root.classList.add(settings.theme);
+    if (settings.darkMode) {
+        root.classList.add('dark');
+    } else {
+        root.classList.remove('dark');
+    }
+  }, [settings]);
 
   const handleNavigate = (path: string) => {
     router.push(path);
