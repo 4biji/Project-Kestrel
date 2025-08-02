@@ -12,7 +12,6 @@ import { Calendar } from "./ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "./ui/separator";
-import { Switch } from "./ui/switch";
 
 interface FeedingCalcDialogProps {
     open: boolean;
