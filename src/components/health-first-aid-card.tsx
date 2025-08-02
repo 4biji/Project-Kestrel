@@ -17,24 +17,20 @@ import { useToast } from "@/hooks/use-toast";
 interface HealthFirstAidCardProps {
     birdName: string;
     logs: HealthLog[];
+    predefinedIssues: PredefinedHealthIssue[];
     onAddLog: (logData: Omit<HealthLog, 'id' | 'datetime' | 'logType'>) => void;
     onEditLog: (log: HealthLog) => void;
     onDeleteLog: (log: HealthLog) => void;
+    onSaveIssues: (issues: PredefinedHealthIssue[]) => void;
 }
 
-export function HealthFirstAidCard({ birdName, logs, onAddLog, onEditLog, onDeleteLog }: HealthFirstAidCardProps) {
+export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog, onEditLog, onDeleteLog, onSaveIssues }: HealthFirstAidCardProps) {
     const [isAddingLog, setIsAddingLog] = useState(false);
     const [isEditingSettings, setIsEditingSettings] = useState(false);
     const [isViewingAllLogs, setIsViewingAllLogs] = useState(false);
-    const [predefinedIssues, setPredefinedIssues] = useState<PredefinedHealthIssue[]>(initialPredefinedHealthIssues);
-    const { toast } = useToast();
     
     const handleSaveSettings = (issues: PredefinedHealthIssue[]) => {
-        setPredefinedIssues(issues);
-        toast({
-            title: "Health Issues Updated",
-            description: "Your predefined health issues have been saved.",
-        });
+        onSaveIssues(issues)
     }
 
     const handleAddSubmit = (data: Omit<HealthLog, 'id' | 'datetime' | 'logType'>) => {
@@ -73,7 +69,7 @@ export function HealthFirstAidCard({ birdName, logs, onAddLog, onEditLog, onDele
                 </div>
             </CardHeader>
             <CardContent className="flex-grow">
-                <HealthLogComponent logs={logs} onEdit={onEditLog} onDelete={onDeleteLog} />
+                <HealthLogComponent logs={logs} predefinedIssues={predefinedIssues} onEdit={onEditLog} onDelete={onDeleteLog} />
             </CardContent>
 
              <Dialog open={isAddingLog} onOpenChange={setIsAddingLog}>
@@ -101,6 +97,7 @@ export function HealthFirstAidCard({ birdName, logs, onAddLog, onEditLog, onDele
                 open={isViewingAllLogs}
                 onOpenChange={setIsViewingAllLogs}
                 logs={logs}
+                predefinedIssues={predefinedIssues}
                 onEdit={onEditLog}
                 onDelete={onDeleteLog}
             />

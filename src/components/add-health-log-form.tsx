@@ -15,7 +15,6 @@ import { Slider } from "./ui/slider";
 const formSchema = z.object({
   condition: z.string().min(1, "Condition is required."),
   treatment: z.string().min(1, "Treatment is required."),
-  severity: z.number().min(1).max(10),
   notes: z.string().optional(),
 });
 
@@ -33,7 +32,6 @@ export function AddHealthLogForm({ birdName, predefinedIssues, onSubmit, onCance
     resolver: zodResolver(formSchema),
     defaultValues: {
       notes: "",
-      severity: 5,
     },
   });
 
@@ -56,7 +54,7 @@ export function AddHealthLogForm({ birdName, predefinedIssues, onSubmit, onCance
                     </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                        {predefinedIssues.map(item => <SelectItem key={item.id} value={item.issue}>{item.issue}</SelectItem>)}
+                        {predefinedIssues.map(item => <SelectItem key={item.id} value={item.issue}>{item.issue} (Severity: {item.severity})</SelectItem>)}
                     </SelectContent>
                 </Select>
               <FormMessage />
@@ -71,25 +69,6 @@ export function AddHealthLogForm({ birdName, predefinedIssues, onSubmit, onCance
               <FormLabel>Treatment Applied</FormLabel>
               <FormControl>
                 <Textarea placeholder="Describe the treatment provided..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="severity"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Severity: {field.value}</FormLabel>
-              <FormControl>
-                <Slider
-                  min={1}
-                  max={10}
-                  step={1}
-                  defaultValue={[field.value]}
-                  onValueChange={(value) => field.onChange(value[0])}
-                />
               </FormControl>
               <FormMessage />
             </FormItem>

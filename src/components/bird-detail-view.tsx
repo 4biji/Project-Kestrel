@@ -106,7 +106,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const [isViewingNutritionTable, setIsViewingNutritionTable] = useState(false);
   const [isEditingHusbandrySettings, setIsEditingHusbandrySettings] = useState(false);
   const [isEditingTrainingSettings, setIsEditingTrainingSettings] = useState(false);
-  const [isEditingHealthSettings, setIsEditingHealthSettings] = useState(false);
 
   const [predefinedHusbandryTasks, setPredefinedHusbandryTasks] = useState<PredefinedHusbandryTask[]>(initialPredefinedHusbandryTasks);
   const [predefinedTraining, setPredefinedTraining] = useState<PredefinedTraining[]>(initialPredefinedTraining);
@@ -499,9 +498,11 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             <HealthFirstAidCard 
                 birdName={selectedBird.name}
                 logs={birdHealthLogs}
+                predefinedIssues={predefinedHealthIssues}
                 onAddLog={(data) => handleAddLog(data, 'health')}
                 onEditLog={handleEditLog}
                 onDeleteLog={handleDeleteLog}
+                onSaveIssues={handleUpdateHealthIssues}
             />
         </div>
       </ResponsiveGridLayout>
@@ -596,6 +597,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             open={isViewingAllHealthLogs}
             onOpenChange={setIsViewingAllHealthLogs}
             logs={birdHealthLogs}
+            predefinedIssues={predefinedHealthIssues}
             onEdit={handleEditLog}
             onDelete={handleDeleteLog}
         />
@@ -622,14 +624,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 onOpenChange={setIsEditingTrainingSettings}
                 trainings={predefinedTraining}
                 onSave={handleUpdateTraining}
-            />
-        )}
-        {isEditingHealthSettings && (
-            <HealthLogSettingsDialog
-                open={isEditingHealthSettings}
-                onOpenChange={setIsEditingHealthSettings}
-                issues={predefinedHealthIssues}
-                onSave={handleUpdateHealthIssues}
             />
         )}
     </div>

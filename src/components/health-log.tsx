@@ -2,7 +2,7 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
-import type { HealthLog } from "@/lib/types";
+import type { HealthLog, PredefinedHealthIssue } from "@/lib/types";
 import { ScrollArea } from "./ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
@@ -14,15 +14,12 @@ import { cn } from "@/lib/utils";
 
 interface HealthLogProps {
   logs: HealthLog[];
+  predefinedIssues: PredefinedHealthIssue[];
   onEdit: (log: HealthLog) => void;
   onDelete: (log: HealthLog) => void;
 }
 
-interface CommonProps {
-    logs: HealthLog[];
-    onEdit: (log: HealthLog) => void;
-    onDelete: (log: HealthLog) => void;
-}
+interface CommonProps extends HealthLogProps {}
 
 const getSeverityBadgeVariant = (severity: number): "destructive" | "secondary" | "default" => {
     if (severity >= 8) return "destructive";
@@ -30,7 +27,7 @@ const getSeverityBadgeVariant = (severity: number): "destructive" | "secondary" 
     return "default";
 }
 
-export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, onEdit, onDelete }: { open: boolean, onOpenChange: (open: boolean) => void } & CommonProps) {
+export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, predefinedIssues, onEdit, onDelete }: { open: boolean, onOpenChange: (open: boolean) => void } & CommonProps) {
     const displayLogs = [...logs].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
 
     return (
@@ -44,11 +41,14 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, onEdit, onDe
                 </DialogHeader>
                 <ScrollArea className="h-72">
                     <div className="space-y-4 pt-2 pr-4">
-                        {displayLogs.map((log) => (
+                        {displayLogs.map((log) => {
+                            const issue = predefinedIssues.find(i => i.issue === log.condition);
+                            const severity = issue?.severity || 0;
+                            return (
                             <div key={log.id} className="group p-3 bg-secondary/50 rounded-lg text-sm space-y-2 relative">
                                 <div className="flex justify-between items-start">
                                     <div className="font-medium">{log.condition}</div>
-                                    <Badge variant={getSeverityBadgeVariant(log.severity)}>Severity: {log.severity}</Badge>
+                                    <Badge variant={getSeverityBadgeVariant(severity)}>Severity: {severity}</Badge>
                                 </div>
                                 <div className="text-xs text-muted-foreground">
                                     {format(parseISO(log.datetime), 'MMM d, yyyy HH:mm')}
@@ -83,7 +83,7 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, onEdit, onDe
                                     </DropdownMenu>
                                 </div>
                             </div>
-                        ))}
+                        )})}
                     </div>
                 </ScrollArea>
                 <DialogFooter>
@@ -99,8 +99,12 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, onEdit, onDe
 }
 
 
-export function HealthLogComponent({ logs }: HealthLogProps) {
+export function HealthLogComponent({ logs, predefinedIssues }: HealthLogProps) {
   const topTwoSevereLogs = [...logs]
+    .map(log => {
+        const issue = predefinedIssues.find(i => i.issue === log.condition);
+        return { ...log, severity: issue?.severity || 0 };
+    })
     .sort((a, b) => b.severity - a.severity)
     .slice(0, 2);
 

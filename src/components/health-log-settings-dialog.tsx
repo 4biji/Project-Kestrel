@@ -21,9 +21,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { ScrollArea } from "./ui/scroll-area";
 import { Trash2 } from "lucide-react";
+import { Slider } from "./ui/slider";
 
 const healthIssueFormSchema = z.object({
   issue: z.string().min(1, "Issue is required"),
+  severity: z.number().min(1).max(10).default(5),
 });
 
 type HealthIssueFormValues = z.infer<typeof healthIssueFormSchema>;
@@ -47,6 +49,7 @@ export function HealthLogSettingsDialog({
     resolver: zodResolver(healthIssueFormSchema),
     defaultValues: {
       issue: "",
+      severity: 5,
     },
   });
 
@@ -79,12 +82,12 @@ export function HealthLogSettingsDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleAdd)} className="flex items-end gap-2 pt-4">
+          <form onSubmit={form.handleSubmit(handleAdd)} className="space-y-4 pt-4">
             <FormField
               control={form.control}
               name="issue"
               render={({ field }) => (
-                <FormItem className="flex-grow">
+                <FormItem>
                   <FormLabel>New Issue</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="e.g., Bumblefoot" />
@@ -92,7 +95,25 @@ export function HealthLogSettingsDialog({
                 </FormItem>
               )}
             />
-            <Button type="submit">Add</Button>
+            <FormField
+              control={form.control}
+              name="severity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Default Severity: {field.value}</FormLabel>
+                  <FormControl>
+                    <Slider
+                      min={1}
+                      max={10}
+                      step={1}
+                      defaultValue={[field.value]}
+                      onValueChange={(value) => field.onChange(value[0])}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full">Add Issue</Button>
           </form>
         </Form>
 
@@ -104,6 +125,7 @@ export function HealthLogSettingsDialog({
             <TableHeader>
               <TableRow>
                 <TableHead>Issue</TableHead>
+                <TableHead>Severity</TableHead>
                 <TableHead className="text-right"></TableHead>
               </TableRow>
             </TableHeader>
@@ -111,6 +133,7 @@ export function HealthLogSettingsDialog({
               {issues.map((issue) => (
                 <TableRow key={issue.id}>
                   <TableCell>{issue.issue}</TableCell>
+                  <TableCell>{issue.severity}</TableCell>
                   <TableCell className="text-right">
                     <Button type="button" variant="ghost" size="icon" onClick={() => handleDelete(issue.id)}>
                       <Trash2 className="h-4 w-4 text-red-500" />
