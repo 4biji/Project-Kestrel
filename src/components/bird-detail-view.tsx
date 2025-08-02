@@ -112,7 +112,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const [predefinedHealthIssues, setPredefinedHealthIssues] = useState<PredefinedHealthIssue[]>(initialPredefinedHealthIssues);
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
-  
+  const [averageHourlyLoss, setAverageHourlyLoss] = useState(0);
+
   const handleUpdateNutritionInfo = (newInfo: NutritionInfo[]) => {
     setNutritionInfo(newInfo);
     toast({
@@ -327,6 +328,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                         logs={birdWeightLogs} 
                         onEdit={handleEditLog}
                         onDelete={handleDeleteLog}
+                        onAverageLossChange={setAverageHourlyLoss}
                     />
                 </CardContent>
         </Card>
@@ -393,7 +395,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <FeedingLogComponent logs={birdFeedingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
+                    <FeedingLogComponent logs={birdFeedingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} averageHourlyLoss={averageHourlyLoss} currentWeight={selectedBird.weight} />
                 </CardContent>
             </Card>
         </div>

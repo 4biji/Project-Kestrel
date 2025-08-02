@@ -14,9 +14,10 @@ interface WeightLogComponentProps {
   logs: WeightLog[];
   onEdit: (log: WeightLog) => void;
   onDelete: (log: WeightLog) => void;
+  onAverageLossChange: (avgLoss: number) => void;
 }
 
-interface ViewAllLogsDialogProps extends WeightLogComponentProps {
+interface ViewAllLogsDialogProps extends Omit<WeightLogComponentProps, 'onAverageLossChange'> {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
@@ -96,8 +97,7 @@ export function ViewAllLogsDialog({ open, onOpenChange, logs, onEdit, onDelete }
     );
 }
 
-export function WeightLogComponent({ logs }: WeightLogComponentProps) {
-  const [sortedLogs, setSortedLogs] = useState<WeightLog[]>([]);
+export function WeightLogComponent({ logs, onAverageLossChange }: WeightLogComponentProps) {
   const [displayLogs, setDisplayLogs] = useState<WeightLog[]>([]);
   const [lastLog, setLastLog] = useState<WeightLog | null>(null);
   const [averageHourlyLoss, setAverageHourlyLoss] = useState(0);
@@ -108,16 +108,14 @@ export function WeightLogComponent({ logs }: WeightLogComponentProps) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const sortedByTimeAsc = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
-    const display = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+    const sortedByTimeDesc = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
     
-    setSortedLogs(sortedByTimeAsc);
-    setDisplayLogs(display);
-    setLastLog(display.length > 0 ? display[0] : null);
+    setDisplayLogs(sortedByTimeDesc);
+    setLastLog(sortedByTimeDesc.length > 0 ? sortedByTimeDesc[0] : null);
 
-    if (display.length >= 2) {
-        const last = display[0];
-        const secondLast = display[1];
+    if (sortedByTimeDesc.length >= 2) {
+        const last = sortedByTimeDesc[0];
+        const secondLast = sortedByTimeDesc[1];
         setLastWeightChange(last.weight - secondLast.weight);
 
         const hoursApart = differenceInHours(parseISO(last.datetime), parseISO(secondLast.datetime));
@@ -136,10 +134,11 @@ export function WeightLogComponent({ logs }: WeightLogComponentProps) {
         setLastWeightChange(null);
         setLastHourlyChange(null);
     }
-
-
+    
+    const sortedByTimeAsc = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
     if (sortedByTimeAsc.length < 2) {
       setAverageHourlyLoss(0);
+      onAverageLossChange(0);
       return;
     }
 
@@ -160,12 +159,14 @@ export function WeightLogComponent({ logs }: WeightLogComponentProps) {
 
     if (hourlyLosses.length === 0) {
       setAverageHourlyLoss(0);
+      onAverageLossChange(0);
       return;
     }
 
     const avgLoss = hourlyLosses.reduce((sum, loss) => sum + loss, 0) / hourlyLosses.length;
     setAverageHourlyLoss(avgLoss);
-  }, [logs]);
+    onAverageLossChange(avgLoss);
+  }, [logs, onAverageLossChange]);
 
   const getChangeForLog = (currentLog: WeightLog) => {
     const currentIndex = displayLogs.findIndex(log => log.datetime === currentLog.datetime);

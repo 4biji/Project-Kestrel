@@ -17,6 +17,8 @@ interface FeedingLogProps {
   logs: FeedingLog[];
   onEdit: (log: FeedingLog) => void;
   onDelete: (log: FeedingLog) => void;
+  averageHourlyLoss: number;
+  currentWeight: number;
 }
 
 interface CommonProps {
@@ -92,7 +94,7 @@ export function ViewAllFeedingLogsDialog({ open, onOpenChange, logs, onEdit, onD
 }
 
 
-export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps) {
+export function FeedingLogComponent({ logs, onEdit, onDelete, averageHourlyLoss, currentWeight }: FeedingLogProps) {
     const [lastLog, setLastLog] = useState<FeedingLog | null>(null);
     const [averageFoodPerHour, setAverageFoodPerHour] = useState(0);
     const [averageProteinPerHour, setAverageProteinPerHour] = useState(0);
@@ -169,7 +171,7 @@ export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps)
                     </div>
                 </Button>
             </div>
-            <FeedingCalcDialog open={isCalcOpen} onOpenChange={setIsCalcOpen} />
+            <FeedingCalcDialog open={isCalcOpen} onOpenChange={setIsCalcOpen} averageHourlyLoss={averageHourlyLoss} currentWeight={currentWeight} />
         </>
       ) : (
         <p className="text-sm text-center text-muted-foreground py-10">No feeding records yet.</p>
