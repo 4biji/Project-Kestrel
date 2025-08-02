@@ -111,33 +111,32 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
     const originalBirdIds = new Set(birds.map(b => b.id));
     const updatedBirdIds = new Set(updatedBirds.map(b => b.id));
 
+    // Check for additions
     const newBirds = updatedBirds.filter(b => !originalBirdIds.has(b.id));
-    const deletedBirdIds = [...originalBirdIds].filter(id => !updatedBirdIds.has(id));
-    const updatedBirdInfo = updatedBirds.find(b => {
-        const original = birds.find(ob => ob.id === b.id);
-        return original && JSON.stringify(original) !== JSON.stringify(b);
-    });
-
-    setBirds(updatedBirds);
-    
     if (newBirds.length > 0) {
-        toast({ title: "Bird Added", description: `${newBirds.map(b => b.name).join(', ')} has been added.` });
-        setLogs(prevLogs => {
-            const newLogs = { ...prevLogs };
-            newBirds.forEach(bird => {
-                if (!newLogs[bird.id]) {
-                    newLogs[bird.id] = [];
-                }
-            });
-            return newLogs;
+      setBirds(updatedBirds);
+      setLogs(prevLogs => {
+        const newLogs = { ...prevLogs };
+        newBirds.forEach(bird => {
+            if (!newLogs[bird.id]) {
+                newLogs[bird.id] = [];
+            }
         });
-        if (newBirds.length > 0) {
+        return newLogs;
+      });
+      toast({ title: "Bird Added", description: `${newBirds.map(b => b.name).join(', ')} has been added.` });
+       if (newBirds.length > 0) {
           router.push(`/bird/${newBirds[0].id}`);
         }
-    } else if (deletedBirdIds.length > 0) {
+      setIsManageBirdsOpen(false);
+      return;
+    }
+
+    // Check for deletions
+    const deletedBirdIds = [...originalBirdIds].filter(id => !updatedBirdIds.has(id));
+    if (deletedBirdIds.length > 0) {
         const deletedBirdNames = birds.filter(b => deletedBirdIds.includes(b.id)).map(b => b.name);
-        toast({ title: "Bird Removed", description: `${deletedBirdNames.join(', ')} has been removed.`, variant: "destructive" });
-        
+        setBirds(updatedBirds);
         setLogs(prevLogs => {
             const newLogs = { ...prevLogs };
             deletedBirdIds.forEach(id => {
@@ -145,11 +144,21 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
             });
             return newLogs;
         });
-        
+        toast({ title: "Bird Removed", description: `${deletedBirdNames.join(', ')} has been removed.`, variant: "destructive" });
         if (view === 'detail' && selectedBirdId && deletedBirdIds.includes(selectedBirdId)) {
             router.push('/');
         }
-    } else if (updatedBirdInfo) {
+        setIsManageBirdsOpen(false);
+        return;
+    }
+
+    // Check for updates
+    const updatedBirdInfo = updatedBirds.find(b => {
+        const original = birds.find(ob => ob.id === b.id);
+        return original && JSON.stringify(original) !== JSON.stringify(b);
+    });
+     if (updatedBirdInfo) {
+        setBirds(updatedBirds);
         toast({ title: "Bird Updated", description: `${updatedBirdInfo.name}'s information has been updated.` });
     }
     
