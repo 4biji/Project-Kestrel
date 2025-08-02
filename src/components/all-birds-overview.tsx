@@ -167,7 +167,7 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                     <BirdProfileHeader bird={{...bird, weight: currentWeight}} />
                     <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2">
-                            <Card>
+                            <Card className="h-full flex flex-col">
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <CardTitle className="flex items-center gap-2 text-lg">
                                         <Scale className="w-5 h-5" /> Weight Trend
@@ -176,7 +176,7 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                                         <Settings className="w-4 h-4" />
                                     </Button>
                                 </CardHeader>
-                                <CardContent className="h-[250px]">
+                                <CardContent className="flex-grow">
                                     <WeightChart 
                                         data={birdWeightLogs} 
                                         settings={currentChartSettings} 
@@ -235,7 +235,8 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                                         />
                                     ) : (
                                         <WeightLogComponent 
-                                            logs={birdWeightLogs} 
+                                            logs={birdWeightLogs}
+                                            currentWeight={currentWeight}
                                             onEdit={(log) => setEditingLog(log)}
                                             onDelete={(log) => handleDeleteLog(log)}
                                         />
