@@ -6,7 +6,7 @@ import type { HealthLog, PredefinedHealthIssue, FirstAidLink } from "@/lib/types
 import { ScrollArea } from "./ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { MoreVertical, Pencil, Trash2, AlertTriangle, Plus, Siren } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, AlertTriangle, Plus, Siren, PlusSquare } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
@@ -136,7 +136,7 @@ export function HealthLogComponent({ logs, predefinedIssues, firstAidLinks, onEd
             </Card>
           <Card className="flex flex-col justify-between h-full">
             <CardHeader className="pb-2">
-                <CardTitle className="text-base">First Aid Resources</CardTitle>
+                <CardTitle className="text-base flex items-center gap-2"><PlusSquare className="w-4 h-4" />First Aid Resources</CardTitle>
                 <ul className="space-y-2 text-sm pt-2">
                     {firstAidLinks.map(link => (
                          <li key={link.id}>
