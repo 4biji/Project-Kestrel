@@ -115,7 +115,7 @@ export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: H
     });
   };
 
-  const renderTaskList = (tasks: PredefinedHusbandryTask[], frequency: 'daily' | 'weekly' | 'monthly') => {
+  const renderTaskList = (tasks: PredefinedHusbandryTask[], frequency: 'daily' | 'weekly' | 'monthly', limit: number) => {
     const incompleteTasks = tasks.filter(task => !getIsTaskCompleted(task.task, frequency));
 
     if (incompleteTasks.length === 0) {
@@ -127,7 +127,7 @@ export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: H
     
     return (
       <div className="space-y-2">
-        {incompleteTasks.slice(0, 2).map(task => {
+        {incompleteTasks.slice(0, limit).map(task => {
             const isCompleted = getIsTaskCompleted(task.task, frequency);
             return (
                 <div key={task.id} className="flex items-center space-x-3">
@@ -164,7 +164,7 @@ export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: H
                 Daily Tasks
             </div>
             <div className="mt-2">
-                {renderTaskList(dailyTasks, 'daily')}
+                {renderTaskList(dailyTasks, 'daily', 3)}
             </div>
         </div>
         <div className="p-3 bg-secondary/50 rounded-lg text-sm">
@@ -173,7 +173,7 @@ export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: H
                 Weekly Tasks
             </div>
             <div className="mt-2">
-                {renderTaskList(weeklyTasks, 'weekly')}
+                {renderTaskList(weeklyTasks, 'weekly', 1)}
             </div>
         </div>
         <div className="p-3 bg-secondary/50 rounded-lg text-sm">
@@ -182,7 +182,7 @@ export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: H
                 Monthly Tasks
             </div>
             <div className="mt-2">
-                {renderTaskList(monthlyTasks, 'monthly')}
+                {renderTaskList(monthlyTasks, 'monthly', 1)}
             </div>
         </div>
     </div>
