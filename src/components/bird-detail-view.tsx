@@ -61,8 +61,6 @@ const defaultLayouts: Responsive.Layouts = {
       { i: 'training-log', x: 1, y: 5, w: 1, h: 3 },
       { i: 'hunting-log', x: 0, y: 8, w: 1, h: 3 },
       { i: 'mutes-castings', x: 1, y: 8, w: 1, h: 3 },
-      { i: 'first-aid', x: 0, y: 11, w: 1, h: 3 },
-      { i: 'resource-links', x: 1, y: 11, w: 1, h: 3 },
     ],
 };
 
@@ -455,8 +453,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes &amp; Castings</CardTitle>
-                        <CardDescription>Health monitoring through droppings.</CardDescription>
+                        <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Health & Resources</CardTitle>
+                        <CardDescription>Health monitoring, first aid, and helpful links.</CardDescription>
                     </div>
                     <div className="flex items-center">
                         <Button variant="ghost" size="icon" onClick={() => setAddingLogType('mute')}><Plus className="w-4 h-4"/></Button>
@@ -477,35 +475,6 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </CardHeader>
                 <CardContent>
                     <MuteLogComponent logs={birdMuteLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
-                </CardContent>
-            </Card>
-        </div>
-        <div key="first-aid">
-            <Card className="h-full">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><PlusSquare className="w-5 h-5"/> First Aid</CardTitle>
-                        <CardDescription>First aid information and logs.</CardDescription>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-center text-muted-foreground py-10">First aid information coming soon.</p>
-                </CardContent>
-            </Card>
-        </div>
-        <div key="resource-links">
-            <Card className="h-full">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg"><BookMarked className="w-5 h-5"/> Resource Links</CardTitle>
-                    <CardDescription>Quick links for falconry resources.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ul className="space-y-2 text-sm">
-                        <li className="flex"><a href="#" className="text-primary hover:underline">Falconry Forum</a></li>
-                        <li className="flex"><a href="#" className="text-primary hover:underline">Avian Vet Finder</a></li>
-                        <li className="flex"><a href="#" className="text-primary hover:underline">Weather Forecast</a></li>
-                        <li className="flex"><a href="#" className="text-primary hover:underline">Local Regulations</a></li>
-                    </ul>
                 </CardContent>
             </Card>
         </div>
