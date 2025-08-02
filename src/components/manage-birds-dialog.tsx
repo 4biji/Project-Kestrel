@@ -26,7 +26,7 @@ const birdFormSchema = z.object({
   name: z.string().min(1, "Name is required."),
   species: z.string().min(1, "Species is required."),
   gender: z.enum(["Male", "Female"]),
-  imageUrl: z.string().url("Must be a valid URL.").or(z.literal("")),
+  imageUrl: z.string().optional(),
   weight: z.coerce.number().positive("Weight must be a positive number."),
   dateCaptured: z.date({ required_error: "A date is required." }),
 });
@@ -55,6 +55,17 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
       dateCaptured: new Date(),
     },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue("imageUrl", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleFormSubmit = (values: BirdFormValues) => {
     const birdData = {
@@ -171,9 +182,19 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
                                 <FormMessage />
                             </FormItem>
                         )}/>
-                        <FormField control={form.control} name="imageUrl" render={({ field }) => (
-                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input placeholder="https://placehold.co/400x400.png" {...field} /></FormControl><FormMessage /></FormItem>
-                        )}/>
+                        <FormField
+                          control={form.control}
+                          name="imageUrl"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Image (Optional)</FormLabel>
+                              <FormControl>
+                                 <Input type="file" accept="image/*" onChange={handleImageChange} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                         <div className="flex justify-end gap-2">
                             {editingBird && <Button type="button" variant="ghost" onClick={handleCancelEdit}>Cancel</Button>}
                             <Button type="submit">{editingBird ? 'Update Bird' : 'Add Bird'}</Button>
@@ -229,3 +250,5 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
     </Dialog>
   );
 }
+
+    
