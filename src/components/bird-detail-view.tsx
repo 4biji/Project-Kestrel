@@ -1,10 +1,8 @@
 
-
-      
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Bird as BirdType, LogEntry, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog, PredefinedHusbandryTask, PredefinedTraining } from "@/lib/types";
+import type { Bird as BirdType, LogEntry, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog, PredefinedHusbandryTask, PredefinedTraining, HealthLog, PredefinedHealthIssue } from "@/lib/types";
 import { format } from 'date-fns';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -41,17 +39,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 import { NutritionTable } from "./nutrition-table";
-import { nutritionInfo as initialNutritionInfo, predefinedHusbandryTasks as initialPredefinedHusbandryTasks, predefinedTraining as initialPredefinedTraining } from "@/lib/data";
+import { nutritionInfo as initialNutritionInfo, predefinedHusbandryTasks as initialPredefinedHusbandryTasks, predefinedTraining as initialPredefinedTraining, predefinedHealthIssues as initialPredefinedHealthIssues } from "@/lib/data";
 import { type SettingsData } from "./settings-dialog";
 import { HusbandrySettingsDialog } from "./husbandry-settings-dialog";
 import { LogHusbandryTaskForm } from "./log-husbandry-task-form";
 import { TrainingSettingsDialog } from "./training-settings-dialog";
 import { EditLogDialog } from "./edit-log-dialog";
 import { Separator } from "./ui/separator";
+import { AddHealthLogForm } from "./add-health-log-form";
+import { HealthLogComponent, ViewAllHealthLogsDialog } from "./health-log";
+import { HealthLogSettingsDialog } from "./health-log-settings-dialog";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting';
+type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting' | 'health';
 
 const defaultLayouts: Responsive.Layouts = {
     lg: [
@@ -100,13 +101,16 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const [isViewingAllHusbandryLogs, setIsViewingAllHusbandryLogs] = useState(false);
   const [isViewingAllMuteLogs, setIsViewingAllMuteLogs] = useState(false);
   const [isViewingAllHuntingLogs, setIsViewingAllHuntingLogs] = useState(false);
+  const [isViewingAllHealthLogs, setIsViewingAllHealthLogs] = useState(false);
 
   const [isViewingNutritionTable, setIsViewingNutritionTable] = useState(false);
   const [isEditingHusbandrySettings, setIsEditingHusbandrySettings] = useState(false);
   const [isEditingTrainingSettings, setIsEditingTrainingSettings] = useState(false);
+  const [isEditingHealthSettings, setIsEditingHealthSettings] = useState(false);
 
   const [predefinedHusbandryTasks, setPredefinedHusbandryTasks] = useState<PredefinedHusbandryTask[]>(initialPredefinedHusbandryTasks);
   const [predefinedTraining, setPredefinedTraining] = useState<PredefinedTraining[]>(initialPredefinedTraining);
+  const [predefinedHealthIssues, setPredefinedHealthIssues] = useState<PredefinedHealthIssue[]>(initialPredefinedHealthIssues);
   
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   
@@ -134,6 +138,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     });
   }
 
+    const handleUpdateHealthIssues = (issues: PredefinedHealthIssue[]) => {
+    setPredefinedHealthIssues(issues);
+    toast({
+        title: "Health Issues Updated",
+        description: "Your predefined health issues have been saved.",
+    });
+  }
+
   const selectedBird = birds.find(b => b.id === birdId);
 
   if (!selectedBird) {
@@ -147,6 +159,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const birdTrainingLogs = birdLogs.filter(l => l.logType === 'training') as TrainingLog[];
   const birdMuteLogs = birdLogs.filter(l => l.logType === 'mute') as MuteLog[];
   const birdHuntingLogs = birdLogs.filter(l => l.logType === 'hunting') as HuntingLog[];
+  const birdHealthLogs = birdLogs.filter(l => l.logType === 'health') as HealthLog[];
   
   const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
 
@@ -241,6 +254,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         case 'training': return 'Add Training Log';
         case 'mute': return 'Add Mute/Casting Log';
         case 'hunting': return 'Add Hunting Log';
+        case 'health': return 'Add Health Log';
         default: return '';
     }
   }
@@ -252,6 +266,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     setIsViewingAllHuntingLogs(false);
     setIsViewingAllMuteLogs(false);
     setIsViewingAllTrainingLogs(false);
+    setIsViewingAllHealthLogs(false);
     setEditingLog(log);
   }
 
@@ -455,7 +470,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes & Castings</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes &amp; Castings</CardTitle>
                         <CardDescription>Health monitoring and observations.</CardDescription>
                     </div>
                     <div className="flex items-center">
@@ -481,7 +496,13 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             </Card>
         </div>
         <div key="health-first-aid">
-            <HealthFirstAidCard />
+            <HealthFirstAidCard 
+                birdName={selectedBird.name}
+                logs={birdHealthLogs}
+                onAddLog={(data) => handleAddLog(data, 'health')}
+                onEditLog={handleEditLog}
+                onDeleteLog={handleDeleteLog}
+            />
         </div>
       </ResponsiveGridLayout>
       
@@ -496,6 +517,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 {addingLogType === 'training' && <AddTrainingLogForm birdName={selectedBird.name} predefinedTraining={predefinedTraining} onSubmit={(data) => handleAddLog(data, 'training')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'mute' && <AddMuteLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'mute')} onCancel={() => setAddingLogType(null)} />}
                 {addingLogType === 'hunting' && <AddHuntingLogForm birdName={selectedBird.name} onSubmit={(data) => handleAddLog(data, 'hunting')} onCancel={() => setAddingLogType(null)} />}
+                {addingLogType === 'health' && <AddHealthLogForm birdName={selectedBird.name} predefinedIssues={predefinedHealthIssues} onSubmit={(data) => handleAddLog(data, 'health')} onCancel={() => setAddingLogType(null)} />}
             </DialogContent>
         </Dialog>
         
@@ -569,6 +591,15 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             onDelete={handleDeleteLog}
         />
        )}
+       {isViewingAllHealthLogs && (
+        <ViewAllHealthLogsDialog
+            open={isViewingAllHealthLogs}
+            onOpenChange={setIsViewingAllHealthLogs}
+            logs={birdHealthLogs}
+            onEdit={handleEditLog}
+            onDelete={handleDeleteLog}
+        />
+       )}
        {isViewingNutritionTable && (
         <NutritionTable
             open={isViewingNutritionTable}
@@ -593,16 +624,14 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 onSave={handleUpdateTraining}
             />
         )}
+        {isEditingHealthSettings && (
+            <HealthLogSettingsDialog
+                open={isEditingHealthSettings}
+                onOpenChange={setIsEditingHealthSettings}
+                issues={predefinedHealthIssues}
+                onSave={handleUpdateHealthIssues}
+            />
+        )}
     </div>
   );
 }
-
-
-
-    
-
-    
-
-    
-
-    

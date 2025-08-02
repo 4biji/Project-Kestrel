@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState } from "react";
@@ -65,8 +64,8 @@ const cardOptions = [
     { id: 'feeding-log', label: 'Feeding Log' },
     { id: 'hunting-log', label: 'Hunting Log' },
     { id: 'husbandry', label: 'Husbandry Tasks' },
-    { id: 'mutes-castings', label: 'Mutes & Castings' },
-    { id: 'health-first-aid', label: 'Health & First Aid' },
+    { id: 'mutes-castings', label: 'Mutes &amp; Castings' },
+    { id: 'health-first-aid', label: 'Health Log' },
 ] as const;
 
 export function SettingsDialog({

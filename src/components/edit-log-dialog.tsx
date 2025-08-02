@@ -9,6 +9,7 @@ import { EditHusbandryTaskForm } from "./edit-husbandry-task-form";
 import { EditTrainingLogForm } from "./edit-training-log-form";
 import { EditMuteLogForm } from "./edit-mute-log-form";
 import { EditHuntingLogForm } from "./edit-hunting-log-form";
+import { EditHealthLogForm } from "./edit-health-log-form";
 
 interface EditLogDialogProps {
   log: LogEntry | null;
@@ -40,6 +41,8 @@ export function EditLogDialog({ log, open, onOpenChange, onSubmit }: EditLogDial
         return <EditMuteLogForm log={log} onSubmit={handleSubmit} onCancel={handleCancel} />;
       case 'hunting':
         return <EditHuntingLogForm log={log} onSubmit={handleSubmit} onCancel={handleCancel} />;
+      case 'health':
+        return <EditHealthLogForm log={log} onSubmit={handleSubmit} onCancel={handleCancel} />;
       default:
         return null;
     }
@@ -53,6 +56,7 @@ export function EditLogDialog({ log, open, onOpenChange, onSubmit }: EditLogDial
         case 'training': return 'Edit Training Log';
         case 'mute': return 'Edit Mute/Casting Log';
         case 'hunting': return 'Edit Hunting Log';
+        case 'health': return 'Edit Health Log';
         default: return 'Edit Log';
     }
   }

@@ -9,7 +9,7 @@ export interface Bird {
   dateCaptured: string;
 }
 
-export type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting';
+export type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting' | 'health';
 export type MuteCondition = 'Normal' | 'Urinate Only' | 'Greenish' | 'Blackish' | 'Yellowish';
 export type PerformanceRating = 'Positive' | 'Neutral' | 'Negative';
 
@@ -58,7 +58,13 @@ export interface HuntingLog extends BaseLog {
   outcome: 'Successful' | 'Unsuccessful';
 }
 
-export type LogEntry = WeightLog | FeedingLog | HusbandryTask | TrainingLog | MuteLog | HuntingLog;
+export interface HealthLog extends BaseLog {
+  logType: 'health';
+  condition: string;
+  treatment: string;
+}
+
+export type LogEntry = WeightLog | FeedingLog | HusbandryTask | TrainingLog | MuteLog | HuntingLog | HealthLog;
 
 export interface NutritionInfo {
     id: string;
@@ -75,6 +81,11 @@ export interface PredefinedHusbandryTask {
 export interface PredefinedTraining {
     id: string;
     behavior: string;
+}
+
+export interface PredefinedHealthIssue {
+    id: string;
+    issue: string;
 }
 
 
