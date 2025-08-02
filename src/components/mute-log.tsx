@@ -102,7 +102,7 @@ export function ViewAllMuteLogsDialog({ open, onOpenChange, logs, onEdit, onDele
     );
 }
 
-export function MuteLogComponent({ logs }: MuteLogProps) {
+export function MuteLogComponent({ logs, onEdit, onDelete }: MuteLogProps) {
     const sortedLogs = [...logs].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
     const lastMute = sortedLogs.find(log => log.type === 'Mute');
     const lastCasting = sortedLogs.find(log => log.type === 'Casting');

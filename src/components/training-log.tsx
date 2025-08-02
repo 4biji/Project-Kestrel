@@ -104,7 +104,7 @@ export function ViewAllTrainingLogsDialog({ open, onOpenChange, logs, onEdit, on
 }
 
 
-export function TrainingLogComponent({ logs }: TrainingLogProps) {
+export function TrainingLogComponent({ logs, onEdit, onDelete }: TrainingLogProps) {
     const sortedLogs = [...logs].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
     const lastLog = sortedLogs.length > 0 ? sortedLogs[0] : null;
 

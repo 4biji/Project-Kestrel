@@ -99,4 +99,3 @@ export function HealthIssueDetailDialog({ open, onOpenChange, issue, logs, onAdd
         </Dialog>
     );
 }
-

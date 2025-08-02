@@ -32,6 +32,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -81,6 +91,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   const [logs, setLogs] = useState(initialData.logs);
 
   const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
+  const [deletingLog, setDeletingLog] = useState<LogEntry | null>(null);
 
   const [addingLogType, setAddingLogType] = useState<LogType | null>(null);
   const { toast } = useToast();
@@ -190,13 +201,13 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     });
   };
 
-  const handleDeleteLog = (logToDelete: LogEntry) => {
-    if (!confirm('Are you sure you want to delete this log entry?')) return;
+  const confirmDeleteLog = () => {
+    if (!deletingLog) return;
     
     setLogs(prevLogs => {
       const newLogs = { ...prevLogs };
       newLogs[birdId] = newLogs[birdId].filter(
-        log => log.id !== logToDelete.id
+        log => log.id !== deletingLog.id
       );
       return newLogs;
     });
@@ -206,6 +217,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
       description: `The entry has been removed.`,
       variant: "destructive"
     });
+
+    setDeletingLog(null);
   };
   
   const handleAddLog = (newLogData: Omit<LogEntry, 'id' | 'datetime'>, logType: LogType) => {
@@ -268,6 +281,17 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     setIsViewingAllTrainingLogs(false);
     setIsViewingAllHealthLogs(false);
     setEditingLog(log);
+  }
+
+  const handleDeleteLog = (log: LogEntry) => {
+    setIsViewingAllWeightLogs(false);
+    setIsViewingAllFeedingLogs(false);
+    setIsViewingAllHusbandryLogs(false);
+    setIsViewingAllHuntingLogs(false);
+    setIsViewingAllMuteLogs(false);
+    setIsViewingAllTrainingLogs(false);
+    setIsViewingAllHealthLogs(false);
+    setDeletingLog(log);
   }
 
 
@@ -530,6 +554,22 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             onOpenChange={(isOpen) => !isOpen && setEditingLog(null)}
             onSubmit={handleUpdateLog}
         />
+
+        <AlertDialog open={!!deletingLog} onOpenChange={(isOpen) => !isOpen && setDeletingLog(null)}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete this log entry.
+                </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setDeletingLog(null)}>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmDeleteLog}>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
 
       {isEditingChartSettings && (
         <WeightChartSettings

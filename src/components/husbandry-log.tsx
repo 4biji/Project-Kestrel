@@ -100,7 +100,7 @@ export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks, onEdit,
     );
 }
 
-export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: HusbandryLogProps) {
+export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask, onEdit, onDelete }: HusbandryLogProps) {
   
   const getIsTaskCompleted = (task: string, frequency: 'daily' | 'weekly' | 'monthly') => {
     return loggedTasks.some(log => {

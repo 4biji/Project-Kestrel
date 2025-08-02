@@ -97,7 +97,7 @@ export function ViewAllLogsDialog({ open, onOpenChange, logs, onEdit, onDelete }
     );
 }
 
-export function WeightLogComponent({ logs, onAverageLossChange }: WeightLogComponentProps) {
+export function WeightLogComponent({ logs, onEdit, onDelete, onAverageLossChange }: WeightLogComponentProps) {
   const [displayLogs, setDisplayLogs] = useState<WeightLog[]>([]);
   const [lastLog, setLastLog] = useState<WeightLog | null>(null);
   const [averageHourlyLoss, setAverageHourlyLoss] = useState(0);

@@ -88,7 +88,7 @@ export function ViewAllHuntingLogsDialog({ open, onOpenChange, logs, onEdit, onD
     );
 }
 
-export function HuntingLogComponent({ logs }: HuntingLogProps) {
+export function HuntingLogComponent({ logs, onEdit, onDelete }: HuntingLogProps) {
   const sortedLogs = [...logs].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
   const lastLog = sortedLogs.length > 0 ? sortedLogs[0] : null;
 

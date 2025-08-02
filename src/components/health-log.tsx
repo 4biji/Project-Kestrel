@@ -137,9 +137,7 @@ export function HealthLogComponent({ logs, predefinedIssues, firstAidLinks, onEd
           <Card className="flex flex-col justify-between h-full">
             <CardHeader className="pb-2">
                 <CardTitle className="text-base">First Aid Resources</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <ul className="space-y-2 text-sm">
+                <ul className="space-y-2 text-sm pt-2">
                     {firstAidLinks.map(link => (
                          <li key={link.id}>
                             <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
@@ -148,6 +146,8 @@ export function HealthLogComponent({ logs, predefinedIssues, firstAidLinks, onEd
                         </li>
                     ))}
                 </ul>
+            </CardHeader>
+            <CardContent>
             </CardContent>
           </Card>
         </div>
