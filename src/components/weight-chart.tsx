@@ -109,7 +109,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
             />
             <YAxis 
                 domain={getChartDomain()}
-                tickFormatter={(tick) => Math.round(tick).toString()}
+                tickFormatter={(tick) => `${Math.round(tick)}`}
                 tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
                 tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
