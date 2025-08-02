@@ -27,12 +27,11 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
     const [targetTime, setTargetTime] = useState(format(new Date(), "HH:mm"));
     const [calculatedAmount, setCalculatedAmount] = useState<number | null>(null);
     const [projectedLoss, setProjectedLoss] = useState<number | null>(null);
-    const [useAverage, setUseAverage] = useState(true);
     const [customLoss, setCustomLoss] = useState('');
 
 
      useEffect(() => {
-        const lossValue = useAverage ? averageHourlyLoss : parseFloat(customLoss);
+        const lossValue = customLoss ? parseFloat(customLoss) : averageHourlyLoss;
         const tWeight = parseFloat(targetWeight);
 
         if (!isNaN(tWeight) && currentWeight > 0 && !isNaN(lossValue) && lossValue > 0 && targetDate && targetTime) {
@@ -59,7 +58,7 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
             setCalculatedAmount(null);
             setProjectedLoss(null);
         }
-    }, [targetWeight, targetDate, targetTime, averageHourlyLoss, currentWeight, useAverage, customLoss]);
+    }, [targetWeight, targetDate, targetTime, averageHourlyLoss, currentWeight, customLoss]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -71,26 +70,10 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
                     </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
-                     <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
-                        <div className="space-y-0.5">
-                            <Label>Use Avg. Hourly Loss</Label>
-                             <p className="text-xs text-muted-foreground">
-                                Use calculated loss of {averageHourlyLoss.toFixed(2)}g/hr.
-                             </p>
-                        </div>
-                        <Switch
-                            checked={useAverage}
-                            onCheckedChange={setUseAverage}
-                        />
+                    <div className="grid grid-cols-2 items-center gap-4">
+                        <Label htmlFor="customLoss">Hourly Loss (g/hr)</Label>
+                        <Input id="customLoss" type="number" placeholder={`Avg: ${averageHourlyLoss.toFixed(2)}`} value={customLoss} onChange={(e) => setCustomLoss(e.target.value)} />
                     </div>
-
-                    {!useAverage && (
-                        <div className="grid grid-cols-2 items-center gap-4">
-                            <Label htmlFor="customLoss">Custom Loss (g/hr)</Label>
-                            <Input id="customLoss" type="number" placeholder="e.g. 1.5" value={customLoss} onChange={(e) => setCustomLoss(e.target.value)} />
-                        </div>
-                    )}
-
 
                     <div className="grid grid-cols-2 items-center gap-4">
                         <Label htmlFor="targetWeight">Target Weight (g)</Label>
@@ -132,14 +115,14 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
                             {projectedLoss !== null && (
                                 <div>
                                     <p className="text-sm text-muted-foreground">Projected Weight Loss</p>
-                                    <p className="text-lg font-semibold text-destructive">{projectedLoss.toFixed(1)}g</p>
+                                    <p className="text-xl font-bold text-destructive">{projectedLoss.toFixed(1)}g</p>
                                 </div>
                             )}
                              {calculatedAmount !== null && projectedLoss !== null && <Separator />}
                             {calculatedAmount !== null && (
                                 <div>
                                     <p className="text-sm text-muted-foreground">Amount to Feed</p>
-                                    <p className="text-3xl font-bold text-primary">{calculatedAmount.toFixed(1)}g</p>
+                                    <p className="text-xl font-bold text-primary">{calculatedAmount.toFixed(1)}g</p>
                                 </div>
                             )}
                         </div>
