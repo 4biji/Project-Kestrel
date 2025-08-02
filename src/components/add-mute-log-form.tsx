@@ -18,7 +18,7 @@ const formSchema = z.object({
   type: z.enum(["Mute", "Casting"], { required_error: "Please select a type." }),
   condition: z.enum(muteConditions).optional(),
   notes: z.string().optional(),
-  imageUrl: z.string().url().optional().or(z.literal('')),
+  imageUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -41,6 +41,17 @@ export function AddMuteLogForm({ birdName, onSubmit, onCancel }: AddMuteLogFormP
   });
 
   const watchType = form.watch("type");
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue("imageUrl", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -118,9 +129,9 @@ export function AddMuteLogForm({ birdName, onSubmit, onCancel }: AddMuteLogFormP
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL (Optional)</FormLabel>
+              <FormLabel>Image (Optional)</FormLabel>
               <FormControl>
-                 <Input type="text" placeholder="https://placehold.co/600x400.png" {...field} />
+                 <Input type="file" accept="image/*" onChange={handleImageChange} />
               </FormControl>
               <FormMessage />
             </FormItem>

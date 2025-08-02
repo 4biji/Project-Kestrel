@@ -9,11 +9,13 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
-import { DialogDescription } from "./ui/dialog";
+import { Textarea } from "./ui/textarea";
 
 const formSchema = z.object({
   task: z.string().min(1, "Task description is required."),
   completed: z.boolean(),
+  notes: z.string().optional(),
+  imageUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -30,6 +32,8 @@ export function EditHusbandryTaskForm({ task, onSubmit, onCancel }: EditHusbandr
     defaultValues: {
       task: task.task,
       completed: task.completed,
+      notes: task.notes,
+      imageUrl: task.imageUrl,
     },
   });
 
@@ -39,6 +43,17 @@ export function EditHusbandryTaskForm({ task, onSubmit, onCancel }: EditHusbandr
         ...values,
     });
   }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue("imageUrl", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -51,6 +66,32 @@ export function EditHusbandryTaskForm({ task, onSubmit, onCancel }: EditHusbandr
               <FormLabel>Task</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., Clean mews" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Notes</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Any notes on the task..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image (Optional)</FormLabel>
+              <FormControl>
+                 <Input type="file" accept="image/*" onChange={handleImageChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -85,5 +126,3 @@ export function EditHusbandryTaskForm({ task, onSubmit, onCancel }: EditHusbandr
     </Form>
   );
 }
-
-    

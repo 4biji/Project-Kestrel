@@ -38,6 +38,7 @@ export interface HusbandryTask extends BaseLog {
   logType: 'husbandry';
   task: string;
   completed: boolean;
+  imageUrl?: string;
 }
 
 export interface TrainingLog extends BaseLog {
@@ -63,6 +64,7 @@ export interface HealthLog extends BaseLog {
   logType: 'health';
   condition: string;
   treatment: string;
+  imageUrl?: string;
 }
 
 export type LogEntry = WeightLog | FeedingLog | HusbandryTask | TrainingLog | MuteLog | HuntingLog | HealthLog;

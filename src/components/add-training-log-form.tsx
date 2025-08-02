@@ -19,7 +19,7 @@ const formSchema = z.object({
   duration: z.coerce.number().positive("Duration must be a positive number."),
   notes: z.string().min(1, "Notes are required."),
   performance: z.enum(performanceRatings).optional(),
-  imageUrl: z.string().url().optional().or(z.literal('')),
+  imageUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -42,6 +42,17 @@ export function AddTrainingLogForm({ birdName, predefinedTraining, onSubmit, onC
       imageUrl: "",
     },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue("imageUrl", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -137,9 +148,9 @@ export function AddTrainingLogForm({ birdName, predefinedTraining, onSubmit, onC
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL (Optional)</FormLabel>
+              <FormLabel>Image (Optional)</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="https://placehold.co/600x400.png" {...field} />
+                <Input type="file" accept="image/*" onChange={handleImageChange} />
               </FormControl>
                <FormMessage />
             </FormItem>

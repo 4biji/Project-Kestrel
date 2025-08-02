@@ -15,7 +15,7 @@ const formSchema = z.object({
   prey: z.string().min(1, "Prey is required."),
   outcome: z.enum(["Successful", "Unsuccessful"], { required_error: "Please select an outcome." }),
   notes: z.string().optional(),
-  imageUrl: z.string().url().optional().or(z.literal('')),
+  imageUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -43,6 +43,17 @@ export function EditHuntingLogForm({ log, onSubmit, onCancel }: EditHuntingLogFo
       ...values,
     });
   }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue("imageUrl", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -99,9 +110,9 @@ export function EditHuntingLogForm({ log, onSubmit, onCancel }: EditHuntingLogFo
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL (Optional)</FormLabel>
+              <FormLabel>Image (Optional)</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="https://placehold.co/600x400.png" {...field} />
+                 <Input type="file" accept="image/*" onChange={handleImageChange} />
               </FormControl>
                <FormMessage />
             </FormItem>

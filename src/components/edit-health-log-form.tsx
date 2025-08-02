@@ -15,6 +15,7 @@ const formSchema = z.object({
   condition: z.string().min(1, "Condition is required."),
   treatment: z.string().min(1, "Treatment is required."),
   notes: z.string().optional(),
+  imageUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -32,6 +33,7 @@ export function EditHealthLogForm({ log, onSubmit, onCancel }: EditHealthLogForm
       condition: log.condition,
       treatment: log.treatment,
       notes: log.notes,
+      imageUrl: log.imageUrl,
     },
   });
 
@@ -41,6 +43,17 @@ export function EditHealthLogForm({ log, onSubmit, onCancel }: EditHealthLogForm
         ...values,
     });
   }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue("imageUrl", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -79,6 +92,19 @@ export function EditHealthLogForm({ log, onSubmit, onCancel }: EditHealthLogForm
               <FormLabel>Notes</FormLabel>
               <FormControl>
                 <Textarea {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image (Optional)</FormLabel>
+              <FormControl>
+                 <Input type="file" accept="image/*" onChange={handleImageChange} />
               </FormControl>
               <FormMessage />
             </FormItem>

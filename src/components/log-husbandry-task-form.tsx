@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { HusbandryTask, PredefinedHusbandryTask } from "@/lib/types";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
@@ -14,6 +15,7 @@ import { Separator } from "./ui/separator";
 const formSchema = z.object({
   task: z.string().min(1, "Task is required."),
   notes: z.string().optional(),
+  imageUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -40,6 +42,17 @@ export function LogHusbandryTaskForm({ birdName, predefinedTasks, onSubmit, onCa
         completed: true,
     });
   }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue("imageUrl", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -77,6 +90,19 @@ export function LogHusbandryTaskForm({ birdName, predefinedTasks, onSubmit, onCa
               <FormLabel>Notes (Optional)</FormLabel>
               <FormControl>
                 <Textarea placeholder="Any notes on the task..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image (Optional)</FormLabel>
+              <FormControl>
+                 <Input type="file" accept="image/*" onChange={handleImageChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
