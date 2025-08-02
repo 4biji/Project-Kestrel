@@ -47,7 +47,7 @@ export function ViewAllFeedingLogsDialog({ open, onOpenChange, logs, onEdit, onD
                                     <div className="flex justify-between font-medium items-baseline">
                                         <span>{log.foodItem}</span>
                                         <div className="flex items-baseline gap-2">
-                                            {log.protein && <span className="text-xs text-muted-foreground">{log.protein.toFixed(1)}g p</span>}
+                                            {log.protein && <span className="text-xs text-muted-foreground">{log.protein.toFixed(1)}g protein</span>}
                                             <span className="font-bold">{log.amount}g</span>
                                         </div>
                                     </div>
@@ -145,7 +145,7 @@ export function FeedingLogComponent({ logs, onEdit, onDelete, averageHourlyLoss,
                         {averageFoodPerHour.toFixed(1)}g/hr
                     </div>
                     <div className="text-xl font-bold text-primary">
-                        {averageProteinPerHour.toFixed(1)}p/hr
+                        {averageProteinPerHour.toFixed(1)} g protein/hr
                     </div>
                 </div>
             </div>
@@ -157,7 +157,7 @@ export function FeedingLogComponent({ logs, onEdit, onDelete, averageHourlyLoss,
                         <div className="text-xl font-bold text-primary">{logs[0].amount}g</div>
                         <div className="text-md font-semibold">{logs[0].foodItem}</div>
                     </div>
-                    {logs[0].protein && <span className="text-sm text-muted-foreground">{logs[0].protein.toFixed(1)}g p</span>}
+                    {logs[0].protein && <span className="text-sm text-muted-foreground">{logs[0].protein.toFixed(1)}g protein</span>}
                 </div>
                  <div className="text-xs text-muted-foreground mt-1 flex justify-between">
                     <span>{format(parseISO(logs[0].datetime), 'MMM d, HH:mm')}</span>
