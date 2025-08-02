@@ -50,9 +50,9 @@ const generateLogs = (bird: Bird, days: number): LogEntry[] => {
     const generatedLogs: LogEntry[] = [];
     const now = new Date();
     const initialWeight = bird.weight;
-    let currentWeight = initialWeight * (1 + (Math.random() - 0.5) * 0.05);
+    let currentWeight = initialWeight * 1.02; // Start slightly above base weight
 
-    const dailyLossRate = 0.04 + (Math.random() * 0.02 - 0.01);
+    const dailyLossRate = 0.045; // Consistent daily loss rate
     
     const totalDailyFood = initialWeight * (dailyLossRate - 0.01); 
     const morningFoodAmount = parseFloat((totalDailyFood * 0.6).toFixed(1));
