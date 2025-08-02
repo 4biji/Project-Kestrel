@@ -48,7 +48,8 @@ export interface TrainingLog extends BaseLog {
 
 export interface MuteLog extends BaseLog {
   logType: 'mute';
-  condition: MuteCondition;
+  type: 'Mute' | 'Casting';
+  condition?: MuteCondition;
 }
 
 export interface HuntingLog extends BaseLog {

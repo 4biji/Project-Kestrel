@@ -10,11 +10,13 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 const muteConditions: MuteCondition[] = ['Normal', 'Urinate Only', 'Greenish', 'Blackish', 'Yellowish'];
 
 const formSchema = z.object({
-  condition: z.enum(muteConditions, { required_error: "Please select a condition." }),
+  type: z.enum(["Mute", "Casting"], { required_error: "Please select a type." }),
+  condition: z.enum(muteConditions).optional(),
   notes: z.string().optional(),
   imageUrl: z.string().url().optional().or(z.literal('')),
 });
@@ -31,6 +33,7 @@ export function EditMuteLogForm({ log, onSubmit, onCancel }: EditMuteLogFormProp
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      type: log.type,
       condition: log.condition,
       notes: log.notes,
       imageUrl: log.imageUrl,
@@ -44,29 +47,63 @@ export function EditMuteLogForm({ log, onSubmit, onCancel }: EditMuteLogFormProp
     });
   }
 
+  const watchType = form.watch("type");
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <FormField
-            control={form.control}
-            name="condition"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel>Condition</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>Type</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-row space-x-4"
+                >
+                  <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a condition" />
-                    </SelectTrigger>
+                      <RadioGroupItem value="Mute" />
                     </FormControl>
-                    <SelectContent>
-                        {muteConditions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-                <FormMessage />
-                </FormItem>
-            )}
+                    <FormLabel className="font-normal">Mute</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-2 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="Casting" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Casting</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
+        {watchType === 'Mute' && (
+          <FormField
+              control={form.control}
+              name="condition"
+              render={({ field }) => (
+                  <FormItem>
+                  <FormLabel>Condition</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                      <SelectTrigger>
+                          <SelectValue placeholder="Select a condition" />
+                      </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                          {muteConditions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                      </SelectContent>
+                  </Select>
+                  <FormMessage />
+                  </FormItem>
+              )}
+          />
+        )}
         <FormField
           control={form.control}
           name="notes"

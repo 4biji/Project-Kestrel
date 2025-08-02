@@ -24,7 +24,7 @@ interface CommonProps {
 }
 
 
-const getBadgeVariant = (condition: string) => {
+const getBadgeVariant = (condition?: string) => {
     switch (condition) {
       case "Normal":
         return "default";
@@ -55,12 +55,14 @@ export function ViewAllMuteLogsDialog({ open, onOpenChange, logs, onEdit, onDele
                              <div key={log.id} className="group p-3 bg-secondary/50 rounded-lg text-sm space-y-2 relative">
                                {log.imageUrl && (
                                  <div className="relative aspect-video rounded-md overflow-hidden">
-                                     <Image src={log.imageUrl} alt={log.condition} layout="fill" objectFit="cover" data-ai-hint="bird droppings" />
+                                     <Image src={log.imageUrl} alt={log.condition || 'Mute/Casting Log'} layout="fill" objectFit="cover" data-ai-hint="bird droppings" />
                                  </div>
                                )}
                                <div className="flex justify-between items-center">
-                                 <span className="font-medium">Mute/Casting</span>
-                                 <Badge variant={getBadgeVariant(log.condition)}>{log.condition}</Badge>
+                                 <span className="font-medium">{log.type}</span>
+                                 {log.type === 'Mute' && log.condition && (
+                                     <Badge variant={getBadgeVariant(log.condition)}>{log.condition}</Badge>
+                                 )}
                                </div>
                                 <div className="text-xs text-muted-foreground flex justify-between">
                                   <span>{format(parseISO(log.datetime), 'MMM d, yyyy')}</span>
@@ -115,12 +117,14 @@ export function MuteLogComponent({ logs, onEdit, onDelete }: MuteLogProps) {
             <div key={log.id} className="p-3 bg-secondary/50 rounded-lg text-sm space-y-2">
               {log.imageUrl && (
                 <div className="relative aspect-video rounded-md overflow-hidden">
-                    <Image src={log.imageUrl} alt={log.condition} layout="fill" objectFit="cover" data-ai-hint="bird droppings" />
+                    <Image src={log.imageUrl} alt={log.condition || 'Mute/Casting Log'} layout="fill" objectFit="cover" data-ai-hint="bird droppings" />
                 </div>
               )}
               <div className="flex justify-between items-center">
-                <span className="font-medium">Mute/Casting</span>
-                <Badge variant={getBadgeVariant(log.condition)}>{log.condition}</Badge>
+                <span className="font-medium">{log.type}</span>
+                {log.type === 'Mute' && log.condition && (
+                    <Badge variant={getBadgeVariant(log.condition)}>{log.condition}</Badge>
+                )}
               </div>
                <div className="text-xs text-muted-foreground flex justify-between">
                  <span>{format(parseISO(log.datetime), 'MMM d, yyyy')}</span>
@@ -141,3 +145,4 @@ export function MuteLogComponent({ logs, onEdit, onDelete }: MuteLogProps) {
     
 
     
+
