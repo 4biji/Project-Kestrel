@@ -100,20 +100,20 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, predefinedIs
 
 
 export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }: HealthLogProps) {
-  const topTwoSevereLogs = [...logs]
+  const topSevereLog = [...logs]
     .map(log => {
         const issue = predefinedIssues.find(i => i.issue === log.condition);
         return { ...log, severity: issue?.severity || 0 };
     })
     .sort((a, b) => b.severity - a.severity)
-    .slice(0, 2);
+    .slice(0, 1);
 
   return (
     <div className="space-y-2 h-full">
-      {logs.length > 0 && topTwoSevereLogs.length > 0 ? (
+      {logs.length > 0 && topSevereLog.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
             <div className="space-y-4">
-            {topTwoSevereLogs.map(log => (
+            {topSevereLog.map(log => (
                 <Card key={log.id} className={cn(
                     "flex flex-col justify-between flex-grow",
                     log.severity >= 8 ? "border-destructive" : log.severity >= 4 ? "border-yellow-500" : ""
