@@ -28,6 +28,7 @@ interface CommonProps {
 }
 
 export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks, onEdit, onDelete }: { open: boolean, onOpenChange: (open: boolean) => void } & CommonProps) {
+    const sortedTasks = [...tasks].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
@@ -39,7 +40,7 @@ export function ViewAllHusbandryTasksDialog({ open, onOpenChange, tasks, onEdit,
                 </DialogHeader>
                 <ScrollArea className="h-72">
                     <div className="space-y-2 pt-2 pr-4">
-                        {tasks.map(task => (
+                        {sortedTasks.map(task => (
                              <div key={task.id} className="group flex items-center justify-between p-2 bg-secondary/50 rounded-lg">
                                 <div className="flex items-center space-x-3">
                                     <Checkbox
@@ -124,27 +125,29 @@ export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: H
       return <p className="text-xs text-center text-muted-foreground py-2">No {frequency} tasks defined.</p>;
     }
     
-    const task = incompleteTasks[0];
-    const isCompleted = getIsTaskCompleted(task.task, frequency); // This will be false here
-
     return (
       <div className="space-y-2">
-        <div key={task.id} className="flex items-center space-x-3">
-          <Checkbox
-            id={task.id}
-            checked={isCompleted}
-            onCheckedChange={() => !isCompleted && onCompleteTask(task.task)}
-            disabled={isCompleted}
-          />
-          <Label
-            htmlFor={task.id}
-            className={`text-sm ${
-              isCompleted ? "text-muted-foreground line-through" : ""
-            }`}
-          >
-            {task.task}
-          </Label>
-        </div>
+        {incompleteTasks.slice(0, 2).map(task => {
+            const isCompleted = getIsTaskCompleted(task.task, frequency);
+            return (
+                <div key={task.id} className="flex items-center space-x-3">
+                <Checkbox
+                    id={task.id}
+                    checked={isCompleted}
+                    onCheckedChange={() => !isCompleted && onCompleteTask(task.task)}
+                    disabled={isCompleted}
+                />
+                <Label
+                    htmlFor={task.id}
+                    className={`text-sm ${
+                    isCompleted ? "text-muted-foreground line-through" : ""
+                    }`}
+                >
+                    {task.task}
+                </Label>
+                </div>
+            )
+        })}
       </div>
     );
   };
