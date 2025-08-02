@@ -25,12 +25,14 @@ interface AddHealthLogFormProps {
   predefinedIssues: PredefinedHealthIssue[];
   onSubmit: (data: Omit<HealthLog, "id" | "datetime" | "logType">) => void;
   onCancel: () => void;
+  initialCondition?: string;
 }
 
-export function AddHealthLogForm({ birdName, predefinedIssues, onSubmit, onCancel }: AddHealthLogFormProps) {
+export function AddHealthLogForm({ birdName, predefinedIssues, onSubmit, onCancel, initialCondition }: AddHealthLogFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      condition: initialCondition || "",
       notes: "",
     },
   });

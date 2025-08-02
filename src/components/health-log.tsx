@@ -18,9 +18,10 @@ interface HealthLogProps {
   predefinedIssues: PredefinedHealthIssue[];
   onEdit: (log: HealthLog) => void;
   onDelete: (log: HealthLog) => void;
+  onIssueClick: (issue: PredefinedHealthIssue) => void;
 }
 
-interface CommonProps extends HealthLogProps {}
+interface CommonProps extends Omit<HealthLogProps, 'onIssueClick'> {}
 
 const getSeverityBadgeVariant = (severity: number): "destructive" | "secondary" | "default" => {
     if (severity >= 8) return "destructive";
@@ -100,7 +101,7 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, predefinedIs
 }
 
 
-export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }: HealthLogProps) {
+export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete, onIssueClick }: HealthLogProps) {
   const sortedIssues = [...predefinedIssues].sort((a,b) => b.severity - a.severity);
 
   return (
@@ -118,10 +119,15 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }:
                     <ScrollArea className="h-full pr-4 -mr-4">
                         <div className="space-y-1">
                             {sortedIssues.map((issue) => (
-                                <div key={issue.id} className="flex justify-between items-center text-sm py-0.5">
+                                <Button 
+                                    key={issue.id} 
+                                    variant="ghost" 
+                                    className="flex justify-between items-center text-sm py-0.5 w-full h-auto font-normal"
+                                    onClick={() => onIssueClick(issue)}
+                                >
                                     <span>{issue.issue}</span>
                                     <Badge variant={getSeverityBadgeVariant(issue.severity)} className="px-1.5 py-0 text-xs">{issue.severity}</Badge>
-                                </div>
+                                </Button>
                             ))}
                         </div>
                     </ScrollArea>

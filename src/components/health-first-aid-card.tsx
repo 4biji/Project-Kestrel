@@ -11,6 +11,7 @@ import type { HealthLog, PredefinedHealthIssue, LogEntry } from "@/lib/types";
 import { HealthLogComponent, ViewAllHealthLogsDialog } from "./health-log";
 import { HealthLogSettingsDialog } from "./health-log-settings-dialog";
 import { AddHealthLogForm } from "./add-health-log-form";
+import { HealthIssueDetailDialog } from "./health-issue-detail-dialog";
 import { predefinedHealthIssues as initialPredefinedHealthIssues } from "@/lib/data";
 import { useToast } from "@/hooks/use-toast";
 
@@ -28,7 +29,9 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
     const [isAddingLog, setIsAddingLog] = useState(false);
     const [isEditingSettings, setIsEditingSettings] = useState(false);
     const [isViewingAllLogs, setIsViewingAllLogs] = useState(false);
-    
+    const [selectedIssue, setSelectedIssue] = useState<PredefinedHealthIssue | null>(null);
+    const [addingLogForIssue, setAddingLogForIssue] = useState<PredefinedHealthIssue | null>(null);
+
     const handleSaveSettings = (issues: PredefinedHealthIssue[]) => {
         onSaveIssues(issues)
     }
@@ -36,6 +39,16 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
     const handleAddSubmit = (data: Omit<HealthLog, 'id' | 'datetime' | 'logType'>) => {
         onAddLog(data);
         setIsAddingLog(false);
+        setAddingLogForIssue(null);
+    }
+    
+    const handleAddForIssue = (issue: PredefinedHealthIssue) => {
+        setAddingLogForIssue(issue);
+        setSelectedIssue(null); 
+    }
+    
+    const handleCloseDetailDialog = () => {
+        setSelectedIssue(null);
     }
 
     return (
@@ -69,10 +82,21 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
                 </div>
             </CardHeader>
             <CardContent className="flex-grow">
-                <HealthLogComponent logs={logs} predefinedIssues={predefinedIssues} onEdit={onEditLog} onDelete={onDeleteLog} />
+                <HealthLogComponent 
+                    logs={logs} 
+                    predefinedIssues={predefinedIssues} 
+                    onEdit={onEditLog} 
+                    onDelete={onDeleteLog}
+                    onIssueClick={setSelectedIssue}
+                />
             </CardContent>
 
-             <Dialog open={isAddingLog} onOpenChange={setIsAddingLog}>
+             <Dialog open={isAddingLog || !!addingLogForIssue} onOpenChange={(isOpen) => {
+                if (!isOpen) {
+                    setIsAddingLog(false);
+                    setAddingLogForIssue(null);
+                }
+             }}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Add Health Log</DialogTitle>
@@ -81,7 +105,11 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
                         birdName={birdName}
                         predefinedIssues={predefinedIssues}
                         onSubmit={handleAddSubmit}
-                        onCancel={() => setIsAddingLog(false)}
+                        onCancel={() => {
+                            setIsAddingLog(false);
+                            setAddingLogForIssue(null);
+                        }}
+                        initialCondition={addingLogForIssue?.issue}
                     />
                 </DialogContent>
             </Dialog>
@@ -101,7 +129,18 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
                 onEdit={onEditLog}
                 onDelete={onDeleteLog}
             />
+            
+            {selectedIssue && (
+                 <HealthIssueDetailDialog
+                    open={!!selectedIssue}
+                    onOpenChange={(isOpen) => !isOpen && handleCloseDetailDialog()}
+                    issue={selectedIssue}
+                    logs={logs.filter(log => log.condition === selectedIssue.issue)}
+                    onAddLog={() => handleAddForIssue(selectedIssue)}
+                    onEdit={onEditLog}
+                    onDelete={onDeleteLog}
+                />
+            )}
         </Card>
     )
 }
-
