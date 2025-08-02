@@ -90,8 +90,8 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
       };
       updatedBirds = [...birds, newBird];
     }
-    setBirds(updatedBirds);
     onSave(updatedBirds);
+    setBirds(updatedBirds);
     setEditingBird(null);
     form.reset({ name: "", species: "", gender: "Male", imageUrl: "", weight: 0, dateCaptured: new Date(), isHidden: false });
   };
@@ -113,8 +113,8 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
   const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to remove this bird? This will delete all associated data.")) {
         const updatedBirds = birds.filter(b => b.id !== id);
-        setBirds(updatedBirds);
         onSave(updatedBirds);
+        setBirds(updatedBirds);
     }
   };
   
