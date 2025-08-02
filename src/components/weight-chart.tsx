@@ -65,7 +65,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
 
     const minValue = Math.min(...allValues);
     const maxValue = Math.max(...allValues);
-    const padding = (maxValue - minValue) * 0.1 || 10;
+    const padding = 5;
 
     return [Math.floor(minValue - padding), Math.ceil(maxValue + padding)];
   }
