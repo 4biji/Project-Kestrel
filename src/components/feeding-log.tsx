@@ -115,7 +115,7 @@ export function FeedingLogComponent({ logs, onEdit, onDelete, averageHourlyLoss,
 
         const firstLogTime = parseISO(sortedByTime[0].datetime);
         const lastLogTime = parseISO(sortedByTime[sortedByTime.length - 1].datetime);
-        const totalHours = differenceInHours(lastLogTime, firstLogTime);
+        const totalHours = (lastLogTime.getTime() - firstLogTime.getTime()) / (1000 * 60 * 60);
 
         if (totalHours > 0) {
             const totalFood = sortedByTime.reduce((sum, log) => sum + log.amount, 0);
