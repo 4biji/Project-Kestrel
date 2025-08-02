@@ -114,6 +114,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
                 tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
                 width={30}
+                allowDataOverflow={true}
             />
             <Tooltip
                 content={({ active, payload, label }) => {
