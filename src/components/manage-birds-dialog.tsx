@@ -48,7 +48,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
 
   useEffect(() => {
     setBirds(initialBirds);
-  }, [initialBirds]);
+  }, [initialBirds, open]);
 
   const form = useForm<BirdFormValues>({
     resolver: zodResolver(birdFormSchema),
@@ -90,7 +90,6 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
       };
       updatedBirds = [...birds, newBird];
     }
-    onSave(updatedBirds);
     setBirds(updatedBirds);
     setEditingBird(null);
     form.reset({ name: "", species: "", gender: "Male", imageUrl: "", weight: 0, dateCaptured: new Date(), isHidden: false });
@@ -99,7 +98,6 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
   const handleToggleVisibility = (birdId: string) => {
     const updatedBirds = birds.map(b => b.id === birdId ? { ...b, isHidden: !b.isHidden } : b);
     setBirds(updatedBirds);
-    onSave(updatedBirds);
   }
 
   const handleEdit = (bird: Bird) => {
@@ -113,7 +111,6 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
   const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to remove this bird? This will delete all associated data.")) {
         const updatedBirds = birds.filter(b => b.id !== id);
-        onSave(updatedBirds);
         setBirds(updatedBirds);
     }
   };
@@ -124,16 +121,23 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
   }
 
   const handleSaveChanges = () => {
+    onSave(birds);
+    onOpenChange(false);
+  }
+  
+  const handleClose = () => {
+    setEditingBird(null);
+    form.reset({ name: "", species: "", gender: "Male", imageUrl: "", weight: 0, dateCaptured: new Date(), isHidden: false });
     onOpenChange(false);
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Manage Birds</DialogTitle>
           <DialogDescription>
-            Add, edit, or remove birds from your journal.
+            Add, edit, or remove birds from your journal. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
         
@@ -152,7 +156,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
                             <FormField control={form.control} name="gender" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Gender</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                                         <SelectContent><SelectItem value="Male">Male</SelectItem><SelectItem value="Female">Female</SelectItem></SelectContent>
                                     </Select>
@@ -258,9 +262,8 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
         </div>
         
         <DialogFooter>
-            <DialogClose asChild>
-                <Button type="button" variant="ghost" onClick={handleSaveChanges}>Close</Button>
-            </DialogClose>
+            <Button type="button" variant="ghost" onClick={handleClose}>Cancel</Button>
+            <Button type="button" onClick={handleSaveChanges}>Save Changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

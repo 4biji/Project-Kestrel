@@ -111,55 +111,44 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
     const originalBirdIds = new Set(birds.map(b => b.id));
     const updatedBirdIds = new Set(updatedBirds.map(b => b.id));
 
-    // Check for additions
-    const newBirds = updatedBirds.filter(b => !originalBirdIds.has(b.id));
-    if (newBirds.length > 0) {
-      setBirds(updatedBirds);
-      setLogs(prevLogs => {
-        const newLogs = { ...prevLogs };
-        newBirds.forEach(bird => {
-            if (!newLogs[bird.id]) {
-                newLogs[bird.id] = [];
-            }
-        });
-        return newLogs;
-      });
-      toast({ title: "Bird Added", description: `${newBirds.map(b => b.name).join(', ')} has been added.` });
-       if (newBirds.length > 0) {
-          router.push(`/bird/${newBirds[0].id}`);
-        }
-      setIsManageBirdsOpen(false);
-      return;
-    }
-
     // Check for deletions
-    const deletedBirdIds = [...originalBirdIds].filter(id => !updatedBirdIds.has(id));
-    if (deletedBirdIds.length > 0) {
-        const deletedBirdNames = birds.filter(b => deletedBirdIds.includes(b.id)).map(b => b.name);
-        setBirds(updatedBirds);
-        setLogs(prevLogs => {
-            const newLogs = { ...prevLogs };
-            deletedBirdIds.forEach(id => {
-                delete newLogs[id];
-            });
-            return newLogs;
-        });
-        toast({ title: "Bird Removed", description: `${deletedBirdNames.join(', ')} has been removed.`, variant: "destructive" });
-        if (view === 'detail' && selectedBirdId && deletedBirdIds.includes(selectedBirdId)) {
-            router.push('/');
-        }
-        setIsManageBirdsOpen(false);
-        return;
-    }
+    if (updatedBirds.length < birds.length) {
+        const deletedBirdId = [...originalBirdIds].find(id => !updatedBirdIds.has(id));
+        if (deletedBirdId) {
+            const deletedBird = birds.find(b => b.id === deletedBirdId);
+            setBirds(updatedBirds);
+            
+            const newLogs = { ...logs };
+            delete newLogs[deletedBirdId];
+            setLogs(newLogs);
 
-    // Check for updates
-    const updatedBirdInfo = updatedBirds.find(b => {
-        const original = birds.find(ob => ob.id === b.id);
-        return original && JSON.stringify(original) !== JSON.stringify(b);
-    });
-     if (updatedBirdInfo) {
+            toast({ title: "Bird Removed", description: `${deletedBird?.name} has been removed.`, variant: "destructive" });
+            
+            if (view === 'detail' && selectedBirdId === deletedBirdId) {
+                router.push('/');
+            }
+        }
+    }
+    // Check for additions
+    else if (updatedBirds.length > birds.length) {
+        const newBird = updatedBirds.find(b => !originalBirdIds.has(b.id));
         setBirds(updatedBirds);
-        toast({ title: "Bird Updated", description: `${updatedBirdInfo.name}'s information has been updated.` });
+        if (newBird) {
+            setLogs(prevLogs => ({ ...prevLogs, [newBird.id]: [] }));
+            toast({ title: "Bird Added", description: `${newBird.name} has been added.` });
+            router.push(`/bird/${newBird.id}`);
+        }
+    }
+    // Check for updates
+    else {
+        const updatedBirdInfo = updatedBirds.find(b => {
+            const original = birds.find(ob => ob.id === b.id);
+            return original && JSON.stringify(original) !== JSON.stringify(b);
+        });
+        setBirds(updatedBirds);
+        if (updatedBirdInfo) {
+            toast({ title: "Bird Updated", description: `${updatedBirdInfo.name}'s information has been updated.` });
+        }
     }
     
     setIsManageBirdsOpen(false);
