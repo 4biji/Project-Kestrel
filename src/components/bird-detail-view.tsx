@@ -52,14 +52,14 @@ type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunti
 
 const defaultLayouts: Responsive.Layouts = {
     lg: [
-      { i: 'weight-trend', x: 0, y: 0, w: 4, h: 2 },
-      { i: 'husbandry', x: 0, y: 2, w: 1, h: 3 },
-      { i: 'hunting-log', x: 1, y: 2, w: 1, h: 3 },
-      { i: 'training-log', x: 2, y: 2, w: 1, h: 3 },
-      { i: 'weight-log', x: 3, y: 2, w: 1, h: 3 },
-      { i: 'mutes-castings', x: 0, y: 5, w: 1, h: 3 },
-      { i: 'feeding-log', x: 1, y: 5, w: 1, h: 3 },
-      { i: 'first-aid', x: 2, y: 5, w: 2, h: 3 },
+      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
+      { i: 'weight-log', x: 0, y: 2, w: 1, h: 3 },
+      { i: 'feeding-log', x: 1, y: 2, w: 1, h: 3 },
+      { i: 'husbandry', x: 0, y: 5, w: 1, h: 3 },
+      { i: 'training-log', x: 1, y: 5, w: 1, h: 3 },
+      { i: 'hunting-log', x: 0, y: 8, w: 1, h: 3 },
+      { i: 'mutes-castings', x: 1, y: 8, w: 1, h: 3 },
+      { i: 'first-aid', x: 0, y: 11, w: 2, h: 3 },
     ],
 };
 
@@ -264,7 +264,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         className="layout"
         layouts={defaultLayouts}
         breakpoints={{lg: 1200, md: 768, sm: 640, xs: 0}}
-        cols={{lg: 4, md: 2, sm: 1, xs: 1}}
+        cols={{lg: 2, md: 2, sm: 1, xs: 1}}
         rowHeight={settings.rowHeight}
         isDraggable={settings.isLayoutEditable}
         isResizable={settings.isLayoutEditable}
