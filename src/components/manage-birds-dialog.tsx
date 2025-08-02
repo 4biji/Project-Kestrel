@@ -1,11 +1,12 @@
 
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { CalendarIcon, Eye, EyeOff } from "lucide-react";
 import type { Bird } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -26,7 +27,7 @@ const birdFormSchema = z.object({
   name: z.string().min(1, "Name is required."),
   species: z.string().min(1, "Species is required."),
   gender: z.enum(["Male", "Female"]),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().url().optional().or(z.literal('')),
   weight: z.coerce.number().positive("Weight must be a positive number."),
   dateCaptured: z.date({ required_error: "A date is required." }),
   isHidden: z.boolean().default(false),
@@ -41,8 +42,13 @@ interface ManageBirdsDialogProps {
   onSave: (birds: Bird[]) => void;
 }
 
-export function ManageBirdsDialog({ open, onOpenChange, birds, onSave }: ManageBirdsDialogProps) {
+export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onSave }: ManageBirdsDialogProps) {
+  const [birds, setBirds] = useState(initialBirds);
   const [editingBird, setEditingBird] = useState<Bird | null>(null);
+
+  useEffect(() => {
+    setBirds(initialBirds);
+  }, [initialBirds]);
 
   const form = useForm<BirdFormValues>({
     resolver: zodResolver(birdFormSchema),
@@ -84,6 +90,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds, onSave }: ManageB
       };
       updatedBirds = [...birds, newBird];
     }
+    setBirds(updatedBirds);
     onSave(updatedBirds);
     setEditingBird(null);
     form.reset({ name: "", species: "", gender: "Male", imageUrl: "", weight: 0, dateCaptured: new Date(), isHidden: false });
@@ -91,6 +98,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds, onSave }: ManageB
   
   const handleToggleVisibility = (birdId: string) => {
     const updatedBirds = birds.map(b => b.id === birdId ? { ...b, isHidden: !b.isHidden } : b);
+    setBirds(updatedBirds);
     onSave(updatedBirds);
   }
 
@@ -98,13 +106,14 @@ export function ManageBirdsDialog({ open, onOpenChange, birds, onSave }: ManageB
     setEditingBird(bird);
     form.reset({
         ...bird,
-        dateCaptured: new Date(bird.dateCaptured),
+        dateCaptured: parseISO(bird.dateCaptured),
     });
   };
 
   const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to remove this bird? This will delete all associated data.")) {
         const updatedBirds = birds.filter(b => b.id !== id);
+        setBirds(updatedBirds);
         onSave(updatedBirds);
     }
   };
@@ -150,7 +159,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds, onSave }: ManageB
                                 </FormItem>
                             )}/>
                             <FormField control={form.control} name="weight" render={({ field }) => (
-                                <FormItem><FormLabel>Weight (g)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Initial Weight (g)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                             )}/>
                         </div>
                         <FormField control={form.control} name="dateCaptured" render={({ field }) => (

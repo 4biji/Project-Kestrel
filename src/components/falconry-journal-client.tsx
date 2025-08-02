@@ -54,6 +54,7 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
     try {
       const storedBirds = localStorage.getItem('falconry-birds');
       const storedLogs = localStorage.getItem('falconry-logs');
+      const storedSettings = localStorage.getItem('falconry-settings');
 
       if (storedBirds) {
         setBirds(JSON.parse(storedBirds));
@@ -66,6 +67,11 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
       } else {
         setLogs(initialLogs);
       }
+      
+      if (storedSettings) {
+        setSettings(settingsSchema.parse(JSON.parse(storedSettings)));
+      }
+
     } catch (error) {
         console.error("Failed to parse from localStorage", error);
         setBirds(initialBirds);
@@ -79,11 +85,12 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
       try {
         localStorage.setItem('falconry-birds', JSON.stringify(birds));
         localStorage.setItem('falconry-logs', JSON.stringify(logs));
+        localStorage.setItem('falconry-settings', JSON.stringify(settings));
       } catch (error) {
         console.error("Failed to save to localStorage", error);
       }
     }
-  }, [birds, logs, isLoaded]);
+  }, [birds, logs, settings, isLoaded]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -101,8 +108,11 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
   };
   
   const handleSaveBirds = (updatedBirds: BirdType[]) => {
-    const newBirds = updatedBirds.filter(b => !birds.some(ob => ob.id === b.id));
-    const deletedBirds = birds.filter(b => !updatedBirds.some(ub => ub.id === b.id));
+    const originalBirdIds = new Set(birds.map(b => b.id));
+    const updatedBirdIds = new Set(updatedBirds.map(b => b.id));
+
+    const newBirds = updatedBirds.filter(b => !originalBirdIds.has(b.id));
+    const deletedBirdIds = [...originalBirdIds].filter(id => !updatedBirdIds.has(id));
     const updatedBirdInfo = updatedBirds.find(b => {
         const original = birds.find(ob => ob.id === b.id);
         return original && JSON.stringify(original) !== JSON.stringify(b);
@@ -112,7 +122,6 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
     
     if (newBirds.length > 0) {
         toast({ title: "Bird Added", description: `${newBirds.map(b => b.name).join(', ')} has been added.` });
-        // Create an empty log array for the new bird
         setLogs(prevLogs => {
             const newLogs = { ...prevLogs };
             newBirds.forEach(bird => {
@@ -122,11 +131,20 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
             });
             return newLogs;
         });
-        // Navigate to the new bird's page
         router.push(`/bird/${newBirds[0].id}`);
-    } else if (deletedBirds.length > 0) {
-        toast({ title: "Bird Removed", description: `${deletedBirds.map(b => b.name).join(', ')} has been removed.`, variant: "destructive" });
-        if (view === 'detail' && deletedBirds.some(b => b.id === selectedBirdId)) {
+    } else if (deletedBirdIds.length > 0) {
+        const deletedBirdNames = birds.filter(b => deletedBirdIds.includes(b.id)).map(b => b.name);
+        toast({ title: "Bird Removed", description: `${deletedBirdNames.join(', ')} has been removed.`, variant: "destructive" });
+        
+        setLogs(prevLogs => {
+            const newLogs = { ...prevLogs };
+            deletedBirdIds.forEach(id => {
+                delete newLogs[id];
+            });
+            return newLogs;
+        });
+        
+        if (view === 'detail' && selectedBirdId && deletedBirdIds.includes(selectedBirdId)) {
             router.push('/');
         }
     } else if (updatedBirdInfo) {
