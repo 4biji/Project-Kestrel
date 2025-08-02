@@ -1,4 +1,5 @@
 
+
 export interface Bird {
   id: string;
   name: string;
@@ -87,6 +88,12 @@ export interface PredefinedHealthIssue {
     id: string;
     issue: string;
     severity: number;
+}
+
+export interface FirstAidLink {
+    id: string;
+    title: string;
+    url: string;
 }
 
 

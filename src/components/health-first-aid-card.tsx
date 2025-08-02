@@ -7,12 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { HeartPulse, Plus, Settings, ScrollText } from "lucide-react";
-import type { HealthLog, PredefinedHealthIssue, LogEntry } from "@/lib/types";
+import type { HealthLog, PredefinedHealthIssue, LogEntry, FirstAidLink } from "@/lib/types";
 import { HealthLogComponent, ViewAllHealthLogsDialog } from "./health-log";
 import { HealthLogSettingsDialog } from "./health-log-settings-dialog";
 import { AddHealthLogForm } from "./add-health-log-form";
 import { HealthIssueDetailDialog } from "./health-issue-detail-dialog";
-import { predefinedHealthIssues as initialPredefinedHealthIssues } from "@/lib/data";
+import { predefinedHealthIssues as initialPredefinedHealthIssues, predefinedFirstAidLinks as initialPredefinedFirstAidLinks } from "@/lib/data";
 import { useToast } from "@/hooks/use-toast";
 
 interface HealthFirstAidCardProps {
@@ -31,9 +31,11 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
     const [isViewingAllLogs, setIsViewingAllLogs] = useState(false);
     const [selectedIssue, setSelectedIssue] = useState<PredefinedHealthIssue | null>(null);
     const [addingLogForIssue, setAddingLogForIssue] = useState<PredefinedHealthIssue | null>(null);
+    const [firstAidLinks, setFirstAidLinks] = useState<FirstAidLink[]>(initialPredefinedFirstAidLinks);
 
-    const handleSaveSettings = (issues: PredefinedHealthIssue[]) => {
-        onSaveIssues(issues)
+    const handleSaveSettings = (issues: PredefinedHealthIssue[], links: FirstAidLink[]) => {
+        onSaveIssues(issues);
+        setFirstAidLinks(links);
     }
 
     const handleAddSubmit = (data: Omit<HealthLog, 'id' | 'datetime' | 'logType'>) => {
@@ -88,6 +90,7 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
                     onEdit={onEditLog} 
                     onDelete={onDeleteLog}
                     onIssueClick={setSelectedIssue}
+                    firstAidLinks={firstAidLinks}
                 />
             </CardContent>
 
@@ -118,6 +121,7 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
                 open={isEditingSettings}
                 onOpenChange={setIsEditingSettings}
                 issues={predefinedIssues}
+                links={firstAidLinks}
                 onSave={handleSaveSettings}
             />
 

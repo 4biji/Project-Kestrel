@@ -2,7 +2,7 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
-import type { HealthLog, PredefinedHealthIssue } from "@/lib/types";
+import type { HealthLog, PredefinedHealthIssue, FirstAidLink } from "@/lib/types";
 import { ScrollArea } from "./ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
@@ -16,12 +16,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 interface HealthLogProps {
   logs: HealthLog[];
   predefinedIssues: PredefinedHealthIssue[];
+  firstAidLinks: FirstAidLink[];
   onEdit: (log: HealthLog) => void;
   onDelete: (log: HealthLog) => void;
   onIssueClick: (issue: PredefinedHealthIssue) => void;
 }
 
-interface CommonProps extends Omit<HealthLogProps, 'onIssueClick'> {}
+interface CommonProps extends Omit<HealthLogProps, 'onIssueClick' | 'firstAidLinks'> {}
 
 const getSeverityBadgeVariant = (severity: number): "destructive" | "secondary" | "default" => {
     if (severity >= 8) return "destructive";
@@ -101,12 +102,12 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, predefinedIs
 }
 
 
-export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete, onIssueClick }: HealthLogProps) {
+export function HealthLogComponent({ logs, predefinedIssues, firstAidLinks, onEdit, onDelete, onIssueClick }: HealthLogProps) {
   const sortedIssues = [...predefinedIssues].sort((a,b) => b.severity - a.severity);
 
   return (
     <div className="space-y-2 h-full">
-      {predefinedIssues.length > 0 ? (
+      {predefinedIssues.length > 0 || firstAidLinks.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
             <Card className="flex flex-col h-full">
                  <CardHeader>
@@ -139,16 +140,13 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete, o
             </CardHeader>
             <CardContent>
                 <ul className="space-y-2 text-sm">
-                    <li>
-                        <a href="https://www.themodernapprentice.com/firstaid.htm" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
-                            <Link className="h-4 w-4" /> The Modern Apprentice
-                        </a>
-                    </li>
-                     <li>
-                        <a href="https://nysfa.org/health-medical/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
-                            <Link className="h-4 w-4" /> NYS Falconry Association
-                        </a>
-                    </li>
+                    {firstAidLinks.map(link => (
+                         <li key={link.id}>
+                            <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
+                                <Link className="h-4 w-4" /> {link.title}
+                            </a>
+                        </li>
+                    ))}
                 </ul>
             </CardContent>
           </Card>
@@ -156,7 +154,7 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete, o
       ) : (
         <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-full">
             <AlertTriangle className="w-12 h-12 mb-4" />
-            <p>No predefined health issues.</p>
+            <p>No predefined health issues or links.</p>
             <p className="text-xs">Add some in the settings to see them here.</p>
         </div>
       )}

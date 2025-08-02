@@ -1,5 +1,5 @@
 
-import type { Bird, LogEntry, NutritionInfo, PredefinedHusbandryTask, PredefinedTraining, PredefinedHealthIssue } from './types';
+import type { Bird, LogEntry, NutritionInfo, PredefinedHusbandryTask, PredefinedTraining, PredefinedHealthIssue, FirstAidLink } from './types';
 
 export const birds: Bird[] = [
   {
@@ -119,6 +119,11 @@ export const predefinedHealthIssues: PredefinedHealthIssue[] = [
     { id: 'health_2', issue: 'Sour Crop', severity: 8 },
     { id: 'health_3', issue: 'Feather Damage', severity: 2 },
     { id: 'health_4', issue: 'Aspergillosis', severity: 9 },
+];
+
+export const predefinedFirstAidLinks: FirstAidLink[] = [
+    { id: 'link_1', title: 'The Modern Apprentice', url: 'https://www.themodernapprentice.com/firstaid.htm' },
+    { id: 'link_2', title: 'NYS Falconry Association', url: 'https://nysfa.org/health-medical/' },
 ];
 
     
