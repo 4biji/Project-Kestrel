@@ -11,7 +11,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { cn } from "@/lib/utils";
-import { FirstAidButton } from "./first-aid-button";
 
 interface HealthLogProps {
   logs: HealthLog[];
@@ -107,7 +106,7 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }:
         return { ...log, severity: issue?.severity || 0 };
     })
     .sort((a, b) => b.severity - a.severity)
-    .slice(0, 1);
+    .slice(0, 2);
 
   return (
     <div className="space-y-2 h-full">
@@ -136,7 +135,6 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }:
               </CardContent>
             </Card>
           ))}
-          <FirstAidButton />
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-full">
