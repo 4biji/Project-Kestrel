@@ -116,9 +116,9 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }:
                  </CardHeader>
                  <CardContent className="flex-grow overflow-hidden">
                     <ScrollArea className="h-full pr-4 -mr-4">
-                        <div className="space-y-2">
+                        <div className="space-y-1">
                             {sortedIssues.map((issue) => (
-                                <div key={issue.id} className="flex justify-between items-center text-sm py-1">
+                                <div key={issue.id} className="flex justify-between items-center text-sm py-0.5">
                                     <span>{issue.issue}</span>
                                     <Badge variant={getSeverityBadgeVariant(issue.severity)} className="px-1.5 py-0 text-xs">{issue.severity}</Badge>
                                 </div>
