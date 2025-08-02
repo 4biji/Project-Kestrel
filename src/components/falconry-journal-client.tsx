@@ -131,7 +131,9 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
             });
             return newLogs;
         });
-        router.push(`/bird/${newBirds[0].id}`);
+        if (newBirds.length > 0) {
+          router.push(`/bird/${newBirds[0].id}`);
+        }
     } else if (deletedBirdIds.length > 0) {
         const deletedBirdNames = birds.filter(b => deletedBirdIds.includes(b.id)).map(b => b.name);
         toast({ title: "Bird Removed", description: `${deletedBirdNames.join(', ')} has been removed.`, variant: "destructive" });
@@ -244,7 +246,7 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
                     setBirds={setBirds}
                 />
             )}
-             {view === 'detail' && !birdForDetail && (
+             {view === 'detail' && !birdForDetail && isLoaded && (
                 <div className="flex flex-col items-center justify-center h-full text-center">
                     <Feather className="w-16 h-16 text-muted-foreground" />
                     <h2 className="mt-4 text-2xl font-semibold">Bird not found.</h2>
