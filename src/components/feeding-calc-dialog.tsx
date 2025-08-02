@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Calendar } from "./ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Separator } from "./ui/separator";
 
 interface FeedingCalcDialogProps {
     open: boolean;
@@ -24,6 +25,7 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
     const [targetDate, setTargetDate] = useState<Date | undefined>(new Date());
     const [targetTime, setTargetTime] = useState(format(new Date(), "HH:mm"));
     const [calculatedAmount, setCalculatedAmount] = useState<number | null>(null);
+    const [projectedLoss, setProjectedLoss] = useState<number | null>(null);
 
      useEffect(() => {
         const tWeight = parseFloat(targetWeight);
@@ -38,15 +40,18 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
 
             if (hoursUntilTarget > 0) {
                 const projectedWeightLoss = hoursUntilTarget * averageHourlyLoss;
+                setProjectedLoss(projectedWeightLoss);
                 const weightDifference = tWeight - currentWeight;
                 const amountNeeded = weightDifference + projectedWeightLoss;
                 setCalculatedAmount(amountNeeded > 0 ? amountNeeded : 0);
             } else {
-                 setCalculatedAmount(0); // If time is in the past, no feeding needed to reach future weight
+                 setCalculatedAmount(0);
+                 setProjectedLoss(0);
             }
 
         } else {
             setCalculatedAmount(null);
+            setProjectedLoss(null);
         }
     }, [targetWeight, targetDate, targetTime, averageHourlyLoss, currentWeight]);
 
@@ -95,10 +100,21 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
                         <Label></Label>
                         <Input id="targetTime" type="time" value={targetTime} onChange={(e) => setTargetTime(e.target.value)} />
                     </div>
-                    {calculatedAmount !== null && (
-                        <div className="text-center pt-4 border-t mt-4">
-                            <p className="text-sm text-muted-foreground">Amount to Feed</p>
-                            <p className="text-3xl font-bold text-primary">{calculatedAmount.toFixed(1)}g</p>
+                    {(calculatedAmount !== null || projectedLoss !== null) && (
+                        <div className="space-y-4 text-center pt-4 border-t mt-4">
+                            {projectedLoss !== null && (
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Projected Weight Loss</p>
+                                    <p className="text-lg font-semibold text-destructive">{projectedLoss.toFixed(1)}g</p>
+                                </div>
+                            )}
+                             {calculatedAmount !== null && projectedLoss !== null && <Separator />}
+                            {calculatedAmount !== null && (
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Amount to Feed</p>
+                                    <p className="text-3xl font-bold text-primary">{calculatedAmount.toFixed(1)}g</p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
