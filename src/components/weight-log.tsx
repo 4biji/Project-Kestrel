@@ -12,12 +12,13 @@ import { TrendingUp, TrendingDown, MoreVertical, Pencil, Trash2, Activity, GitCo
 
 interface WeightLogComponentProps {
   logs: WeightLog[];
+  currentWeight: number;
   onEdit: (log: WeightLog) => void;
   onDelete: (log: WeightLog) => void;
   onAverageLossChange?: (avgLoss: number) => void;
 }
 
-interface ViewAllLogsDialogProps extends Omit<WeightLogComponentProps, 'onAverageLossChange'> {
+interface ViewAllLogsDialogProps extends Omit<WeightLogComponentProps, 'onAverageLossChange' | 'currentWeight'> {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
@@ -97,8 +98,7 @@ export function ViewAllLogsDialog({ open, onOpenChange, logs, onEdit, onDelete }
     );
 }
 
-export function WeightLogComponent({ logs, onEdit, onDelete, onAverageLossChange }: WeightLogComponentProps) {
-  const [displayLogs, setDisplayLogs] = useState<WeightLog[]>([]);
+export function WeightLogComponent({ logs, currentWeight, onEdit, onDelete, onAverageLossChange }: WeightLogComponentProps) {
   const [lastLog, setLastLog] = useState<WeightLog | null>(null);
   const [averageHourlyLoss, setAverageHourlyLoss] = useState(0);
   const [lastWeightChange, setLastWeightChange] = useState<number | null>(null);
@@ -110,7 +110,6 @@ export function WeightLogComponent({ logs, onEdit, onDelete, onAverageLossChange
 
     const sortedByTimeDesc = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
     
-    setDisplayLogs(sortedByTimeDesc);
     setLastLog(sortedByTimeDesc.length > 0 ? sortedByTimeDesc[0] : null);
 
     if (sortedByTimeDesc.length >= 2) {
@@ -135,7 +134,7 @@ export function WeightLogComponent({ logs, onEdit, onDelete, onAverageLossChange
         setLastHourlyChange(null);
     }
     
-    const sortedByTimeAsc = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(a.datetime).getTime());
+    const sortedByTimeAsc = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
     if (sortedByTimeAsc.length < 2) {
       setAverageHourlyLoss(0);
       if (onAverageLossChange) onAverageLossChange(0);
@@ -168,12 +167,16 @@ export function WeightLogComponent({ logs, onEdit, onDelete, onAverageLossChange
     if (onAverageLossChange) onAverageLossChange(avgLoss);
   }, [logs, onAverageLossChange]);
 
-  const getChangeForLog = (currentLog: WeightLog) => {
-    const currentIndex = displayLogs.findIndex(log => log.datetime === currentLog.datetime);
-    if (currentIndex === -1 || currentIndex >= displayLogs.length - 1) return null;
-    const previousLog = displayLogs[currentIndex + 1];
+  const getChangeForLog = (currentLog: WeightLog | null) => {
+    if (!currentLog) return null;
+    const sortedByTimeDesc = [...logs].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+    const currentIndex = sortedByTimeDesc.findIndex(log => log.id === currentLog.id);
+    if (currentIndex === -1 || currentIndex >= sortedByTimeDesc.length - 1) return null;
+    const previousLog = sortedByTimeDesc[currentIndex + 1];
     return currentLog.weight - previousLog.weight;
   }
+
+  const weightChange = getChangeForLog(lastLog);
 
   return (
     <div className="space-y-2">
@@ -182,16 +185,13 @@ export function WeightLogComponent({ logs, onEdit, onDelete, onAverageLossChange
           <div className="group flex flex-col p-2.5 bg-secondary/50 rounded-lg text-sm -mt-2">
             <div className="font-medium whitespace-nowrap">Last Entry</div>
             <div className="flex items-center gap-2 mt-1">
-                <div className="text-2xl font-bold text-primary">{lastLog.weight}g</div>
-                {(log => {
-                    const weightChange = getChangeForLog(log);
-                    return weightChange !== null && !isNaN(weightChange) && (
+                <div className="text-2xl font-bold text-primary">{currentWeight}g</div>
+                {weightChange !== null && !isNaN(weightChange) && (
                     <span className={`flex items-center text-lg font-bold ${weightChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
                         {weightChange >= 0 ? <TrendingUp className="w-4 h-4 mr-0.5" /> : <TrendingDown className="w-4 h-4 mr-0.5" />}
                         {weightChange.toFixed(1)}g
                     </span>
-                    );
-                })(lastLog)}
+                )}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
               <span>{format(parseISO(lastLog.datetime), 'MMM d, HH:mm:ss')}</span>

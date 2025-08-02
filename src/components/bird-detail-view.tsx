@@ -356,6 +356,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 <CardContent className="flex-grow">
                     <WeightLogComponent 
                         logs={birdWeightLogs} 
+                        currentWeight={currentWeight}
                         onEdit={handleEditLog}
                         onDelete={handleDeleteLog}
                         onAverageLossChange={setAverageHourlyLoss}
