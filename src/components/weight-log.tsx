@@ -14,7 +14,7 @@ interface WeightLogComponentProps {
   logs: WeightLog[];
   onEdit: (log: WeightLog) => void;
   onDelete: (log: WeightLog) => void;
-  onAverageLossChange: (avgLoss: number) => void;
+  onAverageLossChange?: (avgLoss: number) => void;
 }
 
 interface ViewAllLogsDialogProps extends Omit<WeightLogComponentProps, 'onAverageLossChange'> {
@@ -138,7 +138,7 @@ export function WeightLogComponent({ logs, onEdit, onDelete, onAverageLossChange
     const sortedByTimeAsc = [...logs].sort((a,b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
     if (sortedByTimeAsc.length < 2) {
       setAverageHourlyLoss(0);
-      onAverageLossChange(0);
+      if (onAverageLossChange) onAverageLossChange(0);
       return;
     }
 
@@ -159,13 +159,13 @@ export function WeightLogComponent({ logs, onEdit, onDelete, onAverageLossChange
 
     if (hourlyLosses.length === 0) {
       setAverageHourlyLoss(0);
-      onAverageLossChange(0);
+      if (onAverageLossChange) onAverageLossChange(0);
       return;
     }
 
     const avgLoss = hourlyLosses.reduce((sum, loss) => sum + loss, 0) / hourlyLosses.length;
     setAverageHourlyLoss(avgLoss);
-    onAverageLossChange(avgLoss);
+    if (onAverageLossChange) onAverageLossChange(avgLoss);
   }, [logs, onAverageLossChange]);
 
   const getChangeForLog = (currentLog: WeightLog) => {
