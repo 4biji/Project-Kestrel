@@ -1,6 +1,11 @@
 
 import { FalconryJournalClient } from "@/components/falconry-journal-client";
 
-export default async function BirdPage({ params }: { params: { birdId: string } }) {
+interface PageProps {
+  params: { birdId: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default async function BirdPage({ params }: PageProps) {
   return <FalconryJournalClient view="detail" selectedBirdId={params.birdId} />;
 }
