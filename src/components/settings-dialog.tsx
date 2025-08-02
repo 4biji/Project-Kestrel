@@ -63,7 +63,7 @@ const cardOptions = [
     { id: 'feeding-log', label: 'Feeding Log' },
     { id: 'hunting-log', label: 'Hunting Log' },
     { id: 'husbandry', label: 'Husbandry Tasks' },
-    { id: 'mutes-castings', label: 'Health & Resources' },
+    { id: 'mutes-castings', label: 'Mutes & Castings' },
 ] as const;
 
 export function SettingsDialog({

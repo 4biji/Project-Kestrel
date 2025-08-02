@@ -9,9 +9,8 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Badge } from "./ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { MoreVertical, Pencil, Trash2, BookMarked, PlusSquare } from "lucide-react";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Separator } from "./ui/separator";
 
 interface MuteLogProps {
   logs: MuteLog[];
@@ -137,27 +136,10 @@ export function MuteLogComponent({ logs }: MuteLogProps) {
           {!lastMute && !lastCasting && (
              <p className="text-sm text-center text-muted-foreground py-10 col-span-2">No mute or casting records.</p>
           )}
-
         </div>
       ) : (
         <p className="text-sm text-center text-muted-foreground py-10">No mute or casting records.</p>
       )}
-
-      <Separator className="my-4" />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <div className="p-3 bg-secondary/50 rounded-lg text-sm">
-            <div className="font-medium flex items-center gap-2"><PlusSquare className="w-4 h-4 text-primary"/> First Aid</div>
-            <p className="text-xs text-muted-foreground mt-2">First aid information coming soon.</p>
-        </div>
-        <div className="p-3 bg-secondary/50 rounded-lg text-sm">
-            <div className="font-medium flex items-center gap-2"><BookMarked className="w-4 h-4 text-primary"/> Resources</div>
-            <ul className="space-y-1 text-xs text-muted-foreground mt-2">
-                <li><a href="#" className="text-primary hover:underline">Falconry Forum</a></li>
-                <li><a href="#" className="text-primary hover:underline">Avian Vet Finder</a></li>
-            </ul>
-        </div>
-      </div>
     </div>
   );
 }

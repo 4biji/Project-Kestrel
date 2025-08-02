@@ -453,8 +453,8 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Health & Resources</CardTitle>
-                        <CardDescription>Health monitoring, first aid, and helpful links.</CardDescription>
+                        <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes & Castings</CardTitle>
+                        <CardDescription>Health monitoring and observations.</CardDescription>
                     </div>
                     <div className="flex items-center">
                         <Button variant="ghost" size="icon" onClick={() => setAddingLogType('mute')}><Plus className="w-4 h-4"/></Button>
