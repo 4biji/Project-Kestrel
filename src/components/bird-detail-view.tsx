@@ -53,12 +53,12 @@ type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunti
 const defaultLayouts: Responsive.Layouts = {
     lg: [
       { i: 'weight-trend', x: 0, y: 0, w: 4, h: 2 },
-      { i: 'training-log', x: 0, y: 2, w: 1, h: 3 },
+      { i: 'weight-log', x: 0, y: 2, w: 1, h: 3 },
       { i: 'feeding-log', x: 1, y: 2, w: 1, h: 3 },
-      { i: 'mutes-castings', x: 2, y: 2, w: 1, h: 3 },
-      { i: 'weight-log', x: 3, y: 2, w: 1, h: 3 },
-      { i: 'hunting-log', x: 0, y: 5, w: 1, h: 3 },
-      { i: 'husbandry', x: 1, y: 5, w: 1, h: 3 },
+      { i: 'training-log', x: 2, y: 2, w: 1, h: 3 },
+      { i: 'husbandry', x: 3, y: 2, w: 1, h: 3 },
+      { i: 'mutes-castings', x: 0, y: 5, w: 1, h: 3 },
+      { i: 'hunting-log', x: 1, y: 5, w: 1, h: 3 },
       { i: 'first-aid', x: 2, y: 5, w: 2, h: 3 },
     ],
 };
