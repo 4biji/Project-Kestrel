@@ -164,7 +164,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
   }
   
   const birdLogs = logs[birdData.id] || [];
-  const birdWeightLogs = birdLogs.filter(l => l.logType === 'weight') as WeightLog[];
+  const birdWeightLogs = (birdLogs.filter(l => l.logType === 'weight') as WeightLog[]).sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
   const lastWeightLog = birdWeightLogs[0];
   const currentWeight = lastWeightLog ? lastWeightLog.weight : birdData.weight;
   

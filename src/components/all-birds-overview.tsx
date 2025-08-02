@@ -155,7 +155,7 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
     {birds.length > 0 ? (
         birds.map((bird, index) => {
             const birdLogs = logs[bird.id] || [];
-            const birdWeightLogs = birdLogs.filter(l => l.logType === 'weight') as WeightLog[];
+            const birdWeightLogs = (birdLogs.filter(l => l.logType === 'weight') as WeightLog[]).sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
             const lastWeightLog = birdWeightLogs[0];
             const currentWeight = lastWeightLog ? lastWeightLog.weight : bird.weight;
             const birdFeedingLogs = birdLogs.filter(l => l.logType === 'feeding') as FeedingLog[];
