@@ -35,6 +35,7 @@ export const settingsSchema = z.object({
     'hunting-log': z.boolean().default(true),
     'husbandry': z.boolean().default(true),
     'mutes-castings': z.boolean().default(true),
+    'health-first-aid': z.boolean().default(true),
   }).default({
     'weight-trend': true,
     'weight-log': true,
@@ -43,6 +44,7 @@ export const settingsSchema = z.object({
     'hunting-log': true,
     'husbandry': true,
     'mutes-castings': true,
+    'health-first-aid': true,
   }),
 });
 
@@ -64,6 +66,7 @@ const cardOptions = [
     { id: 'hunting-log', label: 'Hunting Log' },
     { id: 'husbandry', label: 'Husbandry Tasks' },
     { id: 'mutes-castings', label: 'Mutes & Castings' },
+    { id: 'health-first-aid', label: 'Health & First Aid' },
 ] as const;
 
 export function SettingsDialog({

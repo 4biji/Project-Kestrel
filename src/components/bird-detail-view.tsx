@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/
 import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, Rabbit, Eye, EyeOff, PlusSquare, BookMarked } from "lucide-react";
+import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, Rabbit, Eye, EyeOff, PlusSquare, BookMarked, HeartPulse } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { AddMuteLogForm } from "./add-mute-log-form";
@@ -25,6 +25,7 @@ import { HusbandryLog, ViewAllHusbandryTasksDialog } from "./husbandry-log";
 import { MuteLogComponent, ViewAllMuteLogsDialog } from "./mute-log";
 import { TrainingLogComponent, ViewAllTrainingLogsDialog } from "./training-log";
 import { HuntingLogComponent, ViewAllHuntingLogsDialog } from "./hunting-log";
+import { HealthFirstAidCard } from "./health-first-aid-card";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -61,6 +62,7 @@ const defaultLayouts: Responsive.Layouts = {
       { i: 'training-log', x: 1, y: 5, w: 1, h: 3 },
       { i: 'hunting-log', x: 0, y: 8, w: 1, h: 3 },
       { i: 'mutes-castings', x: 1, y: 8, w: 1, h: 3 },
+      { i: 'health-first-aid', x: 0, y: 11, w: 2, h: 2 },
     ],
 };
 
@@ -477,6 +479,9 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                     <MuteLogComponent logs={birdMuteLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
                 </CardContent>
             </Card>
+        </div>
+        <div key="health-first-aid">
+            <HealthFirstAidCard />
         </div>
       </ResponsiveGridLayout>
       
