@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
-const muteConditions: MuteCondition[] = ['Normal', 'Urinate Only', 'Greenish', 'Blackish', 'Yellowish'];
+const muteConditions = ['Normal', 'Urinate Only', 'Greenish', 'Blackish', 'Yellowish'] as const;
 
 const formSchema = z.object({
   type: z.enum(["Mute", "Casting"], { required_error: "Please select a type." }),
