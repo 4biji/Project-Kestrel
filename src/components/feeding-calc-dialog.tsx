@@ -69,9 +69,14 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
                     </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
+                    <div className="rounded-lg bg-secondary/50 p-3 text-center">
+                        <Label>Current Avg. Hourly Weight Loss</Label>
+                        <p className="text-xl font-bold text-primary">{averageHourlyLoss.toFixed(2)}g/hr</p>
+                    </div>
+
                     <div className="grid grid-cols-2 items-center gap-4">
-                        <Label htmlFor="customLoss">Hourly Loss (g/hr)</Label>
-                        <Input id="customLoss" type="number" placeholder={`Avg: ${averageHourlyLoss.toFixed(2)}`} value={customLoss} onChange={(e) => setCustomLoss(e.target.value)} />
+                        <Label htmlFor="customLoss">Override Loss (g/hr)</Label>
+                        <Input id="customLoss" type="number" placeholder="Optional" value={customLoss} onChange={(e) => setCustomLoss(e.target.value)} />
                     </div>
 
                     <div className="grid grid-cols-2 items-center gap-4">
