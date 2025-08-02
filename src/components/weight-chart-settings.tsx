@@ -30,7 +30,7 @@ import { Separator } from "./ui/separator";
 
 export const weightChartSettingsSchema = z.object({
     style: z.enum(["monotone", "linear", "step"]).default("monotone"),
-    dateRange: z.enum(["all", "30d", "7d", "1d"]).default("all"),
+    dateRange: z.enum(["all", "30d", "7d", "1d"]).default("7d"),
     showAverage: z.boolean().default(true),
     showFeedingEvents: z.boolean().default(true),
     alertBelowAverage: z.object({
