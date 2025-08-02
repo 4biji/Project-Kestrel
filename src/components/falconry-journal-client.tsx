@@ -1,7 +1,8 @@
 
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Bird,
   Feather,
@@ -49,6 +50,11 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<SettingsData>(() => settingsSchema.parse({}));
   const { toast } = useToast();
+
+  useEffect(() => {
+    document.documentElement.classList.remove('default', 'forest');
+    document.documentElement.classList.add(settings.theme);
+  }, [settings.theme]);
 
   const handleNavigate = (path: string) => {
     router.push(path);

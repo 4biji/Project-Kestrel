@@ -1,4 +1,5 @@
 
+
 import type { Bird, LogEntry, NutritionInfo, PredefinedHusbandryTask, PredefinedTraining, PredefinedHealthIssue, FirstAidLink, FeedingLog } from './types';
 
 export const birds: Bird[] = [
@@ -139,6 +140,7 @@ export const predefinedHealthIssues: PredefinedHealthIssue[] = [
 export const predefinedFirstAidLinks: FirstAidLink[] = [
     { id: 'link_1', title: 'The Modern Apprentice', url: 'https://www.themodernapprentice.com/firstaid.htm' },
     { id: 'link_2', title: 'NYS Falconry Association', url: 'https://nysfa.org/health-medical/' },
+    { id: 'link_3', title: 'Raptor Center', url: 'https://www.raptor.umn.edu/our-work/medical-care' },
 ];
 
     

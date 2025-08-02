@@ -1,5 +1,7 @@
 
 
+export type Theme = 'default' | 'forest';
+
 export interface Bird {
   id: string;
   name: string;

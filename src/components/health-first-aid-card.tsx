@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { HeartPulse, Plus, Settings, ScrollText } from "lucide-react";
+import { HeartPulse, Plus, Settings, ScrollText, Stethoscope } from "lucide-react";
 import type { HealthLog, PredefinedHealthIssue, LogEntry, FirstAidLink } from "@/lib/types";
 import { HealthLogComponent, ViewAllHealthLogsDialog } from "./health-log";
 import { HealthLogSettingsDialog } from "./health-log-settings-dialog";
@@ -58,7 +59,7 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
             <CardHeader className="flex flex-row items-center justify-between">
                  <div>
                     <CardTitle className="flex items-center gap-2 text-lg">
-                        <HeartPulse className="w-5 h-5"/> Health & First Aid
+                        <Stethoscope className="w-5 h-5"/> Health & First Aid
                     </CardTitle>
                     <CardDescription>Track issues and access resources.</CardDescription>
                 </div>

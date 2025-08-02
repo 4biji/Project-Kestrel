@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -19,13 +20,16 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
-import { Bird, View, Plus, Minus, PlusSquare } from "lucide-react";
+import { Bird, View, Plus, Minus, Palette } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import type { Theme } from "@/lib/types";
 
 
 export const settingsSchema = z.object({
   isLayoutEditable: z.boolean().default(false),
   rowHeight: z.coerce.number().positive().default(125),
+  theme: z.enum(['default', 'forest']).default('default'),
   visibleCards: z.object({
     'weight-trend': z.boolean().default(true),
     'weight-log': z.boolean().default(true),
@@ -64,7 +68,7 @@ const cardOptions = [
     { id: 'feeding-log', label: 'Feeding Log' },
     { id: 'hunting-log', label: 'Hunting Log' },
     { id: 'husbandry', label: 'Husbandry Tasks' },
-    { id: 'mutes-castings', label: 'Mutes &amp; Castings' },
+    { id: 'mutes-castings', label: 'Mutes & Castings' },
     { id: 'health-first-aid', label: 'Health Log' },
 ] as const;
 
@@ -77,6 +81,7 @@ export function SettingsDialog({
 }: SettingsDialogProps) {
   const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [isAppearanceOpen, setIsAppearanceOpen] = useState(false);
 
   const form = useForm<SettingsData>({
     resolver: zodResolver(settingsSchema),
@@ -100,6 +105,38 @@ export function SettingsDialog({
         </DialogHeader>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 pt-4">
+                <Collapsible open={isAppearanceOpen} onOpenChange={setIsAppearanceOpen} className="space-y-4 rounded-lg border p-4">
+                    <CollapsibleTrigger className="flex w-full items-center justify-between">
+                        <h3 className="font-medium text-foreground flex items-center gap-2">
+                            <Palette className="w-4 h-4" />
+                            Appearance
+                        </h3>
+                        {isAppearanceOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-4">
+                         <FormField
+                            control={form.control}
+                            name="theme"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Theme</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="default">Default</SelectItem>
+                                            <SelectItem value="forest">Forest</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </FormItem>
+                            )}
+                        />
+                    </CollapsibleContent>
+                </Collapsible>
+
                  <Collapsible open={isDataManagementOpen} onOpenChange={setIsDataManagementOpen} className="space-y-4 rounded-lg border p-4">
                     <CollapsibleTrigger className="flex w-full items-center justify-between">
                         <h3 className="font-medium text-foreground flex items-center gap-2">

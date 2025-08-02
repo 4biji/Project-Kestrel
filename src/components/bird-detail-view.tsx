@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -12,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/
 import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Settings, ScrollText, ClipboardList, Rabbit, PlusSquare, BookMarked, Activity, HousePlus, Rat, Droplets, Bird, ClipboardPlus } from "lucide-react";
+import { Plus, Settings, ScrollText, ClipboardList, Rabbit, BookMarked, Activity, HousePlus, Rat, Droplets, Bird, ClipboardPlus, Stethoscope } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { AddMuteLogForm } from "./add-mute-log-form";

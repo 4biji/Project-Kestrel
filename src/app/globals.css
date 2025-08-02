@@ -59,6 +59,33 @@
     --chart-4: 195 23% 79%;
     --chart-5: 195 23% 89%;
   }
+
+  .forest {
+    --background: 120 15% 95%;
+    --foreground: 120 25% 10%;
+    --card: 120 10% 99%;
+    --card-foreground: 120 25% 10%;
+    --popover: 120 10% 99%;
+    --popover-foreground: 120 25% 10%;
+    --primary: 140 35% 45%;
+    --primary-foreground: 140 20% 98%;
+    --secondary: 130 20% 96%;
+    --secondary-foreground: 130 25% 20%;
+    --muted: 130 20% 96%;
+    --muted-foreground: 130 15% 45%;
+    --accent: 140 30% 65%;
+    --accent-foreground: 140 20% 98%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 120 15% 88%;
+    --input: 120 15% 88%;
+    --ring: 140 35% 45%;
+    --chart-1: 140 35% 45%;
+    --chart-2: 140 35% 55%;
+    --chart-3: 140 35% 65%;
+    --chart-4: 140 35% 75%;
+    --chart-5: 140 35% 85%;
+  }
 }
 
 @layer base {

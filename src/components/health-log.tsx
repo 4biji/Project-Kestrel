@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { format, parseISO } from "date-fns";
@@ -6,7 +7,7 @@ import type { HealthLog, PredefinedHealthIssue, FirstAidLink } from "@/lib/types
 import { ScrollArea } from "./ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { MoreVertical, Pencil, Trash2, AlertTriangle, Plus, Siren, Cross } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, AlertTriangle, Plus, Siren, Cross, PlusSquare } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
