@@ -12,7 +12,7 @@ export function FirstAidButton() {
   return (
     <Button
       variant="destructive"
-      className="h-full w-full flex flex-col items-center justify-center text-lg space-y-2 bg-red-600 hover:bg-red-700"
+      className="h-full w-full aspect-square flex flex-col items-center justify-center text-lg space-y-2 bg-red-600 hover:bg-red-700"
       onClick={openFirstAidLink}
     >
       <div className="relative w-12 h-12">
