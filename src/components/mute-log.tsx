@@ -140,7 +140,7 @@ export function MuteLogComponent({ logs }: MuteLogProps) {
                 <div className="font-medium flex items-center gap-2"><BookOpen className="w-4 h-4 text-primary"/> Resources</div>
                  <div className="text-xs text-muted-foreground mt-2 space-y-1">
                     <a href="https://www.themodernapprentice.com/mutes.htm" target="_blank" rel="noopener noreferrer" className="block hover:underline text-primary">The Modern Apprentice</a>
-                    <a href="#" className="block hover:underline text-primary">North American Falconers Association</a>
+                    <a href="https://clinicalavianpathologyservices.com/feces-mutes/" target="_blank" rel="noopener noreferrer" className="block hover:underline text-primary">Clinical Avian Pathology</a>
                 </div>
             </div>
         </div>
