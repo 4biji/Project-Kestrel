@@ -108,10 +108,17 @@ export function AllBirdsOverview({ birds, logs: initialLogs }: AllBirdsOverviewP
     });
   };
   
-  const handleAddWeightLog = (newLogData: Omit<WeightLog, 'id' | 'datetime' | 'logType'> & { datetime: string }, birdId: string) => {
+  const handleAddWeightLog = (newLogData: Omit<WeightLog, 'id' | 'logType' | 'datetime'>, birdId: string) => {
+    const { date, time, ...rest } = newLogData as any;
+    const [hours, minutes] = time.split(':').map(Number);
+    const combinedDateTime = new Date(date);
+    combinedDateTime.setHours(hours);
+    combinedDateTime.setMinutes(minutes);
+
     const newLog: WeightLog = {
-      ...newLogData,
+      ...rest,
       id: `w${Date.now()}`,
+      datetime: combinedDateTime.toISOString(),
       logType: 'weight',
     };
 
