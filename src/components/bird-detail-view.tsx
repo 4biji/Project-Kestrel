@@ -1,5 +1,4 @@
 
-
       
 "use client";
 
@@ -54,13 +53,13 @@ type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunti
 const defaultLayouts: Responsive.Layouts = {
     lg: [
       { i: 'weight-trend', x: 0, y: 0, w: 4, h: 2 },
-      { i: 'weight-log', x: 0, y: 2, w: 1, h: 3 },
-      { i: 'feeding-log', x: 1, y: 2, w: 1, h: 3 },
-      { i: 'training-log', x: 2, y: 2, w: 1, h: 3 },
+      { i: 'training-log', x: 0, y: 2, w: 1, h: 3 },
+      { i: 'mutes-castings', x: 1, y: 2, w: 1, h: 3 },
+      { i: 'weight-log', x: 2, y: 2, w: 1, h: 3 },
+      { i: 'feeding-log', x: 3, y: 2, w: 1, h: 3 },
       { i: 'hunting-log', x: 0, y: 5, w: 1, h: 3 },
-      { i: 'mutes-castings', x: 1, y: 5, w: 1, h: 3 },
-      { i: 'husbandry', x: 2, y: 5, w: 1, h: 3 },
-      { i: 'first-aid', x: 3, y: 5, w: 1, h: 3 },
+      { i: 'husbandry', x: 1, y: 5, w: 1, h: 3 },
+      { i: 'first-aid', x: 2, y: 5, w: 2, h: 3 },
     ],
 };
 
@@ -267,10 +266,10 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         breakpoints={{lg: 1200, md: 768, sm: 640, xs: 0}}
         cols={{lg: 4, md: 2, sm: 1, xs: 1}}
         rowHeight={settings.rowHeight}
-        isDraggable={false}
-        isResizable={false}
+        isDraggable={settings.isLayoutEditable}
+        isResizable={settings.isLayoutEditable}
       >
-        <div key="weight-trend" style={{ display: settings.visibleCards['weight-trend'] ? 'block' : 'none' }}>
+        <div key="weight-trend">
             <Card className="flex flex-col h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Trend</CardTitle>
@@ -285,7 +284,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </CardContent>
             </Card>
         </div>
-        <div key="weight-log" style={{ display: settings.visibleCards['weight-log'] ? 'block' : 'none' }}>
+        <div key="weight-log">
             <Card className="flex flex-col h-full">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
@@ -315,7 +314,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </CardContent>
         </Card>
         </div>
-        <div key="training-log" style={{ display: settings.visibleCards['training-log'] ? 'block' : 'none' }}>
+        <div key="training-log">
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -348,7 +347,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </CardContent>
             </Card>
         </div>
-        <div key="feeding-log" style={{ display: settings.visibleCards['feeding-log'] ? 'block' : 'none' }}>
+        <div key="feeding-log">
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -381,7 +380,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </CardContent>
             </Card>
         </div>
-        <div key="hunting-log" style={{ display: settings.visibleCards['hunting-log'] ? 'block' : 'none' }}>
+        <div key="hunting-log">
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -410,7 +409,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </CardContent>
             </Card>
         </div>
-        <div key="husbandry" style={{ display: settings.visibleCards['husbandry'] ? 'block' : 'none' }}>
+        <div key="husbandry">
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -449,11 +448,11 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </CardContent>
             </Card>
         </div>
-        <div key="mutes-castings" style={{ display: settings.visibleCards['mutes-castings'] ? 'block' : 'none' }}>
+        <div key="mutes-castings">
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes & Castings</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes &amp; Castings</CardTitle>
                         <CardDescription>Health monitoring through droppings.</CardDescription>
                     </div>
                     <div className="flex items-center">
@@ -478,7 +477,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </CardContent>
             </Card>
         </div>
-        <div key="first-aid" style={{ display: settings.visibleCards['first-aid'] ? 'block' : 'none' }}>
+        <div key="first-aid">
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -614,4 +613,3 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     
 
     
-
