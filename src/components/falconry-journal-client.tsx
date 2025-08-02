@@ -111,44 +111,41 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
     const originalBirdIds = new Set(birds.map(b => b.id));
     const updatedBirdIds = new Set(updatedBirds.map(b => b.id));
 
-    // Check for deletions
+    // Handle Deletion
     if (updatedBirds.length < birds.length) {
         const deletedBirdId = [...originalBirdIds].find(id => !updatedBirdIds.has(id));
         if (deletedBirdId) {
             const deletedBird = birds.find(b => b.id === deletedBirdId);
-            setBirds(updatedBirds);
-            
             const newLogs = { ...logs };
             delete newLogs[deletedBirdId];
             setLogs(newLogs);
-
+            setBirds(updatedBirds); // Set the already filtered list
             toast({ title: "Bird Removed", description: `${deletedBird?.name} has been removed.`, variant: "destructive" });
-            
-            if (view === 'detail' && selectedBirdId === deletedBirdId) {
+            if (selectedBirdId === deletedBirdId) {
                 router.push('/');
             }
         }
     }
-    // Check for additions
+    // Handle Addition
     else if (updatedBirds.length > birds.length) {
         const newBird = updatedBirds.find(b => !originalBirdIds.has(b.id));
-        setBirds(updatedBirds);
         if (newBird) {
             setLogs(prevLogs => ({ ...prevLogs, [newBird.id]: [] }));
+            setBirds(updatedBirds);
             toast({ title: "Bird Added", description: `${newBird.name} has been added.` });
             router.push(`/bird/${newBird.id}`);
         }
     }
-    // Check for updates
+    // Handle Updates
     else {
         const updatedBirdInfo = updatedBirds.find(b => {
             const original = birds.find(ob => ob.id === b.id);
             return original && JSON.stringify(original) !== JSON.stringify(b);
         });
-        setBirds(updatedBirds);
         if (updatedBirdInfo) {
             toast({ title: "Bird Updated", description: `${updatedBirdInfo.name}'s information has been updated.` });
         }
+        setBirds(updatedBirds);
     }
     
     setIsManageBirdsOpen(false);
