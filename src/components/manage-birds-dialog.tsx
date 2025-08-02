@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Eye, EyeOff } from "lucide-react";
 import type { Bird } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -29,6 +29,7 @@ const birdFormSchema = z.object({
   imageUrl: z.string().optional(),
   weight: z.coerce.number().positive("Weight must be a positive number."),
   dateCaptured: z.date({ required_error: "A date is required." }),
+  isHidden: z.boolean().default(false),
 });
 
 type BirdFormValues = z.infer<typeof birdFormSchema>;
@@ -40,8 +41,7 @@ interface ManageBirdsDialogProps {
   onSave: (birds: Bird[]) => void;
 }
 
-export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onSave }: ManageBirdsDialogProps) {
-  const [birds, setBirds] = useState(initialBirds);
+export function ManageBirdsDialog({ open, onOpenChange, birds, onSave }: ManageBirdsDialogProps) {
   const [editingBird, setEditingBird] = useState<Bird | null>(null);
 
   const form = useForm<BirdFormValues>({
@@ -53,6 +53,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
       imageUrl: "",
       weight: 0,
       dateCaptured: new Date(),
+      isHidden: false,
     },
   });
 
@@ -68,26 +69,30 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
   };
 
   const handleFormSubmit = (values: BirdFormValues) => {
-    const birdData = {
-        ...values,
-        dateCaptured: values.dateCaptured.toISOString(),
-    };
-
+    let updatedBirds;
     if (editingBird) {
-      // Update existing bird
-      const updatedBirds = birds.map(b => b.id === editingBird.id ? { ...editingBird, ...birdData } : b);
-      setBirds(updatedBirds);
+      updatedBirds = birds.map(b => 
+        b.id === editingBird.id 
+          ? { ...b, ...values, dateCaptured: values.dateCaptured.toISOString() } 
+          : b
+      );
     } else {
-      // Add new bird
       const newBird: Bird = {
-        ...birdData,
+        ...values,
         id: `b${Date.now()}`,
+        dateCaptured: values.dateCaptured.toISOString(),
       };
-      setBirds([...birds, newBird]);
+      updatedBirds = [...birds, newBird];
     }
+    onSave(updatedBirds);
     setEditingBird(null);
-    form.reset({ name: "", species: "", gender: "Male", imageUrl: "", weight: 0, dateCaptured: new Date() });
+    form.reset({ name: "", species: "", gender: "Male", imageUrl: "", weight: 0, dateCaptured: new Date(), isHidden: false });
   };
+  
+  const handleToggleVisibility = (birdId: string) => {
+    const updatedBirds = birds.map(b => b.id === birdId ? { ...b, isHidden: !b.isHidden } : b);
+    onSave(updatedBirds);
+  }
 
   const handleEdit = (bird: Bird) => {
     setEditingBird(bird);
@@ -99,17 +104,16 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
 
   const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to remove this bird? This will delete all associated data.")) {
-        setBirds(birds.filter(b => b.id !== id));
+        onSave(birds.filter(b => b.id !== id));
     }
   };
   
   const handleCancelEdit = () => {
     setEditingBird(null);
-    form.reset({ name: "", species: "", gender: "Male", imageUrl: "", weight: 0, dateCaptured: new Date() });
+    form.reset({ name: "", species: "", gender: "Male", imageUrl: "", weight: 0, dateCaptured: new Date(), isHidden: false });
   }
 
   const handleSaveChanges = () => {
-    onSave(birds);
     onOpenChange(false);
   }
 
@@ -215,7 +219,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
                         </TableHeader>
                         <TableBody>
                         {birds.map(bird => (
-                            <TableRow key={bird.id}>
+                            <TableRow key={bird.id} className={cn(bird.isHidden && "opacity-50")}>
                             <TableCell className="font-medium flex items-center gap-2">
                                 <Avatar className="h-8 w-8">
                                     <AvatarImage src={bird.imageUrl} alt={bird.name} data-ai-hint="falcon bird" />
@@ -225,6 +229,9 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
                             </TableCell>
                             <TableCell>{bird.species}</TableCell>
                             <TableCell className="text-right">
+                                <Button variant="ghost" size="icon" onClick={() => handleToggleVisibility(bird.id)}>
+                                    {bird.isHidden ? <EyeOff className="h-4 w-4"/> : <Eye className="h-4 w-4"/>}
+                                </Button>
                                 <Button variant="ghost" size="icon" onClick={() => handleEdit(bird)}>
                                     <Edit className="h-4 w-4" />
                                 </Button>
@@ -242,13 +249,10 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
         
         <DialogFooter>
             <DialogClose asChild>
-                <Button type="button" variant="ghost">Cancel</Button>
+                <Button type="button" variant="ghost" onClick={handleSaveChanges}>Close</Button>
             </DialogClose>
-          <Button onClick={handleSaveChanges}>Save Changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-
-    

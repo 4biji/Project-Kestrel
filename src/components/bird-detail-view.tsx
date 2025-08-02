@@ -79,18 +79,15 @@ const defaultLayouts: Responsive.Layouts = {
 };
 
 interface BirdDetailViewProps {
-  initialData: {
-    birds: BirdType[];
-    logs: { [birdId: string]: LogEntry[] };
-  };
-  birdId: string;
+  bird: BirdType;
+  allBirds: BirdType[];
+  logs: { [birdId: string]: LogEntry[] };
   settings: SettingsData;
+  setLogs: React.Dispatch<React.SetStateAction<{ [birdId: string]: LogEntry[] }>>;
+  setBirds: React.Dispatch<React.SetStateAction<BirdType[]>>;
 }
 
-export function BirdDetailView({ initialData, birdId, settings }: BirdDetailViewProps) {
-  const [birds, setBirds] = useState(initialData.birds);
-  const [logs, setLogs] = useState(initialData.logs);
-
+export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBirds }: BirdDetailViewProps) {
   const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
   const [deletingLog, setDeletingLog] = useState<LogEntry | null>(null);
 
@@ -159,18 +156,16 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     });
   }
 
-  const birdData = birds.find(b => b.id === birdId);
-
-  if (!birdData) {
+  if (!bird) {
     return <p>Bird not found.</p>;
   }
   
-  const birdLogs = logs[birdData.id] || [];
+  const birdLogs = logs[bird.id] || [];
   const birdWeightLogs = (birdLogs.filter(l => l.logType === 'weight') as WeightLog[]).sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
   const lastWeightLog = birdWeightLogs[0];
-  const currentWeight = lastWeightLog ? lastWeightLog.weight : birdData.weight;
+  const currentWeight = lastWeightLog ? lastWeightLog.weight : bird.weight;
   
-  const selectedBird = {...birdData, weight: currentWeight};
+  const selectedBird = {...bird, weight: currentWeight};
 
 
   const birdFeedingLogs = birdLogs.filter(l => l.logType === 'feeding') as FeedingLog[];
@@ -196,10 +191,10 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     if (!editingLog) return;
     setLogs(prevLogs => {
       const newLogs = { ...prevLogs };
-      const logsForBird = newLogs[birdId].map(log => 
+      const logsForBird = newLogs[bird.id].map(log => 
         log.id === editingLog.id ? updatedLog : log
       );
-      newLogs[birdId] = logsForBird.sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+      newLogs[bird.id] = logsForBird.sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
       return newLogs;
     });
     setEditingLog(null);
@@ -214,7 +209,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     
     setLogs(prevLogs => {
       const newLogs = { ...prevLogs };
-      newLogs[birdId] = newLogs[birdId].filter(
+      newLogs[bird.id] = newLogs[bird.id].filter(
         log => log.id !== deletingLog.id
       );
       return newLogs;
@@ -258,7 +253,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
 
     setLogs(prev => ({
       ...prev,
-      [birdId]: [newLog, ...(prev[birdId] || [])].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime())
+      [bird.id]: [newLog, ...(prev[bird.id] || [])].sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime())
     }));
 
     setAddingLogType(null);
@@ -330,6 +325,251 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
 
   const filteredWeightLogs = getFilteredLogs(birdWeightLogs, chartSettings.dateRange);
   const filteredFeedingLogs = getFilteredLogs(birdFeedingLogs, chartSettings.dateRange);
+  
+  const visibleCards = Object.entries(settings.visibleCards).filter(([, visible]) => visible).map(([key]) => key);
+
+  const gridItems = {
+      'weight-trend': (
+          <div key="weight-trend">
+                <Card className="flex flex-col h-full">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle className="flex items-center gap-2 text-lg"><Activity className="w-5 h-5"/> Weight Trend</CardTitle>
+                        <div className="flex items-center">
+                            <Button variant="ghost" size="icon" onClick={() => setIsEditingChartSettings(true)}>
+                                <Settings className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                        <WeightChart data={filteredWeightLogs} settings={chartSettings} feedingLogs={filteredFeedingLogs} />
+                    </CardContent>
+                </Card>
+            </div>
+      ),
+      'weight-log': (
+          <div key="weight-log">
+                <Card className="flex flex-col h-full">
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-lg"><ClipboardPlus className="w-5 h-5"/> Weight Log</CardTitle>
+                    <div className="flex items-center">
+                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('weight')}><Plus className="w-4 h-4"/></Button>
+                        <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                            <Settings className="w-4 h-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onSelect={() => setIsViewingAllWeightLogs(true)}>
+                            <ScrollText className="mr-2 h-4 w-4" />
+                            <span>View All Logs</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </CardHeader>
+                    <CardContent className="flex-grow">
+                        <WeightLogComponent 
+                            logs={birdWeightLogs} 
+                            currentWeight={currentWeight}
+                            onEdit={handleEditLog}
+                            onDelete={handleDeleteLog}
+                            onAverageLossChange={setAverageHourlyLoss}
+                        />
+                    </CardContent>
+            </Card>
+            </div>
+      ),
+      'training-log': (
+           <div key="training-log">
+                <Card className="h-full">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle className="flex items-center gap-2 text-lg"><Bird className="w-5 h-5"/> Training Log</CardTitle>
+                            <CardDescription>Records of training sessions and behaviors.</CardDescription>
+                        </div>
+                        <div className="flex items-center">
+                            <Button variant="ghost" size="icon" onClick={() => setAddingLogType('training')}><Plus className="w-4 h-4"/></Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <Settings className="w-4 h-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onSelect={() => setIsEditingTrainingSettings(true)}>
+                                        <Settings className="mr-2 h-4 w-4" />
+                                        <span>Manage Training</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onSelect={() => setIsViewingAllTrainingLogs(true)}>
+                                        <ScrollText className="mr-2 h-4 w-4" />
+                                        <span>View All Logs</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <TrainingLogComponent logs={birdTrainingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
+                    </CardContent>
+                </Card>
+            </div>
+      ),
+      'feeding-log': (
+          <div key="feeding-log">
+                <Card className="h-full">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle className="flex items-center gap-2 text-lg"><Rat className="w-5 h-5"/> Feeding Log</CardTitle>
+                            <CardDescription>Daily food intake and notes.</CardDescription>
+                        </div>
+                        <div className="flex items-center">
+                            <Button variant="ghost" size="icon" onClick={() => setAddingLogType('feeding')}><Plus className="w-4 h-4"/></Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <Settings className="w-4 h-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onSelect={() => setIsViewingNutritionTable(true)}>
+                                        <ClipboardList className="mr-2 h-4 w-4" />
+                                        <span>Nutrition Table</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onSelect={() => setIsViewingAllFeedingLogs(true)}>
+                                        <ScrollText className="mr-2 h-4 w-4" />
+                                        <span>View All Logs</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <FeedingLogComponent logs={birdFeedingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} averageHourlyLoss={averageHourlyLoss} currentWeight={selectedBird.weight} />
+                    </CardContent>
+                </Card>
+            </div>
+      ),
+      'hunting-log': (
+           <div key="hunting-log">
+                <Card className="h-full">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle className="flex items-center gap-2 text-lg"><Rabbit className="w-5 h-5"/> Hunting Log</CardTitle>
+                            <CardDescription>Records of hunting sessions.</CardDescription>
+                        </div>
+                        <div className="flex items-center">
+                            <Button variant="ghost" size="icon" onClick={() => setAddingLogType('hunting')}><Plus className="w-4 h-4"/></Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <Settings className="w-4 h-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onSelect={() => setIsViewingAllHuntingLogs(true)}>
+                                        <ScrollText className="mr-2 h-4 w-4" />
+                                        <span>View All Logs</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                    <HuntingLogComponent logs={birdHuntingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
+                    </CardContent>
+                </Card>
+            </div>
+      ),
+      'husbandry': (
+          <div key="husbandry">
+                <Card className="h-full">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle className="flex items-center gap-2 text-lg">
+                                <HousePlus className="w-5 h-5"/> Husbandry
+                            </CardTitle>
+                            <CardDescription>Daily care and equipment checks.</CardDescription>
+                        </div>
+                        <div className="flex items-center">
+                            <Button variant="ghost" size="icon" onClick={() => setAddingLogType('husbandry')}><Plus className="w-4 h-4"/></Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <Settings className="w-4 h-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onSelect={() => setIsEditingHusbandrySettings(true)}>
+                                        <Settings className="mr-2 h-4 w-4" />
+                                        <span>Manage Tasks</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onSelect={() => setIsViewingAllHusbandryLogs(true)}>
+                                        <ScrollText className="mr-2 h-4 w-4" />
+                                        <span>View All Logs</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <HusbandryLog 
+                            predefinedTasks={predefinedHusbandryTasks}
+                            loggedTasks={birdHusbandryLogs}
+                            onCompleteTask={(task) => handleAddLog({task, completed: true}, 'husbandry')}
+                            onEdit={handleEditLog}
+                            onDelete={handleDeleteLog}
+                        />
+                    </CardContent>
+                </Card>
+            </div>
+      ),
+      'mutes-castings': (
+            <div key="mutes-castings">
+                <Card className="h-full">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes &amp; Castings</CardTitle>
+                            <CardDescription>Health monitoring and observations.</CardDescription>
+                        </div>
+                        <div className="flex items-center">
+                            <Button variant="ghost" size="icon" onClick={() => setAddingLogType('mute')}><Plus className="w-4 h-4"/></Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <Settings className="w-4 h-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onSelect={() => setIsViewingAllMuteLogs(true)}>
+                                        <ScrollText className="mr-2 h-4 w-4" />
+                                        <span>View All Logs</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <MuteLogComponent logs={birdMuteLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
+                    </CardContent>
+                </Card>
+            </div>
+      ),
+      'health-first-aid': (
+          <div key="health-first-aid">
+                <HealthFirstAidCard 
+                    birdName={selectedBird.name}
+                    logs={birdHealthLogs}
+                    predefinedIssues={predefinedHealthIssues}
+                    onAddLog={(data) => handleAddLog(data, 'health')}
+                    onEditLog={handleEditLog}
+                    onDeleteLog={handleDeleteLog}
+                    onSaveIssues={handleUpdateHealthIssues}
+                />
+            </div>
+      )
+  }
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -347,229 +587,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         isDraggable={settings.isLayoutEditable}
         isResizable={settings.isLayoutEditable}
       >
-        <div key="weight-trend">
-            <Card className="flex flex-col h-full">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-lg"><Activity className="w-5 h-5"/> Weight Trend</CardTitle>
-                    <div className="flex items-center">
-                        <Button variant="ghost" size="icon" onClick={() => setIsEditingChartSettings(true)}>
-                            <Settings className="w-4 h-4" />
-                        </Button>
-                    </div>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                    <WeightChart data={filteredWeightLogs} settings={chartSettings} feedingLogs={filteredFeedingLogs} />
-                </CardContent>
-            </Card>
-        </div>
-        <div key="weight-log">
-            <Card className="flex flex-col h-full">
-            <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-lg"><ClipboardPlus className="w-5 h-5"/> Weight Log</CardTitle>
-                <div className="flex items-center">
-                    <Button variant="ghost" size="icon" onClick={() => setAddingLogType('weight')}><Plus className="w-4 h-4"/></Button>
-                    <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                        <Settings className="w-4 h-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => setIsViewingAllWeightLogs(true)}>
-                        <ScrollText className="mr-2 h-4 w-4" />
-                        <span>View All Logs</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </CardHeader>
-                <CardContent className="flex-grow">
-                    <WeightLogComponent 
-                        logs={birdWeightLogs} 
-                        currentWeight={currentWeight}
-                        onEdit={handleEditLog}
-                        onDelete={handleDeleteLog}
-                        onAverageLossChange={setAverageHourlyLoss}
-                    />
-                </CardContent>
-        </Card>
-        </div>
-        <div key="training-log">
-            <Card className="h-full">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><Bird className="w-5 h-5"/> Training Log</CardTitle>
-                        <CardDescription>Records of training sessions and behaviors.</CardDescription>
-                    </div>
-                    <div className="flex items-center">
-                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('training')}><Plus className="w-4 h-4"/></Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <Settings className="w-4 h-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onSelect={() => setIsEditingTrainingSettings(true)}>
-                                    <Settings className="mr-2 h-4 w-4" />
-                                    <span>Manage Training</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onSelect={() => setIsViewingAllTrainingLogs(true)}>
-                                    <ScrollText className="mr-2 h-4 w-4" />
-                                    <span>View All Logs</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <TrainingLogComponent logs={birdTrainingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
-                </CardContent>
-            </Card>
-        </div>
-        <div key="feeding-log">
-            <Card className="h-full">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><Rat className="w-5 h-5"/> Feeding Log</CardTitle>
-                        <CardDescription>Daily food intake and notes.</CardDescription>
-                    </div>
-                    <div className="flex items-center">
-                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('feeding')}><Plus className="w-4 h-4"/></Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <Settings className="w-4 h-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onSelect={() => setIsViewingNutritionTable(true)}>
-                                    <ClipboardList className="mr-2 h-4 w-4" />
-                                    <span>Nutrition Table</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onSelect={() => setIsViewingAllFeedingLogs(true)}>
-                                    <ScrollText className="mr-2 h-4 w-4" />
-                                    <span>View All Logs</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <FeedingLogComponent logs={birdFeedingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} averageHourlyLoss={averageHourlyLoss} currentWeight={selectedBird.weight} />
-                </CardContent>
-            </Card>
-        </div>
-        <div key="hunting-log">
-            <Card className="h-full">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><Rabbit className="w-5 h-5"/> Hunting Log</CardTitle>
-                        <CardDescription>Records of hunting sessions.</CardDescription>
-                    </div>
-                    <div className="flex items-center">
-                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('hunting')}><Plus className="w-4 h-4"/></Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <Settings className="w-4 h-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onSelect={() => setIsViewingAllHuntingLogs(true)}>
-                                    <ScrollText className="mr-2 h-4 w-4" />
-                                    <span>View All Logs</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                   <HuntingLogComponent logs={birdHuntingLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
-                </CardContent>
-            </Card>
-        </div>
-        <div key="husbandry">
-            <Card className="h-full">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                            <HousePlus className="w-5 h-5"/> Husbandry
-                        </CardTitle>
-                        <CardDescription>Daily care and equipment checks.</CardDescription>
-                    </div>
-                    <div className="flex items-center">
-                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('husbandry')}><Plus className="w-4 h-4"/></Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <Settings className="w-4 h-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onSelect={() => setIsEditingHusbandrySettings(true)}>
-                                    <Settings className="mr-2 h-4 w-4" />
-                                    <span>Manage Tasks</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onSelect={() => setIsViewingAllHusbandryLogs(true)}>
-                                    <ScrollText className="mr-2 h-4 w-4" />
-                                    <span>View All Logs</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <HusbandryLog 
-                        predefinedTasks={predefinedHusbandryTasks}
-                        loggedTasks={birdHusbandryLogs}
-                        onCompleteTask={(task) => handleAddLog({task, completed: true}, 'husbandry')}
-                        onEdit={handleEditLog}
-                        onDelete={handleDeleteLog}
-                    />
-                </CardContent>
-            </Card>
-        </div>
-        <div key="mutes-castings">
-            <Card className="h-full">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><Droplets className="w-5 h-5"/> Mutes &amp; Castings</CardTitle>
-                        <CardDescription>Health monitoring and observations.</CardDescription>
-                    </div>
-                    <div className="flex items-center">
-                        <Button variant="ghost" size="icon" onClick={() => setAddingLogType('mute')}><Plus className="w-4 h-4"/></Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <Settings className="w-4 h-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onSelect={() => setIsViewingAllMuteLogs(true)}>
-                                    <ScrollText className="mr-2 h-4 w-4" />
-                                    <span>View All Logs</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <MuteLogComponent logs={birdMuteLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
-                </CardContent>
-            </Card>
-        </div>
-        <div key="health-first-aid">
-            <HealthFirstAidCard 
-                birdName={selectedBird.name}
-                logs={birdHealthLogs}
-                predefinedIssues={predefinedHealthIssues}
-                onAddLog={(data) => handleAddLog(data, 'health')}
-                onEditLog={handleEditLog}
-                onDeleteLog={handleDeleteLog}
-                onSaveIssues={handleUpdateHealthIssues}
-            />
-        </div>
+        {visibleCards.map(cardKey => gridItems[cardKey as keyof typeof gridItems])}
       </ResponsiveGridLayout>
       
         <Dialog open={!!addingLogType} onOpenChange={(isOpen) => !isOpen && setAddingLogType(null)}>

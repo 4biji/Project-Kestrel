@@ -33,15 +33,12 @@ import {
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
 
 interface AllBirdsOverviewProps {
-  initialData: {
-    birds: BirdType[];
-    logs: { [birdId: string]: LogEntry[] };
-  };
+  birds: BirdType[];
+  logs: { [birdId: string]: LogEntry[] };
 }
 
-export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
-  const [birds, setBirds] = useState(initialData.birds);
-  const [logs, setLogs] = useState(initialData.logs);
+export function AllBirdsOverview({ birds, logs: initialLogs }: AllBirdsOverviewProps) {
+  const [logs, setLogs] = useState(initialLogs);
   const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
   const [addingWeightLogToBirdId, setAddingWeightLogToBirdId] = useState<string | null>(null);
   const [overviewTitle, setOverviewTitle] = useState("All Birds Weight Overview");
@@ -179,8 +176,8 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
         <SidebarTrigger />
       </div>
 
-    {birds.length > 0 ? (
-        birds.map((bird, index) => {
+    {birds.filter(b => !b.isHidden).length > 0 ? (
+        birds.filter(b => !b.isHidden).map((bird, index) => {
             const birdLogs = logs[bird.id] || [];
             const birdWeightLogs = (birdLogs.filter(l => l.logType === 'weight') as WeightLog[]).sort((a,b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
             const lastWeightLog = birdWeightLogs[0];

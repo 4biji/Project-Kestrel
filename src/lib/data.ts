@@ -2,7 +2,7 @@
 
 import type { Bird, LogEntry, NutritionInfo, PredefinedHusbandryTask, PredefinedTraining, PredefinedHealthIssue, FirstAidLink, FeedingLog } from './types';
 
-export const birds: Bird[] = [
+export const initialBirds: Bird[] = [
   {
     id: 'b1',
     name: 'Apollo',
@@ -11,6 +11,7 @@ export const birds: Bird[] = [
     imageUrl: 'https://placehold.co/400x400.png',
     weight: 650,
     dateCaptured: '2022-09-15T00:00:00.000Z',
+    isHidden: false,
   },
   {
     id: 'b2',
@@ -20,6 +21,7 @@ export const birds: Bird[] = [
     imageUrl: 'https://placehold.co/400x400.png',
     weight: 1100,
     dateCaptured: '2021-10-20T00:00:00.000Z',
+    isHidden: false,
   },
   {
     id: 'b3',
@@ -29,6 +31,7 @@ export const birds: Bird[] = [
     imageUrl: 'https://placehold.co/400x400.png',
     weight: 710,
     dateCaptured: '2023-04-01T00:00:00.000Z',
+    isHidden: false,
   },
 ];
 
@@ -110,10 +113,10 @@ const generateLogs = (bird: Bird, days: number): LogEntry[] => {
     return generatedLogs.sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
 };
 
-export const logs: LogData = {
-  'b1': generateLogs(birds[0], 30),
-  'b2': generateLogs(birds[1], 30),
-  'b3': generateLogs(birds[2], 30),
+export const initialLogs: LogData = {
+  'b1': generateLogs(initialBirds[0], 30),
+  'b2': generateLogs(initialBirds[1], 30),
+  'b3': generateLogs(initialBirds[2], 30),
 };
 
 export const predefinedHusbandryTasks: PredefinedHusbandryTask[] = [
@@ -142,5 +145,3 @@ export const predefinedFirstAidLinks: FirstAidLink[] = [
     { id: 'link_2', title: 'NYS Falconry Association', url: 'https://nysfa.org/health-medical/' },
     { id: 'link_3', title: 'Raptor Center', url: 'https://www.raptor.umn.edu/our-work/medical-care' },
 ];
-
-    

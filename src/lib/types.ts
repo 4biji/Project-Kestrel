@@ -10,6 +10,7 @@ export interface Bird {
   imageUrl: string;
   weight: number; // Current weight in grams
   dateCaptured: string;
+  isHidden?: boolean;
 }
 
 export type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting' | 'health';
