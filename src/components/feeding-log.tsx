@@ -157,7 +157,7 @@ export function FeedingLogComponent({ logs, onEdit, onDelete, averageHourlyLoss,
                         <div className="text-xl font-bold text-primary">{logs[0].amount}g</div>
                         <div className="text-md font-semibold">{logs[0].foodItem}</div>
                     </div>
-                    {logs[0].protein && <span className="text-sm text-muted-foreground">{logs[0].protein.toFixed(1)}g protein</span>}
+                    {logs[0].protein && <div className="text-xl font-bold text-primary">{logs[0].protein.toFixed(1)}g protein</div>}
                 </div>
                  <div className="text-xs text-muted-foreground mt-1 flex justify-between">
                     <span>{format(parseISO(logs[0].datetime), 'MMM d, HH:mm')}</span>
