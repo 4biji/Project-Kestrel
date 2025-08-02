@@ -40,7 +40,7 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
             const combinedDateTime = new Date(targetDate);
             combinedDateTime.setHours(hours, minutes, 0, 0);
             
-            const hoursUntilTarget = differenceInHours(combinedDateTime, now);
+            const hoursUntilTarget = (combinedDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
             if (hoursUntilTarget > 0) {
                 const projectedWeightLoss = hoursUntilTarget * lossValue;
