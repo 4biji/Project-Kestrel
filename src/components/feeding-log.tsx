@@ -140,7 +140,7 @@ export function FeedingLogComponent({ logs, onEdit, onDelete, averageHourlyLoss,
                     <Activity className="w-4 h-4 text-primary"/>
                     Avg. Hourly Consumption
                 </div>
-                <div className="flex items-baseline gap-2 mt-1">
+                <div className="flex items-baseline gap-4 mt-1">
                     <div className="text-xl font-bold text-primary">
                         {averageFoodPerHour.toFixed(1)}g/hr
                     </div>
