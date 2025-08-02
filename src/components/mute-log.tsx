@@ -53,11 +53,6 @@ export function ViewAllMuteLogsDialog({ open, onOpenChange, logs, onEdit, onDele
                     <div className="space-y-4 pt-2 pr-4">
                         {displayLogs.map((log) => (
                              <div key={log.id} className="group p-3 bg-secondary/50 rounded-lg text-sm space-y-2 relative">
-                               {log.imageUrl && (
-                                 <div className="relative aspect-video rounded-md overflow-hidden">
-                                     <Image src={log.imageUrl} alt={log.condition || 'Mute/Casting Log'} layout="fill" objectFit="cover" data-ai-hint="bird droppings" />
-                                 </div>
-                               )}
                                <div className="flex justify-between items-center">
                                  <span className="font-medium">{log.type}</span>
                                  {log.type === 'Mute' && log.condition && (
@@ -115,11 +110,6 @@ export function MuteLogComponent({ logs, onEdit, onDelete }: MuteLogProps) {
            <div className="space-y-4 pr-4">
           {logs.slice(0, 3).map((log) => (
             <div key={log.id} className="p-3 bg-secondary/50 rounded-lg text-sm space-y-2">
-              {log.imageUrl && (
-                <div className="relative aspect-video rounded-md overflow-hidden">
-                    <Image src={log.imageUrl} alt={log.condition || 'Mute/Casting Log'} layout="fill" objectFit="cover" data-ai-hint="bird droppings" />
-                </div>
-              )}
               <div className="flex justify-between items-center">
                 <span className="font-medium">{log.type}</span>
                 {log.type === 'Mute' && log.condition && (
