@@ -149,10 +149,10 @@ export function TrainingLogComponent({ logs }: TrainingLogProps) {
             </div>
              <div className="p-3 bg-secondary/50 rounded-lg text-sm">
                 <div className="font-medium flex items-center gap-2 whitespace-nowrap"><BarChart3 className="w-4 h-4 text-primary"/> Weekly Performance</div>
-                <div className="text-xs text-muted-foreground mt-2 space-y-1">
-                    <div className="flex justify-between"><span>Positive</span><span>{weeklyStats.performanceCounts.Positive || 0}</span></div>
-                    <div className="flex justify-between"><span>Neutral</span><span>{weeklyStats.performanceCounts.Neutral || 0}</span></div>
-                    <div className="flex justify-between"><span>Negative</span><span>{weeklyStats.performanceCounts.Negative || 0}</span></div>
+                <div className="text-xs text-muted-foreground mt-2 flex justify-around">
+                    <span>P: {weeklyStats.performanceCounts.Positive || 0}</span>
+                    <span>N: {weeklyStats.performanceCounts.Neutral || 0}</span>
+                    <span>N: {weeklyStats.performanceCounts.Negative || 0}</span>
                 </div>
             </div>
           </div>

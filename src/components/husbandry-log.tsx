@@ -115,32 +115,36 @@ export function HusbandryLog({ predefinedTasks, loggedTasks, onCompleteTask }: H
   };
 
   const renderTaskList = (tasks: PredefinedHusbandryTask[], frequency: 'daily' | 'weekly' | 'monthly') => {
-    if (tasks.length === 0) {
+    const incompleteTasks = tasks.filter(task => !getIsTaskCompleted(task.task, frequency));
+
+    if (incompleteTasks.length === 0) {
+      if (tasks.length > 0) {
+        return <p className="text-xs text-center text-muted-foreground py-2">All {frequency} tasks completed!</p>;
+      }
       return <p className="text-xs text-center text-muted-foreground py-2">No {frequency} tasks defined.</p>;
     }
+    
+    const task = incompleteTasks[0];
+    const isCompleted = getIsTaskCompleted(task.task, frequency); // This will be false here
+
     return (
       <div className="space-y-2">
-        {tasks.map(task => {
-          const isCompleted = getIsTaskCompleted(task.task, frequency);
-          return (
-            <div key={task.id} className="flex items-center space-x-3">
-              <Checkbox
-                id={task.id}
-                checked={isCompleted}
-                onCheckedChange={() => !isCompleted && onCompleteTask(task.task)}
-                disabled={isCompleted}
-              />
-              <Label
-                htmlFor={task.id}
-                className={`text-sm ${
-                  isCompleted ? "text-muted-foreground line-through" : ""
-                }`}
-              >
-                {task.task}
-              </Label>
-            </div>
-          );
-        })}
+        <div key={task.id} className="flex items-center space-x-3">
+          <Checkbox
+            id={task.id}
+            checked={isCompleted}
+            onCheckedChange={() => !isCompleted && onCompleteTask(task.task)}
+            disabled={isCompleted}
+          />
+          <Label
+            htmlFor={task.id}
+            className={`text-sm ${
+              isCompleted ? "text-muted-foreground line-through" : ""
+            }`}
+          >
+            {task.task}
+          </Label>
+        </div>
       </div>
     );
   };
