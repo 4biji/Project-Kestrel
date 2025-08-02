@@ -104,7 +104,8 @@ export function ManageBirdsDialog({ open, onOpenChange, birds, onSave }: ManageB
 
   const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to remove this bird? This will delete all associated data.")) {
-        onSave(birds.filter(b => b.id !== id));
+        const updatedBirds = birds.filter(b => b.id !== id);
+        onSave(updatedBirds);
     }
   };
   
