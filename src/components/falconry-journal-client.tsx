@@ -32,6 +32,7 @@ import { ManageBirdsDialog } from "./manage-birds-dialog";
 import { SettingsDialog, type SettingsData, settingsSchema } from "./settings-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { initialBirds, initialLogs } from "@/lib/data";
+import { Button } from "./ui/button";
 
 interface FalconryJournalClientProps {
   view: 'overview' | 'detail';
