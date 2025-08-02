@@ -33,18 +33,13 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
             
             const combinedDateTime = new Date(targetDate);
             combinedDateTime.setHours(hours, minutes, 0, 0);
-
-            if (combinedDateTime < now) {
-                // If the time is in the past, maybe don't calculate or assume next day.
-                // For now, we will calculate even if in the past for planning.
-            }
             
             const hoursUntilTarget = differenceInHours(combinedDateTime, now);
 
             if (hoursUntilTarget > 0) {
                 const projectedWeightLoss = hoursUntilTarget * averageHourlyLoss;
-                const projectedWeight = currentWeight - projectedWeightLoss;
-                const amountNeeded = tWeight - projectedWeight;
+                const weightDifference = tWeight - currentWeight;
+                const amountNeeded = weightDifference + projectedWeightLoss;
                 setCalculatedAmount(amountNeeded > 0 ? amountNeeded : 0);
             } else {
                  setCalculatedAmount(0); // If time is in the past, no feeding needed to reach future weight
