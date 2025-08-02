@@ -35,57 +35,65 @@ type LogData = { [birdId: string]: LogEntry[] };
 
 const generateLogs = (bird: Bird, days: number): LogEntry[] => {
     const generatedLogs: LogEntry[] = [];
-    let currentWeight = bird.weight;
     const now = new Date();
+    const initialWeight = bird.weight;
+    let currentWeight = initialWeight * (1 + (Math.random() - 0.5) * 0.05); // Start within 5% of initial weight
+
+    // This simulates a more controlled daily weight loss of ~3-5% of body weight
+    const dailyLossRate = 0.04 + (Math.random() * 0.02 - 0.01); 
+    
+    // Total food per day is slightly less than daily loss to create fluctuations
+    const totalDailyFood = initialWeight * (dailyLossRate - 0.01); 
+    const morningFood = totalDailyFood * 0.6;
+    const eveningFood = totalDailyFood * 0.4;
+    
+    const lowerBound = initialWeight * 0.90; // Don't let weight drop below 10% of initial
+    const upperBound = initialWeight * 1.15; // Don't let weight exceed 15% of initial
 
     for (let i = days - 1; i >= 0; i--) {
         const date = new Date(now);
         date.setDate(now.getDate() - i);
         
-        const hourlyLoss = (currentWeight * 0.20) / 24;
-
         // Morning weight (8 AM)
         date.setHours(8, 0, 0, 0);
-        const morningWeight = currentWeight;
-        generatedLogs.push({ logType: 'weight', id: `w-${bird.id}-${i}-1`, datetime: date.toISOString(), weight: parseFloat(morningWeight.toFixed(1)) });
+        generatedLogs.push({ logType: 'weight', id: `w-${bird.id}-${i}-1`, datetime: date.toISOString(), weight: parseFloat(currentWeight.toFixed(1)) });
 
         // Morning feeding (8:30 AM)
-        const morningFoodAmount = Math.round(bird.weight * 0.05);
-        currentWeight += morningFoodAmount;
         date.setHours(8, 30, 0, 0);
-        generatedLogs.push({ logType: 'feeding', id: `f-${bird.id}-${i}-1`, datetime: date.toISOString(), foodItem: 'Quail', amount: morningFoodAmount, notes: 'Morning feeding.' });
+        generatedLogs.push({ logType: 'feeding', id: `f-${bird.id}-${i}-1`, datetime: date.toISOString(), foodItem: 'Quail', amount: parseFloat(morningFood.toFixed(1)), notes: 'Morning feeding.' });
+        currentWeight += morningFood;
+        if(currentWeight > upperBound) currentWeight = upperBound;
 
-        // Post-feeding weight (12 PM)
-        const hoursSinceMorningWeight = 4;
-        currentWeight -= hourlyLoss * hoursSinceMorningWeight;
+        // Mid-day weight 1 (12 PM) - 3.5 hours loss
+        currentWeight -= (initialWeight * dailyLossRate) * (3.5/24);
         date.setHours(12, 0, 0, 0);
         generatedLogs.push({ logType: 'weight', id: `w-${bird.id}-${i}-2`, datetime: date.toISOString(), weight: parseFloat(currentWeight.toFixed(1)) });
 
-        // Training session (4:30 PM)
-        date.setHours(16, 30, 0, 0);
-        generatedLogs.push({ logType: 'training', id: `t-${bird.id}-${i}-1`, datetime: date.toISOString(), behavior: 'Lure stooping', duration: 15, notes: 'Good session.', performance: 'Positive' });
+        // Mid-day weight 2 (4 PM) - 4 hours loss
+        currentWeight -= (initialWeight * dailyLossRate) * (4/24);
+        date.setHours(16, 0, 0, 0);
+        generatedLogs.push({ logType: 'weight', id: `w-${bird.id}-${i}-3`, datetime: date.toISOString(), weight: parseFloat(currentWeight.toFixed(1)) });
 
         // Evening feeding (6 PM)
-        const eveningFoodAmount = Math.round(bird.weight * 0.04);
-        currentWeight += eveningFoodAmount;
         date.setHours(18, 0, 0, 0);
-        generatedLogs.push({ logType: 'feeding', id: `f-${bird.id}-${i}-2`, datetime: date.toISOString(), foodItem: 'Chicken Heart', amount: eveningFoodAmount, notes: 'Evening meal.' });
+        generatedLogs.push({ logType: 'feeding', id: `f-${bird.id}-${i}-2`, datetime: date.toISOString(), foodItem: 'Chicken Heart', amount: parseFloat(eveningFood.toFixed(1)), notes: 'Evening meal.' });
+        currentWeight += eveningFood;
+        if(currentWeight > upperBound) currentWeight = upperBound;
         
-        // Evening weight (8 PM)
-        const hoursSinceMiddayWeight = 8;
-        currentWeight -= hourlyLoss * hoursSinceMiddayWeight;
-        date.setHours(20, 0, 0, 0);
-        generatedLogs.push({ logType: 'weight', id: `w-${bird.id}-${i}-3`, datetime: date.toISOString(), weight: parseFloat(currentWeight.toFixed(1)) });
-        
-        // Weight loss overnight for next day's 8 AM reading
-        const hoursOvernight = 12;
-        currentWeight -= hourlyLoss * hoursOvernight;
+        // Evening weight (10 PM) - 4 hours loss
+        currentWeight -= (initialWeight * dailyLossRate) * (4/24);
+        date.setHours(22, 0, 0, 0);
+        generatedLogs.push({ logType: 'weight', id: `w-${bird.id}-${i}-4`, datetime: date.toISOString(), weight: parseFloat(currentWeight.toFixed(1)) });
+
+        // Overnight loss for next day's 8 AM reading - 10 hours
+        currentWeight -= (initialWeight * dailyLossRate) * (10/24);
+        if(currentWeight < lowerBound) currentWeight = lowerBound;
     }
     
     // Add some other log types for variety
-    generatedLogs.push({ logType: 'husbandry', id: `h-${bird.id}-1`, datetime: new Date().toISOString(), task: 'Clean mews', completed: true });
-    generatedLogs.push({ logType: 'mute', id: `m-${bird.id}-1`, datetime: new Date(now.setDate(now.getDate() - 1)).toISOString(), type: 'Mute', condition: 'Normal', notes: 'Healthy looking mute.' });
-    generatedLogs.push({ logType: 'hunting', id: `hunt-${bird.id}-1`, datetime: new Date(now.setDate(now.getDate() - 2)).toISOString(), prey: 'Rabbit', outcome: 'Successful', notes: 'Clean catch.', imageUrl: 'https://placehold.co/600x400.png' });
+    generatedLogs.push({ logType: 'husbandry', id: `h-${bird.id}-1`, datetime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), task: 'Clean mews', completed: true });
+    generatedLogs.push({ logType: 'mute', id: `m-${bird.id}-1`, datetime: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), type: 'Mute', condition: 'Normal', notes: 'Healthy looking mute.' });
+    generatedLogs.push({ logType: 'hunting', id: `hunt-${bird.id}-1`, datetime: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), prey: 'Rabbit', outcome: 'Successful', notes: 'Clean catch.', imageUrl: 'https://placehold.co/600x400.png' });
     if(bird.id === 'b1') {
       generatedLogs.push({ logType: 'health', id: 'health1', datetime: '2024-07-23T10:00:00.000Z', condition: 'Bumblefoot', treatment: 'Applied antiseptic cream and wrapped.', notes: 'Checking daily for improvement.' });
     }
