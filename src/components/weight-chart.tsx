@@ -96,7 +96,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
             margin={{
                 top: 20,
                 right: 40,
-                left: 20,
+                left: 45,
                 bottom: 5,
             }}
             >
