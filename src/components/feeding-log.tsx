@@ -11,6 +11,7 @@ import { MoreVertical, Pencil, Trash2, Bone, Activity, Calculator } from "lucide
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { FeedingCalcDialog } from "./feeding-calc-dialog";
 
 interface FeedingLogProps {
   logs: FeedingLog[];
@@ -95,9 +96,7 @@ export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps)
     const [lastLog, setLastLog] = useState<FeedingLog | null>(null);
     const [averageFoodPerHour, setAverageFoodPerHour] = useState(0);
     const [averageProteinPerHour, setAverageProteinPerHour] = useState(0);
-    const [targetWeight, setTargetWeight] = useState('');
-    const [percentage, setPercentage] = useState('5');
-    const [calculatedAmount, setCalculatedAmount] = useState<number | null>(null);
+    const [isCalcOpen, setIsCalcOpen] = useState(false);
 
 
     useEffect(() => {
@@ -128,16 +127,6 @@ export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps)
         }
 
     }, [logs]);
-
-    useEffect(() => {
-        const tWeight = parseFloat(targetWeight);
-        const perc = parseFloat(percentage);
-        if (!isNaN(tWeight) && !isNaN(perc) && tWeight > 0) {
-            setCalculatedAmount((tWeight * perc) / 100);
-        } else {
-            setCalculatedAmount(null);
-        }
-    }, [targetWeight, percentage]);
 
 
   return (
@@ -172,28 +161,15 @@ export function FeedingLogComponent({ logs, onEdit, onDelete }: FeedingLogProps)
                     <span>{format(parseISO(logs[0].datetime), 'MMM d, HH:mm')}</span>
                 </div>
           </div>
-          <div className="p-3 bg-secondary/50 rounded-lg text-sm">
-              <div className="font-medium flex items-center gap-2 whitespace-nowrap mb-2">
-                  <Calculator className="w-4 h-4 text-primary"/>
-                  Feeding Calc
-              </div>
-              <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                      <Label htmlFor="targetWeight" className="w-1/2">Target Weight (g)</Label>
-                      <Input id="targetWeight" type="number" placeholder="e.g. 650" value={targetWeight} onChange={(e) => setTargetWeight(e.target.value)} />
-                  </div>
-                  <div className="flex items-center gap-2">
-                      <Label htmlFor="percentage" className="w-1/2">Percentage (%)</Label>
-                      <Input id="percentage" type="number" placeholder="e.g. 5" value={percentage} onChange={(e) => setPercentage(e.target.value)} />
-                  </div>
-                  {calculatedAmount !== null && (
-                      <div className="text-center pt-2">
-                          <p className="text-xs text-muted-foreground">Recommended Amount</p>
-                          <p className="text-lg font-bold text-primary">{calculatedAmount.toFixed(1)}g</p>
-                      </div>
-                  )}
-              </div>
-          </div>
+           <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                <Button variant="ghost" className="w-full justify-start p-0 h-auto" onClick={() => setIsCalcOpen(true)}>
+                    <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                        <Calculator className="w-4 h-4 text-primary"/>
+                        Feeding Calc
+                    </div>
+                </Button>
+            </div>
+            <FeedingCalcDialog open={isCalcOpen} onOpenChange={setIsCalcOpen} />
         </>
       ) : (
         <p className="text-sm text-center text-muted-foreground py-10">No feeding records yet.</p>
