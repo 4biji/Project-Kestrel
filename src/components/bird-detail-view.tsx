@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/
 import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Settings, ScrollText, ClipboardList, Rabbit, Eye, EyeOff, PlusSquare, BookMarked, HeartPulse, Activity, HousePlus, Rat, Footprints, Droplets } from "lucide-react";
+import { Plus, Settings, ScrollText, ClipboardList, Rabbit, PlusSquare, BookMarked, Activity, HousePlus, Rat, Droplets, Bird, ClipboardPlus } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { AddMuteLogForm } from "./add-mute-log-form";
@@ -364,7 +364,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
         <div key="weight-log">
             <Card className="flex flex-col h-full">
             <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-lg"><Scale className="w-5 h-5"/> Weight Log</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-lg"><ClipboardPlus className="w-5 h-5"/> Weight Log</CardTitle>
                 <div className="flex items-center">
                     <Button variant="ghost" size="icon" onClick={() => setAddingLogType('weight')}><Plus className="w-4 h-4"/></Button>
                     <DropdownMenu>
@@ -397,7 +397,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><Footprints className="w-5 h-5"/> Training Log</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-lg"><Bird className="w-5 h-5"/> Training Log</CardTitle>
                         <CardDescription>Records of training sessions and behaviors.</CardDescription>
                     </div>
                     <div className="flex items-center">
