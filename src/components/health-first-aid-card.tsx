@@ -43,9 +43,9 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
             <CardHeader className="flex flex-row items-center justify-between">
                  <div>
                     <CardTitle className="flex items-center gap-2 text-lg">
-                        <HeartPulse className="w-5 h-5"/> Health Log
+                        <HeartPulse className="w-5 h-5"/> Health & First Aid
                     </CardTitle>
-                    <CardDescription>Track illnesses and treatments.</CardDescription>
+                    <CardDescription>Track issues and access resources.</CardDescription>
                 </div>
                 <div className="flex items-center">
                     <Button variant="ghost" size="icon" onClick={() => setIsAddingLog(true)}><Plus className="w-4 h-4"/></Button>
@@ -104,3 +104,4 @@ export function HealthFirstAidCard({ birdName, logs, predefinedIssues, onAddLog,
         </Card>
     )
 }
+

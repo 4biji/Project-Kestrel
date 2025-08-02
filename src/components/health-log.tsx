@@ -6,7 +6,7 @@ import type { HealthLog, PredefinedHealthIssue } from "@/lib/types";
 import { ScrollArea } from "./ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { MoreVertical, Pencil, Trash2, AlertTriangle, Plus, Link } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, AlertTriangle, Plus, Link, Calendar, CalendarCheck, CalendarClock } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -107,33 +107,50 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }:
     <div className="space-y-2 h-full">
       {predefinedIssues.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
-            <Card className="flex flex-col h-full">
-                <CardHeader>
-                    <CardTitle className="text-base">Predefined Issues</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow p-0">
-                    <ScrollArea className="h-48">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Issue</TableHead>
-                                    <TableHead className="text-right">Severity</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                            {sortedIssues.map((issue) => (
-                                <TableRow key={issue.id}>
-                                <TableCell>{issue.issue}</TableCell>
-                                <TableCell className="text-right">
-                                    <Badge variant={getSeverityBadgeVariant(issue.severity)}>{issue.severity}</Badge>
-                                </TableCell>
-                                </TableRow>
-                            ))}
-                            </TableBody>
-                        </Table>
-                    </ScrollArea>
-                </CardContent>
-            </Card>
+            <div className="space-y-2">
+                <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                    <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                        <Calendar className="w-4 h-4 text-primary"/>
+                        Common Issues
+                    </div>
+                    <div className="mt-2">
+                        {sortedIssues.slice(0,3).map((issue) => (
+                            <div key={issue.id} className="flex justify-between items-center text-sm py-1">
+                                <span>{issue.issue}</span>
+                                <Badge variant={getSeverityBadgeVariant(issue.severity)}>{issue.severity}</Badge>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                     <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                        <CalendarCheck className="w-4 h-4 text-primary"/>
+                        Moderate Issues
+                    </div>
+                    <div className="mt-2">
+                        {sortedIssues.filter(i => i.severity > 3 && i.severity < 8).slice(0,1).map((issue) => (
+                            <div key={issue.id} className="flex justify-between items-center text-sm py-1">
+                                <span>{issue.issue}</span>
+                                <Badge variant={getSeverityBadgeVariant(issue.severity)}>{issue.severity}</Badge>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                 <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                     <div className="font-medium flex items-center gap-2 whitespace-nowrap">
+                        <CalendarClock className="w-4 h-4 text-primary"/>
+                        Severe Issues
+                    </div>
+                    <div className="mt-2">
+                        {sortedIssues.filter(i => i.severity >= 8).slice(0,1).map((issue) => (
+                            <div key={issue.id} className="flex justify-between items-center text-sm py-1">
+                                <span>{issue.issue}</span>
+                                <Badge variant={getSeverityBadgeVariant(issue.severity)}>{issue.severity}</Badge>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
           <Card className="flex flex-col justify-between h-full">
             <CardHeader className="pb-2">
                 <CardTitle className="text-base">First Aid Resources</CardTitle>
@@ -164,3 +181,4 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }:
     </div>
   );
 }
+
