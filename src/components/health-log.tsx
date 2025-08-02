@@ -167,4 +167,3 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }:
     </div>
   );
 }
-
