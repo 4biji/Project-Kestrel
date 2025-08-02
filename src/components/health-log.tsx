@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { cn } from "@/lib/utils";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
 interface HealthLogProps {
   logs: HealthLog[];
@@ -100,43 +101,39 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, predefinedIs
 
 
 export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }: HealthLogProps) {
-  const topSevereLog = [...logs]
-    .map(log => {
-        const issue = predefinedIssues.find(i => i.issue === log.condition);
-        return { ...log, severity: issue?.severity || 0 };
-    })
-    .sort((a, b) => b.severity - a.severity)
-    .slice(0, 1);
+  const sortedIssues = [...predefinedIssues].sort((a,b) => b.severity - a.severity);
 
   return (
     <div className="space-y-2 h-full">
-      {logs.length > 0 && topSevereLog.length > 0 ? (
+      {predefinedIssues.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
-            <div className="space-y-4">
-            {topSevereLog.map(log => (
-                <Card key={log.id} className={cn(
-                    "flex flex-col justify-between flex-grow",
-                    log.severity >= 8 ? "border-destructive" : log.severity >= 4 ? "border-yellow-500" : ""
-                )}>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-base flex items-center justify-between">
-                            <span>{log.condition}</span>
-                            <Badge variant={getSeverityBadgeVariant(log.severity)}>
-                            {log.severity}
-                            </Badge>
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                    <p className="text-xs text-muted-foreground line-clamp-2">
-                        {log.treatment}
-                    </p>
-                    <p className="text-xs text-muted-foreground pt-2">
-                        {format(parseISO(log.datetime), "MMM d, yyyy")}
-                    </p>
-                    </CardContent>
-                </Card>
-            ))}
-            </div>
+            <Card className="flex flex-col h-full">
+                <CardHeader>
+                    <CardTitle className="text-base">Predefined Issues</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow p-0">
+                    <ScrollArea className="h-48">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Issue</TableHead>
+                                    <TableHead className="text-right">Severity</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                            {sortedIssues.map((issue) => (
+                                <TableRow key={issue.id}>
+                                <TableCell>{issue.issue}</TableCell>
+                                <TableCell className="text-right">
+                                    <Badge variant={getSeverityBadgeVariant(issue.severity)}>{issue.severity}</Badge>
+                                </TableCell>
+                                </TableRow>
+                            ))}
+                            </TableBody>
+                        </Table>
+                    </ScrollArea>
+                </CardContent>
+            </Card>
           <Card className="flex flex-col justify-between h-full">
             <CardHeader className="pb-2">
                 <CardTitle className="text-base">First Aid Resources</CardTitle>
@@ -160,8 +157,8 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }:
       ) : (
         <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-full">
             <AlertTriangle className="w-12 h-12 mb-4" />
-            <p>No critical health issues logged.</p>
-            <p className="text-xs">Log a health event to see it here.</p>
+            <p>No predefined health issues.</p>
+            <p className="text-xs">Add some in the settings to see them here.</p>
         </div>
       )}
     </div>
