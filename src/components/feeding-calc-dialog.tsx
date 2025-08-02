@@ -12,6 +12,7 @@ import { Calendar } from "./ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "./ui/separator";
+import { Switch } from "./ui/switch";
 
 interface FeedingCalcDialogProps {
     open: boolean;
@@ -26,10 +27,15 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
     const [targetTime, setTargetTime] = useState(format(new Date(), "HH:mm"));
     const [calculatedAmount, setCalculatedAmount] = useState<number | null>(null);
     const [projectedLoss, setProjectedLoss] = useState<number | null>(null);
+    const [useAverage, setUseAverage] = useState(true);
+    const [customLoss, setCustomLoss] = useState('');
+
 
      useEffect(() => {
+        const lossValue = useAverage ? averageHourlyLoss : parseFloat(customLoss);
         const tWeight = parseFloat(targetWeight);
-        if (!isNaN(tWeight) && currentWeight > 0 && averageHourlyLoss > 0 && targetDate && targetTime) {
+
+        if (!isNaN(tWeight) && currentWeight > 0 && !isNaN(lossValue) && lossValue > 0 && targetDate && targetTime) {
             const now = new Date();
             const [hours, minutes] = targetTime.split(':').map(Number);
             
@@ -39,7 +45,7 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
             const hoursUntilTarget = differenceInHours(combinedDateTime, now);
 
             if (hoursUntilTarget > 0) {
-                const projectedWeightLoss = hoursUntilTarget * averageHourlyLoss;
+                const projectedWeightLoss = hoursUntilTarget * lossValue;
                 setProjectedLoss(projectedWeightLoss);
                 const weightDifference = tWeight - currentWeight;
                 const amountNeeded = weightDifference + projectedWeightLoss;
@@ -53,7 +59,7 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
             setCalculatedAmount(null);
             setProjectedLoss(null);
         }
-    }, [targetWeight, targetDate, targetTime, averageHourlyLoss, currentWeight]);
+    }, [targetWeight, targetDate, targetTime, averageHourlyLoss, currentWeight, useAverage, customLoss]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -61,10 +67,31 @@ export function FeedingCalcDialog({ open, onOpenChange, averageHourlyLoss, curre
                 <DialogHeader>
                     <DialogTitle>Feeding Calculator</DialogTitle>
                     <DialogDescription>
-                        Calculate food needed based on target weight and time. Uses an average loss of {averageHourlyLoss.toFixed(2)}g/hr.
+                        Calculate food needed based on target weight and time.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
+                     <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                            <Label>Use Avg. Hourly Loss</Label>
+                             <p className="text-xs text-muted-foreground">
+                                Use calculated loss of {averageHourlyLoss.toFixed(2)}g/hr.
+                             </p>
+                        </div>
+                        <Switch
+                            checked={useAverage}
+                            onCheckedChange={setUseAverage}
+                        />
+                    </div>
+
+                    {!useAverage && (
+                        <div className="grid grid-cols-2 items-center gap-4">
+                            <Label htmlFor="customLoss">Custom Loss (g/hr)</Label>
+                            <Input id="customLoss" type="number" placeholder="e.g. 1.5" value={customLoss} onChange={(e) => setCustomLoss(e.target.value)} />
+                        </div>
+                    )}
+
+
                     <div className="grid grid-cols-2 items-center gap-4">
                         <Label htmlFor="targetWeight">Target Weight (g)</Label>
                         <Input id="targetWeight" type="number" placeholder="e.g. 650" value={targetWeight} onChange={(e) => setTargetWeight(e.target.value)} />
