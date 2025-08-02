@@ -1,5 +1,6 @@
 
 "use client";
+import { useState, useEffect } from "react";
 import type { Bird } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,14 @@ interface BirdProfileHeaderProps {
 }
 
 export function BirdProfileHeader({ bird }: BirdProfileHeaderProps) {
+  const [formattedDate, setFormattedDate] = useState("");
+
+  useEffect(() => {
+    if (bird.dateCaptured) {
+      setFormattedDate(format(parseISO(bird.dateCaptured), "MMM d, yyyy"));
+    }
+  }, [bird.dateCaptured]);
+
   return (
     <div className="flex items-center gap-4">
       <Avatar className="h-16 w-16 border-2 border-primary">
@@ -24,7 +33,7 @@ export function BirdProfileHeader({ bird }: BirdProfileHeaderProps) {
             <span className="text-xs">&bull;</span>
              <div className="flex items-center gap-1.5">
                 <Calendar className="w-3 h-3" />
-                <span>Captured: {format(parseISO(bird.dateCaptured), "MMM d, yyyy")}</span>
+                <span>Captured: {formattedDate}</span>
              </div>
         </div>
         <Badge variant="secondary" className="mt-2">
