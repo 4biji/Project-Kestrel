@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/
 import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, Rabbit, Eye, EyeOff, PlusSquare, BookMarked, HeartPulse } from "lucide-react";
+import { Scale, Plus, Bone, Footprints, Droplets, Settings, ScrollText, ClipboardList, Rabbit, Eye, EyeOff, PlusSquare, BookMarked, HeartPulse } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { AddMuteLogForm } from "./add-mute-log-form";
@@ -77,6 +77,15 @@ const defaultLayouts: Responsive.Layouts = {
     ],
 };
 
+const BirdNestIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M12 2L3 9l9 7 9-7-9-7z"></path>
+        <path d="M3 9v6l9 7 9-7V9"></path>
+        <path d="M12 22V12"></path>
+    </svg>
+);
+
+
 interface BirdDetailViewProps {
   initialData: {
     birds: BirdType[];
@@ -98,6 +107,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
 
   const [chartSettings, setChartSettings] = useState<WeightChartSettingsData>(
     weightChartSettingsSchema.parse({
+        dateRange: '7d',
         huntingWeight: {},
         presetAlert: {},
         alertBelowAverage: {},
@@ -491,7 +501,9 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
             <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle className="flex items-center gap-2 text-lg"><ShieldCheck className="w-5 h-5"/> Husbandry</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                            <BirdNestIcon className="w-5 h-5"/> Husbandry
+                        </CardTitle>
                         <CardDescription>Daily care and equipment checks.</CardDescription>
                     </div>
                     <div className="flex items-center">
