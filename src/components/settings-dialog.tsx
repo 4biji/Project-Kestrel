@@ -29,7 +29,7 @@ import type { Theme } from "@/lib/types";
 export const settingsSchema = z.object({
   isLayoutEditable: z.boolean().default(false),
   rowHeight: z.coerce.number().positive().default(125),
-  theme: z.enum(['default', 'forest']).default('default'),
+  theme: z.enum(['default', 'forest', 'desert', 'coastal', 'lake', 'urban']).default('default'),
   visibleCards: z.object({
     'weight-trend': z.boolean().default(true),
     'weight-log': z.boolean().default(true),
@@ -129,6 +129,10 @@ export function SettingsDialog({
                                         <SelectContent>
                                             <SelectItem value="default">Default</SelectItem>
                                             <SelectItem value="forest">Forest</SelectItem>
+                                            <SelectItem value="desert">Desert</SelectItem>
+                                            <SelectItem value="coastal">Coastal</SelectItem>
+                                            <SelectItem value="lake">Lake</SelectItem>
+                                            <SelectItem value="urban">Urban</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </FormItem>

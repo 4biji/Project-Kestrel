@@ -52,7 +52,7 @@ export function FalconryJournalClient({ initialData, view, selectedBirdId: initi
   const { toast } = useToast();
 
   useEffect(() => {
-    document.documentElement.classList.remove('default', 'forest');
+    document.documentElement.classList.remove('default', 'forest', 'desert', 'coastal', 'lake', 'urban');
     document.documentElement.classList.add(settings.theme);
   }, [settings.theme]);
 
