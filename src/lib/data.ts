@@ -57,7 +57,7 @@ export const logs: LogData = {
     { logType: 'weight', id: 'w7', datetime: '2024-07-21T08:01:00', weight: 650 },
     { logType: 'hunting', id: 'hunt1', datetime: '2024-07-21T18:00:00', prey: 'Rabbit', outcome: 'Successful', notes: 'Clean catch.', imageUrl: 'https://placehold.co/600x400.png' },
     { logType: 'hunting', id: 'hunt2', datetime: '2024-07-19T17:45:00', prey: 'Squirrel', outcome: 'Unsuccessful', notes: 'Prey escaped into a tree.' },
-    { logType: 'health', id: 'health1', datetime: '2024-07-23T10:00:00', condition: 'Bumblefoot (Grade 1)', treatment: 'Applied antiseptic cream and wrapped.', notes: 'Checking daily for improvement.'},
+    { logType: 'health', id: 'health1', datetime: '2024-07-23T10:00:00', condition: 'Bumblefoot (Grade 1)', treatment: 'Applied antiseptic cream and wrapped.', notes: 'Checking daily for improvement.', severity: 3 },
   ],
   'b2': [
     { logType: 'feeding', id: 'f3', datetime: '2024-07-20T08:00:00', foodItem: 'Pigeon', amount: 120, notes: 'Full crop.', protein: 25.2 },

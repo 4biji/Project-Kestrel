@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "./ui/button";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Badge } from "./ui/badge";
 
 interface HealthLogProps {
   logs: HealthLog[];
@@ -19,6 +20,12 @@ interface CommonProps {
     logs: HealthLog[];
     onEdit: (log: HealthLog) => void;
     onDelete: (log: HealthLog) => void;
+}
+
+const getSeverityBadgeVariant = (severity: number) => {
+    if (severity >= 8) return "destructive";
+    if (severity >= 4) return "secondary";
+    return "default";
 }
 
 export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, onEdit, onDelete }: { open: boolean, onOpenChange: (open: boolean) => void } & CommonProps) {
@@ -37,7 +44,10 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, onEdit, onDe
                     <div className="space-y-4 pt-2 pr-4">
                         {displayLogs.map((log) => (
                             <div key={log.id} className="group p-3 bg-secondary/50 rounded-lg text-sm space-y-2 relative">
-                                <div className="font-medium">{log.condition}</div>
+                                <div className="flex justify-between items-start">
+                                    <div className="font-medium">{log.condition}</div>
+                                    <Badge variant={getSeverityBadgeVariant(log.severity)}>Severity: {log.severity}</Badge>
+                                </div>
                                 <div className="text-xs text-muted-foreground">
                                     {format(parseISO(log.datetime), 'MMM d, yyyy HH:mm')}
                                 </div>
@@ -97,7 +107,10 @@ export function HealthLogComponent({ logs, onEdit, onDelete }: HealthLogProps) {
             <div className="space-y-4 pr-4">
                 {sortedLogs.map(log => (
                     <div key={log.id} className="group p-3 bg-secondary/50 rounded-lg text-sm space-y-2 relative">
-                        <div className="font-medium">{log.condition}</div>
+                        <div className="flex justify-between items-start">
+                             <div className="font-medium">{log.condition}</div>
+                             <Badge variant={getSeverityBadgeVariant(log.severity)}>Severity: {log.severity}</Badge>
+                        </div>
                         <div className="text-xs text-muted-foreground">
                             {format(parseISO(log.datetime), 'MMM d, yyyy HH:mm')}
                         </div>

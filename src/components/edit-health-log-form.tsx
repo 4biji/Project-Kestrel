@@ -9,10 +9,12 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import { Slider } from "./ui/slider";
 
 const formSchema = z.object({
   condition: z.string().min(1, "Condition is required."),
   treatment: z.string().min(1, "Treatment is required."),
+  severity: z.number().min(1).max(10),
   notes: z.string().optional(),
 });
 
@@ -30,6 +32,7 @@ export function EditHealthLogForm({ log, onSubmit, onCancel }: EditHealthLogForm
     defaultValues: {
       condition: log.condition,
       treatment: log.treatment,
+      severity: log.severity,
       notes: log.notes,
     },
   });
@@ -65,6 +68,25 @@ export function EditHealthLogForm({ log, onSubmit, onCancel }: EditHealthLogForm
               <FormLabel>Treatment Applied</FormLabel>
               <FormControl>
                 <Textarea {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="severity"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Severity: {field.value}</FormLabel>
+              <FormControl>
+                <Slider
+                  min={1}
+                  max={10}
+                  step={1}
+                  defaultValue={[field.value]}
+                  onValueChange={(value) => field.onChange(value[0])}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

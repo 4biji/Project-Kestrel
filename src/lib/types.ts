@@ -62,6 +62,7 @@ export interface HealthLog extends BaseLog {
   logType: 'health';
   condition: string;
   treatment: string;
+  severity: number;
 }
 
 export type LogEntry = WeightLog | FeedingLog | HusbandryTask | TrainingLog | MuteLog | HuntingLog | HealthLog;
