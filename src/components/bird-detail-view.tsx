@@ -1,4 +1,5 @@
 
+
       
 "use client";
 
@@ -13,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/
 import { WeightLogComponent, ViewAllLogsDialog } from "./weight-log";
 import { AddWeightLogForm } from "./add-weight-log-form";
 import { useToast } from "@/hooks/use-toast";
-import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, Rabbit, Eye, EyeOff, PlusSquare } from "lucide-react";
+import { Scale, Plus, Bone, ShieldCheck, Footprints, Droplets, Settings, ScrollText, ClipboardList, Rabbit, Eye, EyeOff, PlusSquare, BookMarked } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { AddFeedingLogForm } from "./add-feeding-log-form";
 import { AddMuteLogForm } from "./add-mute-log-form";
@@ -45,6 +46,7 @@ import { HusbandrySettingsDialog } from "./husbandry-settings-dialog";
 import { LogHusbandryTaskForm } from "./log-husbandry-task-form";
 import { TrainingSettingsDialog } from "./training-settings-dialog";
 import { EditLogDialog } from "./edit-log-dialog";
+import { Separator } from "./ui/separator";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -59,7 +61,8 @@ const defaultLayouts: Responsive.Layouts = {
       { i: 'training-log', x: 1, y: 5, w: 1, h: 3 },
       { i: 'hunting-log', x: 0, y: 8, w: 1, h: 3 },
       { i: 'mutes-castings', x: 1, y: 8, w: 1, h: 3 },
-      { i: 'first-aid', x: 0, y: 11, w: 2, h: 3 },
+      { i: 'first-aid', x: 0, y: 11, w: 1, h: 3 },
+      { i: 'resource-links', x: 1, y: 11, w: 1, h: 3 },
     ],
 };
 
@@ -487,6 +490,22 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                 </CardHeader>
                 <CardContent>
                     <p className="text-sm text-center text-muted-foreground py-10">First aid information coming soon.</p>
+                </CardContent>
+            </Card>
+        </div>
+        <div key="resource-links">
+            <Card className="h-full">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg"><BookMarked className="w-5 h-5"/> Resource Links</CardTitle>
+                    <CardDescription>Quick links for falconry resources.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ul className="space-y-2 text-sm">
+                        <li className="flex"><a href="#" className="text-primary hover:underline">Falconry Forum</a></li>
+                        <li className="flex"><a href="#" className="text-primary hover:underline">Avian Vet Finder</a></li>
+                        <li className="flex"><a href="#" className="text-primary hover:underline">Weather Forecast</a></li>
+                        <li className="flex"><a href="#" className="text-primary hover:underline">Local Regulations</a></li>
+                    </ul>
                 </CardContent>
             </Card>
         </div>

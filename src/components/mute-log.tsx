@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "./ui/button";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Separator } from "./ui/separator";
 
 interface MuteLogProps {
   logs: MuteLog[];
@@ -102,37 +103,44 @@ export function ViewAllMuteLogsDialog({ open, onOpenChange, logs, onEdit, onDele
     );
 }
 
-export function MuteLogComponent({ logs, onEdit, onDelete }: MuteLogProps) {
+export function MuteLogComponent({ logs }: MuteLogProps) {
+    const sortedLogs = [...logs].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+    const lastMute = sortedLogs.find(log => log.type === 'Mute');
+    const lastCasting = sortedLogs.find(log => log.type === 'Casting');
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-2 -mt-2">
       {logs.length > 0 ? (
-        <ScrollArea className="h-64">
-           <div className="space-y-4 pr-4">
-          {logs.slice(0, 3).map((log) => (
-            <div key={log.id} className="p-3 bg-secondary/50 rounded-lg text-sm space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="font-medium">{log.type}</span>
-                {log.type === 'Mute' && log.condition && (
-                    <Badge variant={getBadgeVariant(log.condition)}>{log.condition}</Badge>
-                )}
-              </div>
-               <div className="text-xs text-muted-foreground flex justify-between">
-                 <span>{format(parseISO(log.datetime), 'MMM d, yyyy')}</span>
-                 <span>{format(parseISO(log.datetime), 'HH:mm:ss')}</span>
-               </div>
-              {log.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{log.notes}"</p>}
+        <div className="space-y-2">
+          {lastMute && (
+            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                <div className="font-medium">Last Mute</div>
+                 <div className="flex justify-between items-baseline mt-2">
+                     {lastMute.condition && (
+                        <Badge variant={getBadgeVariant(lastMute.condition)}>{lastMute.condition}</Badge>
+                    )}
+                    <span className="text-xs text-muted-foreground">{format(parseISO(lastMute.datetime), 'MMM d, HH:mm')}</span>
+                </div>
+                {lastMute.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{lastMute.notes}"</p>}
             </div>
-          ))}
-          </div>
-        </ScrollArea>
+          )}
+
+          {lastCasting && (
+            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                <div className="font-medium">Last Casting</div>
+                <div className="text-xs text-muted-foreground mt-2">{format(parseISO(lastCasting.datetime), 'MMM d, HH:mm')}</div>
+                {lastCasting.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{lastCasting.notes}"</p>}
+            </div>
+          )}
+          
+          {!lastMute && !lastCasting && (
+             <p className="text-sm text-center text-muted-foreground py-10">No mute or casting records.</p>
+          )}
+
+        </div>
       ) : (
         <p className="text-sm text-center text-muted-foreground py-10">No mute or casting records.</p>
       )}
     </div>
   );
 }
-
-    
-
-    
-
