@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import type { Bird as BirdType, WeightLog, FeedingLog, LogEntry } from "@/lib/types";
-import { format } from 'date-fns';
+import { format, subDays, isAfter, isToday, parseISO } from 'date-fns';
 
 import { BirdProfileHeader } from "@/components/bird-profile-header";
 import { WeightChart } from "@/components/weight-chart";
@@ -132,11 +132,38 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
 
   const getDefaultChartSettings = (birdId: string): WeightChartSettingsData => {
     return weightChartSettingsSchema.parse({
+        dateRange: "7d",
         alertBelowAverage: {},
         presetAlert: {},
         huntingWeight: {},
     });
   };
+
+  const getFilteredLogs = <T extends LogEntry>(logsToFilter: T[], range: WeightChartSettingsData['dateRange']): T[] => {
+    const now = new Date();
+    let startDate: Date | null = null;
+    
+    switch(range) {
+      case '30d':
+        startDate = subDays(now, 30);
+        break;
+      case '7d':
+        startDate = subDays(now, 7);
+        break;
+      case '1d':
+        startDate = subDays(now, 1);
+        break;
+      case 'all':
+      default:
+        return logsToFilter;
+    }
+    
+    if (range === '1d') {
+        return logsToFilter.filter(log => isToday(parseISO(log.datetime)));
+    }
+
+    return logsToFilter.filter(log => isAfter(parseISO(log.datetime), startDate!));
+  }
   
   return (
     <div className="flex flex-col gap-8">
@@ -162,6 +189,8 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
             const birdForEditing = editingLog && editingLog.logType === 'weight' && Object.keys(logs).find(id => logs[id].some(l => l.id === editingLog.id)) === bird.id ? editingLog as WeightLog : null;
             const currentChartSettings = chartSettings[bird.id] || getDefaultChartSettings(bird.id);
             const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
+            const filteredWeightLogs = getFilteredLogs(birdWeightLogs, currentChartSettings.dateRange);
+            const filteredFeedingLogs = getFilteredLogs(birdFeedingLogs, currentChartSettings.dateRange);
             return (
                 <div key={bird.id}>
                     <BirdProfileHeader bird={{...bird, weight: currentWeight}} />
@@ -178,9 +207,9 @@ export function AllBirdsOverview({ initialData }: AllBirdsOverviewProps) {
                                 </CardHeader>
                                 <CardContent className="flex-grow">
                                     <WeightChart 
-                                        data={birdWeightLogs} 
+                                        data={filteredWeightLogs} 
                                         settings={currentChartSettings} 
-                                        feedingLogs={birdFeedingLogs}
+                                        feedingLogs={filteredFeedingLogs}
                                     />
                                 </CardContent>
                             </Card>
