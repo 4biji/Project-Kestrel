@@ -88,6 +88,7 @@ interface BirdDetailViewProps {
 }
 
 export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBirds }: BirdDetailViewProps) {
+  const [isMounted, setIsMounted] = useState(false);
   const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
   const [deletingLog, setDeletingLog] = useState<LogEntry | null>(null);
 
@@ -124,6 +125,10 @@ export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBir
   const [nutritionInfo, setNutritionInfo] = useState<NutritionInfo[]>(initialNutritionInfo);
   const [averageHourlyLoss, setAverageHourlyLoss] = useState(0);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const handleUpdateNutritionInfo = (newInfo: NutritionInfo[]) => {
     setNutritionInfo(newInfo);
     toast({
@@ -154,6 +159,10 @@ export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBir
         title: "Health Issues Updated",
         description: "Your predefined health issues have been saved.",
     });
+  }
+
+  if (!isMounted) {
+    return <p>Loading bird details...</p>;
   }
 
   if (!bird) {

@@ -40,14 +40,50 @@ interface FalconryJournalClientProps {
 }
 
 export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalClientProps) {
-  const [birds, setBirds] = useState<BirdType[]>(initialBirds);
-  const [logs, setLogs] = useState<{ [birdId: string]: LogEntry[] }>(initialLogs);
+  const [birds, setBirds] = useState<BirdType[]>([]);
+  const [logs, setLogs] = useState<{ [birdId: string]: LogEntry[] }>({});
+  const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const [isManageBirdsOpen, setIsManageBirdsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<SettingsData>(() => settingsSchema.parse({}));
   const { toast } = useToast();
+
+  useEffect(() => {
+    try {
+      const storedBirds = localStorage.getItem('falconry-birds');
+      const storedLogs = localStorage.getItem('falconry-logs');
+
+      if (storedBirds) {
+        setBirds(JSON.parse(storedBirds));
+      } else {
+        setBirds(initialBirds);
+      }
+
+      if (storedLogs) {
+        setLogs(JSON.parse(storedLogs));
+      } else {
+        setLogs(initialLogs);
+      }
+    } catch (error) {
+        console.error("Failed to parse from localStorage", error);
+        setBirds(initialBirds);
+        setLogs(initialLogs);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem('falconry-birds', JSON.stringify(birds));
+        localStorage.setItem('falconry-logs', JSON.stringify(logs));
+      } catch (error) {
+        console.error("Failed to save to localStorage", error);
+      }
+    }
+  }, [birds, logs, isLoaded]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -95,9 +131,9 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
         }
     } else if (updatedBirdInfo) {
         toast({ title: "Bird Updated", description: `${updatedBirdInfo.name}'s information has been updated.` });
-    } else {
-       setIsManageBirdsOpen(false);
     }
+    
+    setIsManageBirdsOpen(false);
   };
 
   const handleSaveSettings = (newSettings: SettingsData) => {
@@ -115,6 +151,10 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
   }
   
   const birdForDetail = view === 'detail' && selectedBirdId ? birds.find(b => b.id === selectedBirdId) : null;
+
+  if (!isLoaded) {
+    return <div className="flex items-center justify-center h-screen">Loading Journal...</div>
+  }
 
   return (
     <SidebarProvider>
