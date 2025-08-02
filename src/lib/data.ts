@@ -34,60 +34,88 @@ export const birds: Bird[] = [
 type LogData = { [birdId: string]: LogEntry[] };
 export const logs: LogData = {
   'b1': [
-    { logType: 'feeding', id: 'f1', datetime: '2024-07-20T08:30:00', foodItem: 'Quail', amount: 50, notes: 'Eager to eat.', protein: 11 },
-    { logType: 'feeding', id: 'f2', datetime: '2024-07-19T09:00:00', foodItem: 'Chicken Heart', amount: 45, notes: '', protein: 7.2 },
-    { logType: 'feeding', id: 'f5', datetime: '2024-07-21T08:30:00', foodItem: 'Quail', amount: 55, notes: 'Very hungry today.', protein: 12.1 },
-    { logType: 'feeding', id: 'f6', datetime: '2024-07-22T09:00:00', foodItem: 'Chicken Heart', amount: 40, notes: '', protein: 6.4 },
-    { logType: 'husbandry', id: 'h1', datetime: '2024-07-23T09:00:00', task: 'Clean mews', completed: true },
-    { logType: 'husbandry', id: 'h2', datetime: '2024-07-23T09:00:00', task: 'Check equipment (jesses, leash)', completed: true },
-    { logType: 'husbandry', id: 'h3', datetime: '2024-07-23T09:00:00', task: 'Weigh bird', completed: false },
-    { logType: 'training', id: 't1', datetime: '2024-07-22T17:00:00', behavior: 'Lure stooping', duration: 15, notes: '10 stoops, good speed.', performance: 'Positive', imageUrl: 'https://placehold.co/600x400.png' },
-    { logType: 'training', id: 't2', datetime: '2024-07-21T16:45:00', behavior: 'Fist calling', duration: 10, notes: 'A bit hesitant today.', performance: 'Neutral', imageUrl: 'https://placehold.co/600x400.png' },
+    // Apollo - Peregrine Falcon, avg weight ~650g
+    // Day 1
+    { logType: 'weight', id: 'w-b1-1', datetime: '2024-07-20T08:00:00', weight: 650 },
+    { logType: 'feeding', id: 'f-b1-1', datetime: '2024-07-20T08:30:00', foodItem: 'Quail', amount: 35, notes: 'Morning feeding.' },
+    { logType: 'weight', id: 'w-b1-2', datetime: '2024-07-20T12:00:00', weight: 685 },
     { logType: 'training', id: 't-b1-1', datetime: '2024-07-20T16:30:00', behavior: 'Fist calling', duration: 12, notes: 'Very responsive, came from 50 yards.', performance: 'Positive' },
-    { logType: 'training', id: 't-b1-2', datetime: '2024-07-19T17:00:00', behavior: 'Lure stooping', duration: 10, notes: 'Distracted by a dog.', performance: 'Negative' },
+    { logType: 'feeding', id: 'f-b1-2', datetime: '2024-07-20T18:00:00', foodItem: 'Chicken Heart', amount: 30, notes: 'Evening meal.' },
+    { logType: 'weight', id: 'w-b1-3', datetime: '2024-07-20T20:00:00', weight: 695 },
+    // Day 2
+    { logType: 'weight', id: 'w-b1-4', datetime: '2024-07-21T08:00:00', weight: 645 }, // ~50g loss overnight
+    { logType: 'feeding', id: 'f-b1-3', datetime: '2024-07-21T08:30:00', foodItem: 'Quail', amount: 40, notes: 'Eager to eat.' },
+    { logType: 'weight', id: 'w-b1-5', datetime: '2024-07-21T12:00:00', weight: 685 },
+    { logType: 'training', id: 't-b1-2', datetime: '2024-07-21T16:45:00', behavior: 'Lure stooping', duration: 10, notes: 'A bit hesitant today.', performance: 'Neutral', imageUrl: 'https://placehold.co/600x400.png' },
+    { logType: 'feeding', id: 'f-b1-4', datetime: '2024-07-21T18:00:00', foodItem: 'Chicken Heart', amount: 35, notes: 'Finished quickly.' },
+    { logType: 'weight', id: 'w-b1-6', datetime: '2024-07-21T20:00:00', weight: 700 },
+    // Day 3
+    { logType: 'weight', id: 'w-b1-7', datetime: '2024-07-22T08:00:00', weight: 650 },
+    { logType: 'feeding', id: 'f-b1-5', datetime: '2024-07-22T08:30:00', foodItem: 'Quail', amount: 30, notes: '' },
+    { logType: 'weight', id: 'w-b1-8', datetime: '2024-07-22T12:00:00', weight: 680 },
+    { logType: 'training', id: 't-b1-3', datetime: '2024-07-22T17:00:00', behavior: 'Lure stooping', duration: 15, notes: '10 stoops, good speed.', performance: 'Positive', imageUrl: 'https://placehold.co/600x400.png' },
+    { logType: 'feeding', id: 'f-b1-6', datetime: '2024-07-22T18:00:00', foodItem: 'Chicken Heart', amount: 30, notes: '' },
+    { logType: 'weight', id: 'w-b1-9', datetime: '2024-07-22T20:00:00', weight: 690 },
+
+    // Misc Logs for Apollo
+    { logType: 'husbandry', id: 'h1', datetime: '2024-07-23T09:00:00', task: 'Clean mews', completed: true },
     { logType: 'mute', id: 'm1', datetime: '2024-07-20T07:00:00', type: 'Mute', condition: 'Normal', notes: 'Healthy looking mute.' },
-    { logType: 'mute', id: 'm2', datetime: '2024-07-19T07:15:00', type: 'Mute', condition: 'Greenish', notes: 'Slightly off color, monitor.', imageUrl: 'https://placehold.co/600x400.png' },
     { logType: 'mute', id: 'c1', datetime: '2024-07-21T06:00:00', type: 'Casting', notes: 'Good size, clean casting.', imageUrl: 'https://placehold.co/600x400.png' },
-    { logType: 'weight', id: 'w1', datetime: '2024-07-15T08:00:00', weight: 655 },
-    { logType: 'weight', id: 'w2', datetime: '2024-07-16T08:05:00', weight: 652 },
-    { logType: 'weight', id: 'w3', datetime: '2024-07-17T07:55:00', weight: 653 },
-    { logType: 'weight', id: 'w4', datetime: '2024-07-18T08:00:00', weight: 651 },
-    { logType: 'weight', id: 'w5', datetime: '2024-07-19T08:02:00', weight: 650 },
-    { logType: 'weight', id: 'w6', datetime: '2024-07-20T07:58:00', weight: 648 },
-    { logType: 'weight', id: 'w7', datetime: '2024-07-21T08:01:00', weight: 650 },
     { logType: 'hunting', id: 'hunt1', datetime: '2024-07-21T18:00:00', prey: 'Rabbit', outcome: 'Successful', notes: 'Clean catch.', imageUrl: 'https://placehold.co/600x400.png' },
-    { logType: 'hunting', id: 'hunt2', datetime: '2024-07-19T17:45:00', prey: 'Squirrel', outcome: 'Unsuccessful', notes: 'Prey escaped into a tree.' },
     { logType: 'health', id: 'health1', datetime: '2024-07-23T10:00:00', condition: 'Bumblefoot', treatment: 'Applied antiseptic cream and wrapped.', notes: 'Checking daily for improvement.' },
   ],
   'b2': [
-    { logType: 'feeding', id: 'f3', datetime: '2024-07-20T08:00:00', foodItem: 'Pigeon', amount: 120, notes: 'Full crop.', protein: 25.2 },
-    { logType: 'feeding', id: 'f7', datetime: '2024-07-21T08:00:00', foodItem: 'Rabbit', amount: 150, notes: 'Ate well.', protein: 31.5 },
-    { logType: 'husbandry', id: 'h4', datetime: '2024-07-23T09:00:00', task: 'Clean mews', completed: true },
-    { logType: 'husbandry', id: 'h5', datetime: '2024-07-23T09:00:00', task: 'Check equipment', completed: false },
-    { logType: 'training', id: 't3', datetime: '2024-07-22T17:30:00', behavior: 'Kite work', duration: 20, notes: 'Followed kite well, gaining height.', performance: 'Positive' },
+    // Athena - Gyrfalcon, avg weight ~1100g
+    // Day 1
+    { logType: 'weight', id: 'w-b2-1', datetime: '2024-07-20T08:00:00', weight: 1100 },
+    { logType: 'feeding', id: 'f-b2-1', datetime: '2024-07-20T08:30:00', foodItem: 'Pigeon', amount: 70, notes: 'Morning feeding.' },
+    { logType: 'weight', id: 'w-b2-2', datetime: '2024-07-20T12:00:00', weight: 1170 },
+    { logType: 'feeding', id: 'f-b2-2', datetime: '2024-07-20T18:00:00', foodItem: 'Rabbit', amount: 80, notes: 'Evening meal.' },
+    { logType: 'weight', id: 'w-b2-3', datetime: '2024-07-20T20:00:00', weight: 1230 },
+    // Day 2
+    { logType: 'weight', id: 'w-b2-4', datetime: '2024-07-21T08:00:00', weight: 1150 }, // ~80g loss overnight
+    { logType: 'feeding', id: 'f-b2-3', datetime: '2024-07-21T08:30:00', foodItem: 'Pigeon', amount: 60, notes: 'Ate well.' },
+    { logType: 'weight', id: 'w-b2-5', datetime: '2024-07-21T12:00:00', weight: 1210 },
     { logType: 'training', id: 't-b2-1', datetime: '2024-07-21T17:30:00', behavior: 'Kite work', duration: 18, notes: 'Good start, but lost focus.', performance: 'Neutral' },
+    { logType: 'feeding', id: 'f-b2-4', datetime: '2024-07-21T18:00:00', foodItem: 'Rabbit', amount: 90, notes: 'Very hungry.' },
+    { logType: 'weight', id: 'w-b2-6', datetime: '2024-07-21T20:00:00', weight: 1270 },
+    // Day 3
+    { logType: 'weight', id: 'w-b2-7', datetime: '2024-07-22T08:00:00', weight: 1190 },
+    { logType: 'feeding', id: 'f-b2-5', datetime: '2024-07-22T08:30:00', foodItem: 'Pigeon', amount: 75, notes: '' },
+    { logType: 'weight', id: 'w-b2-8', datetime: '2024-07-22T12:00:00', weight: 1265 },
+    { logType: 'training', id: 't-b2-2', datetime: '2024-07-22T17:30:00', behavior: 'Kite work', duration: 20, notes: 'Followed kite well, gaining height.', performance: 'Positive' },
+    { logType: 'feeding', id: 'f-b2-6', datetime: '2024-07-22T18:00:00', foodItem: 'Rabbit', amount: 65, notes: '' },
+    { logType: 'weight', id: 'w-b2-9', datetime: '2024-07-22T20:00:00', weight: 1300 },
+
+    // Misc Logs for Athena
+    { logType: 'husbandry', id: 'h4', datetime: '2024-07-23T09:00:00', task: 'Clean mews', completed: true },
     { logType: 'mute', id: 'm-b2-1', datetime: '2024-07-22T07:00:00', type: 'Mute', condition: 'Normal', notes: '' },
-    { logType: 'mute', id: 'c-b2-1', datetime: '2024-07-23T06:30:00', type: 'Casting', notes: 'Regurgitated cleanly.' },
-    { logType: 'weight', id: 'w8', datetime: '2024-07-15T08:30:00', weight: 1110 },
-    { logType: 'weight', id: 'w9', datetime: '2024-07-16T08:35:00', weight: 1105 },
-    { logType: 'weight', id: 'w10', datetime: '2024-07-17T08:25:00', weight: 1108 },
-    { logType: 'weight', id: 'w11', datetime: '2024-07-18T08:30:00', weight: 1102 },
-    { logType: 'weight', id: 'w12', datetime: '2024-07-19T08:32:00', weight: 1100 },
-    { logType: 'weight', id: 'w13', datetime: '2024-07-20T08:28:00', weight: 1098 },
-    { logType: 'weight', id: 'w14', datetime: '2024-07-21T08:31:00', weight: 1100 },
   ],
   'b3': [
-      { logType: 'feeding', id: 'f8', datetime: '2024-07-22T08:45:00', foodItem: 'Mouse', amount: 30, notes: 'First meal with us.' },
-      { logType: 'training', id: 't-b3-1', datetime: '2024-07-22T15:00:00', behavior: 'Manning', duration: 30, notes: 'Calm on the fist, looking around.', performance: 'Positive' },
-      { logType: 'training', id: 't-b3-2', datetime: '2024-07-21T14:00:00', behavior: 'Manning', duration: 25, notes: 'A little jumpy with sudden noises.', performance: 'Neutral' },
+      // Zeus - Harris's Hawk, avg weight ~710g
+      // Day 1
+      { logType: 'weight', id: 'w-b3-1', datetime: '2024-07-20T08:00:00', weight: 710 },
+      { logType: 'feeding', id: 'f-b3-1', datetime: '2024-07-20T08:30:00', foodItem: 'Mouse', amount: 40, notes: 'Morning feeding.' },
+      { logType: 'weight', id: 'w-b3-2', datetime: '2024-07-20T12:00:00', weight: 750 },
+      { logType: 'feeding', id: 'f-b3-2', datetime: '2024-07-20T18:00:00', foodItem: 'Quail', amount: 45, notes: 'Evening meal.' },
+      { logType: 'weight', id: 'w-b3-3', datetime: '2024-07-20T20:00:00', weight: 785 },
+      // Day 2
+      { logType: 'weight', id: 'w-b3-4', datetime: '2024-07-21T08:00:00', weight: 725 }, // ~60g loss overnight
+      { logType: 'training', id: 't-b3-1', datetime: '2024-07-21T14:00:00', behavior: 'Manning', duration: 25, notes: 'A little jumpy with sudden noises.', performance: 'Neutral' },
+      { logType: 'feeding', id: 'f-b3-3', datetime: '2024-07-21T08:30:00', foodItem: 'Mouse', amount: 50, notes: 'Ate well.' },
+      { logType: 'weight', id: 'w-b3-5', datetime: '2024-07-21T12:00:00', weight: 775 },
+      { logType: 'feeding', id: 'f-b3-4', datetime: '2024-07-21T18:00:00', foodItem: 'Quail', amount: 40, notes: '' },
+      { logType: 'weight', id: 'w-b3-6', datetime: '2024-07-21T20:00:00', weight: 805 },
+      // Day 3
+      { logType: 'weight', id: 'w-b3-7', datetime: '2024-07-22T08:00:00', weight: 745 },
+      { logType: 'feeding', id: 'f-b3-5', datetime: '2024-07-22T08:45:00', foodItem: 'Mouse', amount: 30, notes: '' },
+      { logType: 'weight', id: 'w-b3-8', datetime: '2024-07-22T12:00:00', weight: 775 },
+      { logType: 'training', id: 't-b3-2', datetime: '2024-07-22T15:00:00', behavior: 'Manning', duration: 30, notes: 'Calm on the fist, looking around.', performance: 'Positive' },
+      { logType: 'feeding', id: 'f-b3-6', datetime: '2024-07-22T18:00:00', foodItem: 'Quail', amount: 45, notes: '' },
+      { logType: 'weight', id: 'w-b3-9', datetime: '2024-07-22T20:00:00', weight: 810 },
+      
+      // Misc Logs for Zeus
       { logType: 'mute', id: 'm-b3-1', datetime: '2024-07-23T08:00:00', type: 'Mute', condition: 'Normal', notes: 'First mute observed.' },
-      { logType: 'weight', id: 'w15', datetime: '2024-07-15T09:00:00', weight: 715 },
-      { logType: 'weight', id: 'w16', datetime: '2024-07-16T09:05:00', weight: 712 },
-      { logType: 'weight', id: 'w17', datetime: '2024-07-17T08:55:00', weight: 714 },
-      { logType: 'weight', id: 'w18', datetime: '2024-07-18T09:00:00', weight: 710 },
-      { logType: 'weight', id: 'w19', datetime: '2024-07-19T09:02:00', weight: 708 },
-      { logType: 'weight', id: 'w20', datetime: '2024-07-20T08:58:00', weight: 709 },
-      { logType: 'weight', id: 'w21', datetime: '2024-07-21T09:01:00', weight: 710 },
   ],
 };
 
