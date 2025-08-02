@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import type { Bird as BirdType, LogEntry, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog, PredefinedHusbandryTask, PredefinedTraining, HealthLog, PredefinedHealthIssue } from "@/lib/types";
-import { format } from 'date-fns';
+import { format, parseISO, subDays, isAfter, isToday } from 'date-fns';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 import { BirdProfileHeader } from "@/components/bird-profile-header";
@@ -300,6 +300,34 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
     setDeletingLog(log);
   }
 
+  const getFilteredLogs = <T extends LogEntry>(logsToFilter: T[], range: WeightChartSettingsData['dateRange']): T[] => {
+    const now = new Date();
+    let startDate: Date | null = null;
+    
+    switch(range) {
+      case '30d':
+        startDate = subDays(now, 30);
+        break;
+      case '7d':
+        startDate = subDays(now, 7);
+        break;
+      case '1d':
+        startDate = subDays(now, 1); // Or start of today
+        break;
+      case 'all':
+      default:
+        return logsToFilter;
+    }
+    
+    if (range === '1d') {
+        return logsToFilter.filter(log => isToday(parseISO(log.datetime)));
+    }
+
+    return logsToFilter.filter(log => isAfter(parseISO(log.datetime), startDate!));
+  }
+
+  const filteredWeightLogs = getFilteredLogs(birdWeightLogs, chartSettings.dateRange);
+  const filteredFeedingLogs = getFilteredLogs(birdFeedingLogs, chartSettings.dateRange);
 
   return (
     <div className="flex flex-col gap-8">
@@ -328,7 +356,7 @@ export function BirdDetailView({ initialData, birdId, settings }: BirdDetailView
                     </div>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                    <WeightChart data={birdWeightLogs} settings={chartSettings} feedingLogs={birdFeedingLogs} />
+                    <WeightChart data={filteredWeightLogs} settings={chartSettings} feedingLogs={filteredFeedingLogs} />
                 </CardContent>
             </Card>
         </div>

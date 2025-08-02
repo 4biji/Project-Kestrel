@@ -5,7 +5,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianG
 import type { WeightLog, FeedingLog } from "@/lib/types"
 import type { WeightChartSettingsData } from './weight-chart-settings';
 import { Bone } from "lucide-react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 interface WeightChartProps {
   data: WeightLog[];
@@ -29,7 +29,7 @@ const FeedingTooltipContent = ({ active, payload }: any) => {
 
 export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartProps) {
     if (!data || data.length === 0) {
-        return <div className="text-center text-muted-foreground py-10">No weight data available.</div>
+        return <div className="text-center text-muted-foreground py-10">No weight data available for the selected range.</div>
     }
 
   const chartData = data.map(log => ({
@@ -46,7 +46,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
     const weightValues = data.map(log => log.weight);
     let allValues = [...weightValues];
 
-    if (settings.showAverage) {
+    if (settings.showAverage && data.length > 0) {
         allValues.push(averageWeight);
     }
     if (settings.alertBelowAverage.enabled) {
@@ -87,6 +87,12 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
     return closestLog ? closestLog.weight : 0;
   }
   
+  const tickFormatter = (datetime: string) => {
+    if (settings.dateRange === '1d') {
+        return format(parseISO(datetime), "HH:mm");
+    }
+    return format(parseISO(datetime), "MMM d");
+  };
 
   return (
     <div className="h-full w-full">
@@ -102,7 +108,8 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
             >
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
             <XAxis 
-                dataKey="name"
+                dataKey="datetime"
+                tickFormatter={tickFormatter}
                 tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
                 tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
@@ -122,8 +129,8 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
                         if (payload[0].payload.feeding) {
                             return <FeedingTooltipContent active={active} payload={payload} />;
                         }
+                        const log = chartData.find(d => d.datetime === label);
 
-                        const log = chartData.find(d => d.name === label);
                         return (
                             <div className="rounded-lg border bg-background p-2 shadow-sm text-sm">
                                 <div className="font-bold">{log ? new Date(log.datetime).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : label}</div>
@@ -149,7 +156,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
                 dot={{ r: 4, fill: "hsl(var(--primary))" }}
                 activeDot={{ r: 6, fill: "hsl(var(--primary))" }}
             />
-            {settings.showAverage && (
+            {settings.showAverage && data.length > 0 && (
                 <ReferenceLine 
                     y={averageWeight} 
                     label={{ value: `Avg: ${averageWeight.toFixed(0)}g`, position: 'right', fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
@@ -184,7 +191,7 @@ export function WeightChart({ data, settings, feedingLogs = [] }: WeightChartPro
             {settings.showFeedingEvents && feedingLogs.map(log => (
                 <ReferenceDot
                     key={log.id}
-                    x={format(new Date(log.datetime), "MMM d, HH:mm")}
+                    x={log.datetime}
                     y={findWeightAtTime(log.datetime)}
                     r={5}
                     fill="hsl(140 80% 40%)"
