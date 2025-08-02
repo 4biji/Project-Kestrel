@@ -111,23 +111,8 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
     const originalBirdIds = new Set(birds.map(b => b.id));
     const updatedBirdIds = new Set(updatedBirds.map(b => b.id));
 
-    // Handle Deletion
-    if (updatedBirds.length < birds.length) {
-        const deletedBirdId = [...originalBirdIds].find(id => !updatedBirdIds.has(id));
-        if (deletedBirdId) {
-            const deletedBird = birds.find(b => b.id === deletedBirdId);
-            const newLogs = { ...logs };
-            delete newLogs[deletedBirdId];
-            setLogs(newLogs);
-            setBirds(updatedBirds); // Set the already filtered list
-            toast({ title: "Bird Removed", description: `${deletedBird?.name} has been removed.`, variant: "destructive" });
-            if (selectedBirdId === deletedBirdId) {
-                router.push('/');
-            }
-        }
-    }
     // Handle Addition
-    else if (updatedBirds.length > birds.length) {
+    if (updatedBirds.length > birds.length) {
         const newBird = updatedBirds.find(b => !originalBirdIds.has(b.id));
         if (newBird) {
             setLogs(prevLogs => ({ ...prevLogs, [newBird.id]: [] }));
@@ -148,6 +133,29 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
         setBirds(updatedBirds);
     }
     
+    setIsManageBirdsOpen(false);
+  };
+
+  const handleDeleteBird = (birdId: string, deleteLogs: boolean) => {
+    const deletedBird = birds.find(b => b.id === birdId);
+    if (!deletedBird) return;
+
+    const updatedBirds = birds.filter(b => b.id !== birdId);
+    setBirds(updatedBirds);
+
+    if (deleteLogs) {
+        const newLogs = { ...logs };
+        delete newLogs[birdId];
+        setLogs(newLogs);
+    }
+    
+    toast({ title: "Bird Removed", description: `${deletedBird?.name} has been removed.`, variant: "destructive" });
+    
+    if (selectedBirdId === birdId) {
+        router.push('/');
+    }
+    
+    // Close the manage dialog if it's open
     setIsManageBirdsOpen(false);
   };
 
@@ -260,6 +268,7 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
         onOpenChange={setIsManageBirdsOpen}
         birds={birds}
         onSave={handleSaveBirds}
+        onDeleteBird={handleDeleteBird}
       />
       <SettingsDialog
         open={isSettingsOpen}

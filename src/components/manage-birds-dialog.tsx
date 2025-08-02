@@ -21,6 +21,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Calendar } from "./ui/calendar";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
+import { Checkbox } from "./ui/checkbox";
 
 const birdFormSchema = z.object({
   id: z.string().optional(),
@@ -40,11 +42,14 @@ interface ManageBirdsDialogProps {
   onOpenChange: (open: boolean) => void;
   birds: Bird[];
   onSave: (birds: Bird[]) => void;
+  onDeleteBird: (birdId: string, deleteLogs: boolean) => void;
 }
 
-export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onSave }: ManageBirdsDialogProps) {
+export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onSave, onDeleteBird }: ManageBirdsDialogProps) {
   const [birds, setBirds] = useState(initialBirds);
   const [editingBird, setEditingBird] = useState<Bird | null>(null);
+  const [birdToDelete, setBirdToDelete] = useState<Bird | null>(null);
+  const [deleteLogs, setDeleteLogs] = useState(true);
 
   useEffect(() => {
     setBirds(initialBirds);
@@ -108,10 +113,10 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
     });
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to remove this bird? This will delete all associated data.")) {
-        const updatedBirds = birds.filter(b => b.id !== id);
-        setBirds(updatedBirds);
+  const confirmDelete = () => {
+    if (birdToDelete) {
+        onDeleteBird(birdToDelete.id, deleteLogs);
+        setBirdToDelete(null);
     }
   };
   
@@ -132,6 +137,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
   }
 
   return (
+    <>
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
@@ -249,7 +255,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
                                 <Button variant="ghost" size="icon" onClick={() => handleEdit(bird)}>
                                     <Edit className="h-4 w-4" />
                                 </Button>
-                                <Button variant="ghost" size="icon" onClick={() => handleDelete(bird.id)}>
+                                <Button variant="ghost" size="icon" onClick={() => setBirdToDelete(bird)}>
                                     <Trash2 className="h-4 w-4 text-red-500" />
                                 </Button>
                             </TableCell>
@@ -267,5 +273,29 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
         </DialogFooter>
       </DialogContent>
     </Dialog>
+    <AlertDialog open={!!birdToDelete} onOpenChange={(isOpen) => !isOpen && setBirdToDelete(null)}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                    This will permanently delete {birdToDelete?.name}. This action cannot be undone.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="flex items-center space-x-2 my-4">
+                <Checkbox id="delete-logs" checked={deleteLogs} onCheckedChange={(checked) => setDeleteLogs(!!checked)} />
+                <label
+                    htmlFor="delete-logs"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                    Delete all associated log data for this bird.
+                </label>
+            </div>
+            <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmDelete}>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
