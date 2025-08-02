@@ -76,7 +76,7 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, predefinedIs
                                                 <span>Edit</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => onDelete(log)} className="text-red-500 focus:text-red-500">
-                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                <Trash2 className="h-4 w-4" />
                                                 <span>Delete</span>
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -100,41 +100,39 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, predefinedIs
 
 
 export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }: HealthLogProps) {
-  const topSevereLogs = [...logs]
+  const topSevereLog = [...logs]
     .map(log => {
         const issue = predefinedIssues.find(i => i.issue === log.condition);
         return { ...log, severity: issue?.severity || 0 };
     })
-    .sort((a, b) => b.severity - a.severity)
-    .slice(0, 2);
+    .sort((a, b) => b.severity - a.severity)[0];
 
   return (
     <div className="space-y-2 h-full">
-      {logs.length > 0 && topSevereLogs.length > 0 ? (
+      {logs.length > 0 && topSevereLog ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
-          {topSevereLogs.map((log) => (
-            <Card key={log.id} className={cn(
-                "flex flex-col justify-between",
-                log.severity >= 8 ? "border-destructive" : log.severity >= 4 ? "border-yellow-500" : ""
-            )}>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center justify-between">
-                  <span>{log.condition}</span>
-                  <Badge variant={getSeverityBadgeVariant(log.severity)}>
-                    {log.severity}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground line-clamp-2">
-                  {log.treatment}
-                </p>
-                <p className="text-xs text-muted-foreground pt-2">
-                  {format(parseISO(log.datetime), "MMM d, yyyy")}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+          <Card key={topSevereLog.id} className={cn(
+              "flex flex-col justify-between",
+              topSevereLog.severity >= 8 ? "border-destructive" : topSevereLog.severity >= 4 ? "border-yellow-500" : ""
+          )}>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center justify-between">
+                <span>{topSevereLog.condition}</span>
+                <Badge variant={getSeverityBadgeVariant(topSevereLog.severity)}>
+                  {topSevereLog.severity}
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs text-muted-foreground line-clamp-2">
+                {topSevereLog.treatment}
+              </p>
+              <p className="text-xs text-muted-foreground pt-2">
+                {format(parseISO(topSevereLog.datetime), "MMM d, yyyy")}
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="flex flex-col justify-between h-full"></Card>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-full">
