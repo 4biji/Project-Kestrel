@@ -165,8 +165,8 @@ export function FeedingLogComponent({ logs, onEdit, onDelete, averageHourlyLoss,
           </div>
            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
                 <Button variant="ghost" className="w-full justify-start p-0 h-auto" onClick={() => setIsCalcOpen(true)}>
-                    <div className="font-medium flex items-center gap-2 whitespace-nowrap">
-                        <Calculator className="w-4 h-4 text-primary"/>
+                    <div className="text-xl font-bold text-primary flex items-center gap-2">
+                        <Calculator className="w-5 h-5"/>
                         Feeding Calc
                     </div>
                 </Button>
