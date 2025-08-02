@@ -6,7 +6,7 @@ import type { HealthLog, PredefinedHealthIssue } from "@/lib/types";
 import { ScrollArea } from "./ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { MoreVertical, Pencil, Trash2, AlertTriangle, Plus } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, AlertTriangle, Plus, Link } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -76,7 +76,7 @@ export function ViewAllHealthLogsDialog({ open, onOpenChange, logs, predefinedIs
                                                 <span>Edit</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => onDelete(log)} className="text-red-500 focus:text-red-500">
-                                                <Trash2 className="h-4 w-4" />
+                                                <Trash2 className="mr-2 h-4 w-4" />
                                                 <span>Delete</span>
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -132,7 +132,25 @@ export function HealthLogComponent({ logs, predefinedIssues, onEdit, onDelete }:
               </p>
             </CardContent>
           </Card>
-          <Card className="flex flex-col justify-between h-full"></Card>
+          <Card className="flex flex-col justify-between h-full">
+            <CardHeader className="pb-2">
+                <CardTitle className="text-base">First Aid Resources</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ul className="space-y-2 text-sm">
+                    <li>
+                        <a href="https://www.themodernapprentice.com/firstaid.htm" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
+                            <Link className="h-4 w-4" /> The Modern Apprentice
+                        </a>
+                    </li>
+                     <li>
+                        <a href="https://nysfa.org/health-medical/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
+                            <Link className="h-4 w-4" /> NYS Falconry Association
+                        </a>
+                    </li>
+                </ul>
+            </CardContent>
+          </Card>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-full">
