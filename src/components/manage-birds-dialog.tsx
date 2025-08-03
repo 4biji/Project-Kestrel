@@ -139,7 +139,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
   return (
     <>
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
-      <DialogContent className="sm:max-w-3xl">
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Manage Birds</DialogTitle>
           <DialogDescription>
@@ -147,8 +147,8 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto">
+            <ScrollArea className="pr-4">
                  <h3 className="text-lg font-medium mb-4">{editingBird ? "Edit Bird" : "Add New Bird"}</h3>
                  <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
@@ -225,49 +225,47 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
                         </div>
                     </form>
                  </Form>
-            </div>
-            <div>
+            </ScrollArea>
+            <ScrollArea className="pr-4">
                  <h3 className="text-lg font-medium mb-4">Your Birds</h3>
-                <ScrollArea className="h-[28rem] border rounded-lg">
-                    <Table>
-                        <TableHeader>
-                        <TableRow>
-                            <TableHead>Bird</TableHead>
-                            <TableHead>Species</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                <Table>
+                    <TableHeader>
+                    <TableRow>
+                        <TableHead>Bird</TableHead>
+                        <TableHead>Species</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                    {birds.map(bird => (
+                        <TableRow key={bird.id} className={cn(bird.isHidden && "opacity-50")}>
+                        <TableCell className="font-medium flex items-center gap-2">
+                            <Avatar className="h-8 w-8">
+                                <AvatarImage src={bird.imageUrl} alt={bird.name} data-ai-hint="falcon bird" />
+                                <AvatarFallback>{bird.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            {bird.name}
+                        </TableCell>
+                        <TableCell>{bird.species}</TableCell>
+                        <TableCell className="text-right">
+                            <Button variant="ghost" size="icon" onClick={() => handleToggleVisibility(bird.id)}>
+                                {bird.isHidden ? <EyeOff className="h-4 w-4"/> : <Eye className="h-4 w-4"/>}
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleEdit(bird)}>
+                                <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => setBirdToDelete(bird)}>
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                        </TableCell>
                         </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                        {birds.map(bird => (
-                            <TableRow key={bird.id} className={cn(bird.isHidden && "opacity-50")}>
-                            <TableCell className="font-medium flex items-center gap-2">
-                                <Avatar className="h-8 w-8">
-                                    <AvatarImage src={bird.imageUrl} alt={bird.name} data-ai-hint="falcon bird" />
-                                    <AvatarFallback>{bird.name.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                {bird.name}
-                            </TableCell>
-                            <TableCell>{bird.species}</TableCell>
-                            <TableCell className="text-right">
-                                <Button variant="ghost" size="icon" onClick={() => handleToggleVisibility(bird.id)}>
-                                    {bird.isHidden ? <EyeOff className="h-4 w-4"/> : <Eye className="h-4 w-4"/>}
-                                </Button>
-                                <Button variant="ghost" size="icon" onClick={() => handleEdit(bird)}>
-                                    <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" onClick={() => setBirdToDelete(bird)}>
-                                    <Trash2 className="h-4 w-4 text-red-500" />
-                                </Button>
-                            </TableCell>
-                            </TableRow>
-                        ))}
-                        </TableBody>
-                    </Table>
-                </ScrollArea>
-            </div>
+                    ))}
+                    </TableBody>
+                </Table>
+            </ScrollArea>
         </div>
         
-        <DialogFooter>
+        <DialogFooter className="mt-auto pt-4">
             <Button type="button" variant="ghost" onClick={handleClose}>Cancel</Button>
             <Button type="button" onClick={handleSaveChanges}>Save Changes</Button>
         </DialogFooter>
@@ -299,3 +297,5 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
     </>
   );
 }
+
+    
