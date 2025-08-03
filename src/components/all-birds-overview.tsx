@@ -192,7 +192,7 @@ export function AllBirdsOverview({ birds, logs: initialLogs }: AllBirdsOverviewP
             const birdFeedingLogs = birdLogs.filter(l => l.logType === 'feeding') as FeedingLog[];
             const birdForEditing = editingLog && editingLog.logType === 'weight' && Object.keys(logs).find(id => logs[id].some(l => l.id === editingLog.id)) === bird.id ? editingLog as WeightLog : null;
             const currentChartSettings = chartSettings[bird.id] || getDefaultChartSettings(bird.id);
-            const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : 0;
+            const averageWeight = birdWeightLogs.length > 0 ? birdWeightLogs.reduce((acc, log) => acc + log.weight, 0) / birdWeightLogs.length : bird.weight;
             const filteredWeightLogs = getFilteredLogs(birdWeightLogs, currentChartSettings.dateRange);
             const filteredFeedingLogs = getFilteredLogs(birdFeedingLogs, currentChartSettings.dateRange);
             return (
