@@ -5,7 +5,7 @@
 import { useState, useEffect } from "react";
 import type { Bird as BirdType, LogEntry, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog, PredefinedHusbandryTask, PredefinedTraining, HealthLog, PredefinedHealthIssue } from "@/lib/types";
 import { format, parseISO, subDays, isAfter, isToday } from 'date-fns';
-import { Responsive, WidthProvider } from 'react-grid-layout';
+import { Responsive, WidthProvider, type Layouts } from 'react-grid-layout';
 
 import { BirdProfileHeader } from "@/components/bird-profile-header";
 import { WeightChart } from "@/components/weight-chart";
@@ -65,7 +65,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting' | 'health';
 
-const defaultLayouts: Responsive.Layouts = {
+const defaultLayouts: Layouts = {
     lg: [
       { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
       { i: 'weight-log', x: 0, y: 2, w: 1, h: 3 },
