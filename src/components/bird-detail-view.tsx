@@ -525,7 +525,13 @@ export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBir
                         <HusbandryLog 
                             predefinedTasks={predefinedHusbandryTasks}
                             loggedTasks={birdHusbandryLogs}
-                            onCompleteTask={(task) => handleAddLog({task, completed: true}, 'husbandry')}
+                            onCompleteTask={(taskName) => {
+                                const newLogData: Omit<HusbandryTask, 'id' | 'datetime' | 'logType'> = {
+                                    task: taskName,
+                                    completed: true,
+                                };
+                                handleAddLog(newLogData, 'husbandry');
+                            }}
                             onEdit={handleEditLog}
                             onDelete={handleDeleteLog}
                         />
@@ -737,3 +743,4 @@ export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBir
     </div>
   );
 }
+ 
