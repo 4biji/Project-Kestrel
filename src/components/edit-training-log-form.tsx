@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Label } from "./ui/label";
 
-const performanceRatings: PerformanceRating[] = ["Positive", "Neutral", "Negative"];
+const performanceRatings = ["Positive", "Neutral", "Negative"] as const;
 
 const formSchema = z.object({
   behavior: z.string().min(1, "Behavior is required."),
@@ -46,6 +46,7 @@ export function EditTrainingLogForm({ log, onSubmit, onCancel }: EditTrainingLog
     onSubmit({
       ...log,
       ...values,
+      performance: values.performance as PerformanceRating | undefined,
     });
   }
 

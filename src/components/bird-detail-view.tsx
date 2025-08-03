@@ -233,12 +233,12 @@ export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBir
     setDeletingLog(null);
   };
   
-  const handleAddLog = (newLogData: Omit<LogEntry, 'id' | 'datetime'>, logType: LogType) => {
+  const handleAddLog = (newLogData: Omit<LogEntry, 'id' | 'datetime' | 'logType'>, logType: LogType) => {
     const newLog: LogEntry = {
       ...newLogData,
+      logType,
       id: `${logType.charAt(0)}${Date.now()}`,
       datetime: new Date().toISOString(),
-      logType,
     } as LogEntry;
 
     if (logType === 'weight' && 'time' in newLogData && 'date' in newLogData) {
