@@ -31,6 +31,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { WeightChartSettings, type WeightChartSettingsData, weightChartSettingsSchema } from "./weight-chart-settings";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface AllBirdsOverviewProps {
   birds: BirdType[];

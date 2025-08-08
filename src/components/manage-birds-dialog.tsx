@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -147,8 +146,8 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto">
-            <ScrollArea className="pr-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 overflow-y-hidden">
+            <ScrollArea className="pr-4 h-full">
                  <h3 className="text-lg font-medium mb-4">{editingBird ? "Edit Bird" : "Add New Bird"}</h3>
                  <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
@@ -226,7 +225,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
                     </form>
                  </Form>
             </ScrollArea>
-            <ScrollArea className="pr-4">
+            <ScrollArea className="pr-4 h-full">
                  <h3 className="text-lg font-medium mb-4">Your Birds</h3>
                 <Table>
                     <TableHeader>
@@ -241,7 +240,7 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
                         <TableRow key={bird.id} className={cn(bird.isHidden && "opacity-50")}>
                         <TableCell className="font-medium flex items-center gap-2">
                             <Avatar className="h-8 w-8">
-                                <AvatarImage src={bird.imageUrl} alt={bird.name} data-ai-hint="falcon bird" />
+                                <AvatarImage src={bird.imageUrl} alt={bird.name} />
                                 <AvatarFallback>{bird.name.charAt(0)}</AvatarFallback>
                             </Avatar>
                             {bird.name}
@@ -297,5 +296,3 @@ export function ManageBirdsDialog({ open, onOpenChange, birds: initialBirds, onS
     </>
   );
 }
-
-    
