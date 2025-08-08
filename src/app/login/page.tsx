@@ -17,7 +17,7 @@ export default function LoginPage() {
     setError(null);
     const { result, error } = await signUp(email, password);
     if (error) {
-      setError(error.message);
+      setError((error as any).message);
       return false;
     }
     toast({
@@ -32,7 +32,7 @@ export default function LoginPage() {
     setError(null);
     const { result, error } = await signIn(email, password);
     if (error) {
-      setError(error.message);
+      setError((error as any).message);
       return false;
     }
     router.push("/");
