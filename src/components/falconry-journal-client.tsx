@@ -260,20 +260,18 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
                     Settings
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              {user && (
+                <SidebarMenuItem>
+                    <SidebarMenuButton onClick={handleSignOut}>
+                        <LogOut />
+                        <span>Sign Out</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarGroup>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-            {user && (
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton onClick={handleSignOut}>
-                            <LogOut />
-                            <span>Sign Out</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            )}
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
