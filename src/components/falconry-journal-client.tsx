@@ -167,6 +167,18 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
         description: "Your changes have been saved."
     })
   }
+
+  const handleImportData = (data: { birds: BirdType[], logs: { [key: string]: LogEntry[] } }) => {
+    setBirds(data.birds);
+    setLogs(data.logs);
+    setIsSettingsOpen(false);
+    toast({
+      title: 'Data Imported',
+      description: 'Your journal data has been successfully imported.',
+    });
+    // Navigate to overview to prevent errors if the current bird was removed
+    router.push('/');
+  };
   
   const openManageBirds = () => {
     setIsSettingsOpen(false);
@@ -276,6 +288,8 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
         settings={settings}
         onSave={handleSaveSettings}
         onManageBirdsClick={openManageBirds}
+        appData={{ birds, logs }}
+        onImportData={handleImportData}
       />
     </SidebarProvider>
   );

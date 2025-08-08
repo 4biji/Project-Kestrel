@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,10 +20,12 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
-import { Bird, View, Plus, Minus, Palette } from "lucide-react";
+import { Bird, View, Plus, Minus, Palette, Download, Upload, FileText } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import type { Theme } from "@/lib/types";
+import type { Theme, Bird as BirdType, LogEntry } from "@/lib/types";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 
 export const settingsSchema = z.object({
@@ -60,6 +62,8 @@ interface SettingsDialogProps {
   settings: SettingsData;
   onSave: (settings: SettingsData) => void;
   onManageBirdsClick: () => void;
+  appData: { birds: BirdType[], logs: { [key: string]: LogEntry[] } };
+  onImportData: (data: { birds: BirdType[], logs: { [key: string]: LogEntry[] } }) => void;
 }
 
 const cardOptions = [
@@ -79,10 +83,15 @@ export function SettingsDialog({
   settings,
   onSave,
   onManageBirdsClick,
+  appData,
+  onImportData,
 }: SettingsDialogProps) {
   const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isAppearanceOpen, setIsAppearanceOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileToImport, setFileToImport] = useState<File | null>(null);
+  const { toast } = useToast();
 
   const form = useForm<SettingsData>({
     resolver: zodResolver(settingsSchema),
@@ -95,6 +104,105 @@ export function SettingsDialog({
     onOpenChange(false);
   };
   
+  const handleExport = () => {
+    try {
+      const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+        JSON.stringify(appData, null, 2)
+      )}`;
+      const link = document.createElement("a");
+      link.href = jsonString;
+      link.download = "falconry_journal_data.json";
+      link.click();
+      toast({ title: 'Export Successful', description: 'Your data has been downloaded.' });
+    } catch (error) {
+      toast({ variant: 'destructive', title: 'Export Failed', description: 'Could not export your data.' });
+      console.error("Export failed", error);
+    }
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFileToImport(file);
+    }
+  };
+
+  const processImport = () => {
+    if (!fileToImport) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result;
+        if (typeof text !== 'string') {
+          throw new Error('File content is not readable text.');
+        }
+        const data = JSON.parse(text);
+        // Basic validation
+        if (data.birds && data.logs && Array.isArray(data.birds)) {
+          onImportData(data);
+        } else {
+          throw new Error('Invalid data structure in JSON file.');
+        }
+      } catch (error) {
+        toast({ variant: 'destructive', title: 'Import Failed', description: (error as Error).message || 'Could not parse the JSON file.' });
+        console.error("Import failed", error);
+      } finally {
+        setFileToImport(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }
+    };
+    reader.onerror = () => {
+        toast({ variant: 'destructive', title: 'Import Failed', description: 'Could not read the selected file.' });
+    }
+    reader.readAsText(fileToImport);
+  };
+
+   const handleDownloadTemplate = () => {
+    try {
+      const templateData = {
+        birds: [
+          {
+            "id": "b1",
+            "name": "Apollo",
+            "species": "Peregrine Falcon",
+            "gender": "Male",
+            "imageUrl": "https://placehold.co/400x400.png",
+            "weight": 650,
+            "dateCaptured": "2022-09-15T00:00:00.000Z",
+            "isHidden": false
+          }
+        ],
+        logs: {
+          "b1": [
+            {
+              "logType": "weight",
+              "id": "w-b1-1",
+              "datetime": "2023-10-26T08:00:00.000Z",
+              "weight": 650
+            }
+          ]
+        }
+      };
+      const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+        JSON.stringify(templateData, null, 2)
+      )}`;
+      const link = document.createElement("a");
+      link.href = jsonString;
+      link.download = "import_template.json";
+      link.click();
+    } catch (error) {
+      toast({ variant: 'destructive', title: 'Download Failed', description: 'Could not create the template file.' });
+    }
+  };
+
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -168,15 +276,46 @@ export function SettingsDialog({
                     <CollapsibleContent className="space-y-4">
                         <div className="flex flex-row items-center justify-between">
                             <div className="space-y-0.5">
-                                <FormLabel>
-                                    Manage Birds
-                                </FormLabel>
-                                <p className="text-sm text-muted-foreground">
-                                    Add, edit, or remove birds from your journal.
-                                </p>
+                                <FormLabel>Manage Birds</FormLabel>
+                                <p className="text-sm text-muted-foreground">Add, edit, or remove birds.</p>
                             </div>
-                            <Button type="button" variant="outline" onClick={onManageBirdsClick}>
-                                Manage
+                            <Button type="button" variant="outline" onClick={onManageBirdsClick}>Manage</Button>
+                        </div>
+                        <div className="flex flex-row items-center justify-between">
+                            <div className="space-y-0.5">
+                                <FormLabel>Export Data</FormLabel>
+                                <p className="text-sm text-muted-foreground">Save all your data to a JSON file.</p>
+                            </div>
+                            <Button type="button" variant="outline" onClick={handleExport}><Download className="mr-2"/>Export</Button>
+                        </div>
+                        <div className="flex flex-row items-center justify-between">
+                            <div className="space-y-0.5">
+                                <FormLabel>Import Data</FormLabel>
+                                <p className="text-sm text-muted-foreground">Replace all data from a JSON file.</p>
+                            </div>
+                             <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                     <Button type="button" variant="destructive" onClick={handleImportClick}><Upload className="mr-2"/>Import</Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This action cannot be undone. Importing a file will permanently overwrite all current birds and logs.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel onClick={() => setFileToImport(null)}>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={processImport}>Continue</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
+                        </div>
+                        <div className="flex justify-end">
+                             <Button type="button" variant="link" className="text-xs h-auto p-0" onClick={handleDownloadTemplate}>
+                                <FileText className="mr-1 h-3 w-3" />
+                                Download Template
                             </Button>
                         </div>
                     </CollapsibleContent>
