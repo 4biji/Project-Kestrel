@@ -45,4 +45,3 @@ export const logOut = async () => {
 export const useAuth = (callback: (user: User | null) => void) => {
     return onAuthStateChanged(auth, callback);
 }
-
