@@ -232,18 +232,16 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
                     Manage Birds
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarGroup>
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-           <SidebarMenu>
-             <SidebarMenuItem>
+              <SidebarMenuItem>
                 <SidebarMenuButton onClick={() => setIsSettingsOpen(true)}>
                     <Settings className="w-4 h-4" />
                     Settings
                 </SidebarMenuButton>
               </SidebarMenuItem>
-           </SidebarMenu>
+            </SidebarGroup>
+          </SidebarMenu>
+        </SidebarContent>
+        <SidebarFooter>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
