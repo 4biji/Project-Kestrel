@@ -9,9 +9,11 @@ import {
   Plus,
   LayoutDashboard,
   Settings,
+  LogOut,
 } from "lucide-react";
 import type { Bird as BirdType, LogEntry } from "@/lib/types";
 import { usePathname, useRouter } from 'next/navigation';
+import type { User } from "firebase/auth";
 
 import {
   Sidebar,
@@ -33,6 +35,7 @@ import { SettingsDialog, type SettingsData, settingsSchema } from "./settings-di
 import { useToast } from "@/hooks/use-toast";
 import { initialBirds, initialLogs } from "@/lib/data";
 import { Button } from "./ui/button";
+import { useAuth, logOut } from "@/lib/auth";
 
 interface FalconryJournalClientProps {
   view: 'overview' | 'detail';
@@ -49,6 +52,19 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<SettingsData>(() => settingsSchema.parse({}));
   const { toast } = useToast();
+
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = useAuth(user => {
+      if (user) {
+        setUser(user);
+      } else {
+        router.push('/login');
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   useEffect(() => {
     try {
@@ -184,10 +200,16 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
     setIsSettingsOpen(false);
     setIsManageBirdsOpen(true);
   }
+
+  const handleSignOut = async () => {
+    await logOut();
+    setUser(null);
+    router.push('/login');
+  };
   
   const birdForDetail = view === 'detail' && selectedBirdId ? birds.find(b => b.id === selectedBirdId) : null;
 
-  if (!isLoaded) {
+  if (!isLoaded || !user) {
     return <div className="flex items-center justify-center h-screen">Loading Journal...</div>
   }
 
@@ -242,6 +264,16 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
+            {user && (
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton onClick={handleSignOut}>
+                            <LogOut />
+                            <span>Sign Out</span>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            )}
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
