@@ -243,7 +243,7 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
                     onClick={() => handleNavigate(`/bird/${bird.id}`)}
                     isActive={pathname === `/bird/${bird.id}`}
                   >
-                    <Bird />
+                    <Bird className="h-5 w-5" />
                     <span>{bird.name}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
