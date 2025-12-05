@@ -9,9 +9,11 @@ import {
   Plus,
   LayoutDashboard,
   Settings,
+  LogOut,
 } from "lucide-react";
 import type { Bird as BirdType, LogEntry } from "@/lib/types";
 import { usePathname, useRouter } from 'next/navigation';
+import type { User } from "firebase/auth";
 
 import {
   Sidebar,
@@ -33,6 +35,7 @@ import { SettingsDialog, type SettingsData, settingsSchema } from "./settings-di
 import { useToast } from "@/hooks/use-toast";
 import { initialBirds, initialLogs } from "@/lib/data";
 import { Button } from "./ui/button";
+import { useAuth, logOut } from "@/lib/auth";
 
 interface FalconryJournalClientProps {
   view: 'overview' | 'detail';
@@ -50,32 +53,31 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
   const [settings, setSettings] = useState<SettingsData>(() => settingsSchema.parse({}));
   const { toast } = useToast();
 
+  const [user, setUser] = useState<User | null>({} as User); // Assume user is logged in for now
+
+  // useEffect(() => {
+  //   const unsubscribe = useAuth(user => {
+  //     if (user) {
+  //       setUser(user);
+  //     } else {
+  //       router.push('/login');
+  //     }
+  //   });
+  //   return () => unsubscribe();
+  // }, [router]);
+
   useEffect(() => {
+    // For now, we'll use initial data directly to bypass login for testing
+    setBirds(initialBirds);
+    setLogs(initialLogs);
+    
     try {
-      const storedBirds = localStorage.getItem('falconry-birds');
-      const storedLogs = localStorage.getItem('falconry-logs');
       const storedSettings = localStorage.getItem('falconry-settings');
-
-      if (storedBirds) {
-        setBirds(JSON.parse(storedBirds));
-      } else {
-        setBirds(initialBirds);
-      }
-
-      if (storedLogs) {
-        setLogs(JSON.parse(storedLogs));
-      } else {
-        setLogs(initialLogs);
-      }
-      
       if (storedSettings) {
         setSettings(settingsSchema.parse(JSON.parse(storedSettings)));
       }
-
     } catch (error) {
-        console.error("Failed to parse from localStorage", error);
-        setBirds(initialBirds);
-        setLogs(initialLogs);
+        console.error("Failed to parse settings from localStorage", error);
     }
     setIsLoaded(true);
   }, []);
@@ -83,8 +85,10 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
   useEffect(() => {
     if (isLoaded) {
       try {
-        localStorage.setItem('falconry-birds', JSON.stringify(birds));
-        localStorage.setItem('falconry-logs', JSON.stringify(logs));
+        // We can re-enable localStorage persistence if needed, but for a pure test env,
+        // starting fresh might be better.
+        // localStorage.setItem('falconry-birds', JSON.stringify(birds));
+        // localStorage.setItem('falconry-logs', JSON.stringify(logs));
         localStorage.setItem('falconry-settings', JSON.stringify(settings));
       } catch (error) {
         console.error("Failed to save to localStorage", error);
@@ -167,15 +171,33 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
         description: "Your changes have been saved."
     })
   }
+
+  const handleImportData = (data: { birds: BirdType[], logs: { [key: string]: LogEntry[] } }) => {
+    setBirds(data.birds);
+    setLogs(data.logs);
+    setIsSettingsOpen(false);
+    toast({
+      title: 'Data Imported',
+      description: 'Your journal data has been successfully imported.',
+    });
+    // Navigate to overview to prevent errors if the current bird was removed
+    router.push('/');
+  };
   
   const openManageBirds = () => {
     setIsSettingsOpen(false);
     setIsManageBirdsOpen(true);
   }
+
+  const handleSignOut = async () => {
+    await logOut();
+    setUser(null);
+    router.push('/login');
+  };
   
   const birdForDetail = view === 'detail' && selectedBirdId ? birds.find(b => b.id === selectedBirdId) : null;
 
-  if (!isLoaded) {
+  if (!isLoaded || !user) {
     return <div className="flex items-center justify-center h-screen">Loading Journal...</div>
   }
 
@@ -209,7 +231,7 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
                     onClick={() => handleNavigate(`/bird/${bird.id}`)}
                     isActive={pathname === `/bird/${bird.id}`}
                   >
-                    <Bird />
+                    <Bird className="h-5 w-5" />
                     <span>{bird.name}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -220,18 +242,24 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
                     Manage Birds
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarGroup>
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-           <SidebarMenu>
-             <SidebarMenuItem>
+              <SidebarMenuItem>
                 <SidebarMenuButton onClick={() => setIsSettingsOpen(true)}>
                     <Settings className="w-4 h-4" />
                     Settings
                 </SidebarMenuButton>
               </SidebarMenuItem>
-           </SidebarMenu>
+              {/* {user && (
+                <SidebarMenuItem>
+                    <SidebarMenuButton onClick={handleSignOut}>
+                        <LogOut />
+                        <span>Sign Out</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+              )} */}
+            </SidebarGroup>
+          </SidebarMenu>
+        </SidebarContent>
+        <SidebarFooter>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
@@ -276,6 +304,8 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
         settings={settings}
         onSave={handleSaveSettings}
         onManageBirdsClick={openManageBirds}
+        appData={{ birds, logs }}
+        onImportData={handleImportData}
       />
     </SidebarProvider>
   );

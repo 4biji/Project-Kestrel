@@ -150,7 +150,7 @@ export function WeightChartSettings({
                         name="showAverage"
                         render={({ field }) => (
                             <FormItem className="flex flex-row items-center justify-between">
-                                <FormLabel>Show Average Weight ({averageWeight.toFixed(0)}g)</FormLabel>
+                                <FormLabel>Show Average Weight ({averageWeight > 0 ? averageWeight.toFixed(0) : 'N/A'}g)</FormLabel>
                                 <FormControl>
                                     <Switch checked={field.value} onCheckedChange={field.onChange}/>
                                 </FormControl>

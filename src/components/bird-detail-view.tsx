@@ -5,7 +5,7 @@
 import { useState, useEffect } from "react";
 import type { Bird as BirdType, LogEntry, FeedingLog, HusbandryTask, TrainingLog, MuteLog, WeightLog, NutritionInfo, HuntingLog, PredefinedHusbandryTask, PredefinedTraining, HealthLog, PredefinedHealthIssue } from "@/lib/types";
 import { format, parseISO, subDays, isAfter, isToday } from 'date-fns';
-import { Responsive, WidthProvider } from 'react-grid-layout';
+import { Responsive, WidthProvider, type Layouts } from 'react-grid-layout';
 
 import { BirdProfileHeader } from "@/components/bird-profile-header";
 import { WeightChart } from "@/components/weight-chart";
@@ -65,17 +65,45 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 type LogType = 'weight' | 'feeding' | 'husbandry' | 'training' | 'mute' | 'hunting' | 'health';
 
-const defaultLayouts: Responsive.Layouts = {
-    lg: [
-      { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
-      { i: 'weight-log', x: 0, y: 2, w: 1, h: 3 },
-      { i: 'feeding-log', x: 1, y: 2, w: 1, h: 3 },
-      { i: 'husbandry', x: 0, y: 5, w: 1, h: 3 },
-      { i: 'training-log', x: 1, y: 5, w: 1, h: 3 },
-      { i: 'hunting-log', x: 0, y: 8, w: 1, h: 3 },
-      { i: 'mutes-castings', x: 1, y: 8, w: 1, h: 3 },
-      { i: 'health-first-aid', x: 0, y: 11, w: 2, h: 3 },
-    ],
+const lgLayout = [
+  { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
+  { i: 'weight-log', x: 0, y: 2, w: 1, h: 3 },
+  { i: 'feeding-log', x: 1, y: 2, w: 1, h: 3 },
+  { i: 'husbandry', x: 0, y: 5, w: 1, h: 3 },
+  { i: 'training-log', x: 1, y: 5, w: 1, h: 3 },
+  { i: 'hunting-log', x: 0, y: 8, w: 1, h: 3 },
+  { i: 'mutes-castings', x: 1, y: 8, w: 1, h: 3 },
+  { i: 'health-first-aid', x: 0, y: 11, w: 2, h: 3 },
+];
+
+const mdLayout = [
+    { i: 'weight-trend', x: 0, y: 0, w: 2, h: 2 },
+    { i: 'weight-log', x: 0, y: 2, w: 1, h: 3 },
+    { i: 'feeding-log', x: 1, y: 2, w: 1, h: 3 },
+    { i: 'husbandry', x: 0, y: 5, w: 1, h: 3 },
+    { i: 'training-log', x: 1, y: 5, w: 1, h: 3 },
+    { i: 'hunting-log', x: 0, y: 8, w: 1, h: 3 },
+    { i: 'mutes-castings', x: 1, y: 8, w: 1, h: 3 },
+    { i: 'health-first-aid', x: 0, y: 11, w: 2, h: 3 },
+];
+
+const smLayout = [
+    { i: 'weight-trend', x: 0, y: 0, w: 1, h: 2 },
+    { i: 'weight-log', x: 0, y: 2, w: 1, h: 3 },
+    { i: 'feeding-log', x: 0, y: 5, w: 1, h: 3 },
+    { i: 'husbandry', x: 0, y: 8, w: 1, h: 3 },
+    { i: 'training-log', x: 0, y: 11, w: 1, h: 3 },
+    { i: 'hunting-log', x: 0, y: 14, w: 1, h: 3 },
+    { i: 'mutes-castings', x: 0, y: 17, w: 1, h: 3 },
+    { i: 'health-first-aid', x: 0, y: 20, w: 1, h: 3 },
+];
+
+
+const defaultLayouts: Layouts = {
+    lg: lgLayout,
+    md: mdLayout,
+    sm: smLayout,
+    xs: smLayout,
 };
 
 interface BirdDetailViewProps {
@@ -233,12 +261,12 @@ export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBir
     setDeletingLog(null);
   };
   
-  const handleAddLog = (newLogData: Omit<LogEntry, 'id' | 'datetime'>, logType: LogType) => {
+  const handleAddLog = (newLogData: Partial<LogEntry>, logType: LogType) => {
     const newLog: LogEntry = {
       ...newLogData,
+      logType,
       id: `${logType.charAt(0)}${Date.now()}`,
       datetime: new Date().toISOString(),
-      logType,
     } as LogEntry;
 
     if (logType === 'weight' && 'time' in newLogData && 'date' in newLogData) {
@@ -525,7 +553,13 @@ export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBir
                         <HusbandryLog 
                             predefinedTasks={predefinedHusbandryTasks}
                             loggedTasks={birdHusbandryLogs}
-                            onCompleteTask={(task) => handleAddLog({task, completed: true}, 'husbandry')}
+                            onCompleteTask={(taskName) => {
+                                const newLogData: Partial<HusbandryTask> = {
+                                    task: taskName,
+                                    completed: true,
+                                };
+                                handleAddLog(newLogData, 'husbandry');
+                            }}
                             onEdit={handleEditLog}
                             onDelete={handleDeleteLog}
                         />
@@ -590,8 +624,8 @@ export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBir
       <ResponsiveGridLayout 
         className="layout"
         layouts={defaultLayouts}
-        breakpoints={{lg: 1200, md: 768, sm: 640, xs: 0}}
-        cols={{lg: 2, md: 2, sm: 1, xs: 1}}
+        breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
+        cols={{lg: 2, md: 2, sm: 1, xs: 1, xxs: 1}}
         rowHeight={settings.rowHeight}
         isDraggable={settings.isLayoutEditable}
         isResizable={settings.isLayoutEditable}
@@ -737,3 +771,4 @@ export function BirdDetailView({ bird, allBirds, logs, settings, setLogs, setBir
     </div>
   );
 }
+ 

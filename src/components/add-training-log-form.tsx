@@ -4,7 +4,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import type { TrainingLog, PredefinedTraining, PerformanceRating } from "@/lib/types";
+import type { TrainingLog, PredefinedTraining } from "@/lib/types";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Separator } from "./ui/separator";
 
-const performanceRatings: PerformanceRating[] = ["Positive", "Neutral", "Negative"];
+const performanceRatings = ["Positive", "Neutral", "Negative"] as const;
 
 const formSchema = z.object({
   behavior: z.string().min(1, "Behavior is required."),

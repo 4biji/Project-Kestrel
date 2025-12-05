@@ -109,44 +109,46 @@ export function MuteLogComponent({ logs, onEdit, onDelete }: MuteLogProps) {
 
   return (
     <div className="space-y-2 -mt-2">
-      {logs.length > 0 ? (
-        <div className="space-y-2">
-          {lastMute && (
-            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
-                <div className="font-medium">Last Mute</div>
-                 <div className="flex justify-between items-baseline mt-2">
-                     {lastMute.condition && (
-                        <Badge variant={getBadgeVariant(lastMute.condition)}>{lastMute.condition}</Badge>
-                    )}
-                    <span className="text-xs text-muted-foreground">{format(parseISO(lastMute.datetime), 'MMM d, HH:mm')}</span>
-                </div>
-                {lastMute.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{lastMute.notes}"</p>}
-            </div>
-          )}
+      <div className="space-y-2">
+        {logs.length > 0 ? (
+          <>
+            {lastMute && (
+              <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                  <div className="font-medium">Last Mute</div>
+                   <div className="flex justify-between items-baseline mt-2">
+                       {lastMute.condition && (
+                          <Badge variant={getBadgeVariant(lastMute.condition)}>{lastMute.condition}</Badge>
+                      )}
+                      <span className="text-xs text-muted-foreground">{format(parseISO(lastMute.datetime), 'MMM d, HH:mm')}</span>
+                  </div>
+                  {lastMute.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{lastMute.notes}"</p>}
+              </div>
+            )}
 
-          {lastCasting && (
-            <div className="p-3 bg-secondary/50 rounded-lg text-sm">
-                <div className="font-medium">Last Casting</div>
-                <div className="text-xs text-muted-foreground mt-2">{format(parseISO(lastCasting.datetime), 'MMM d, HH:mm')}</div>
-                {lastCasting.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{lastCasting.notes}"</p>}
-            </div>
-          )}
-          
-          {!lastMute && !lastCasting && (
-             <p className="text-sm text-center text-muted-foreground py-10">No mute or casting records.</p>
-          )}
+            {lastCasting && (
+              <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+                  <div className="font-medium">Last Casting</div>
+                  <div className="text-xs text-muted-foreground mt-2">{format(parseISO(lastCasting.datetime), 'MMM d, HH:mm')}</div>
+                  {lastCasting.notes && <p className="text-xs mt-1 text-muted-foreground italic">"{lastCasting.notes}"</p>}
+              </div>
+            )}
 
-           <div className="p-3 bg-secondary/50 rounded-lg text-sm">
-                <div className="font-medium flex items-center gap-2"><BookOpen className="w-4 h-4 text-primary"/> Resources</div>
-                 <div className="text-xs text-muted-foreground mt-2 space-y-1">
-                    <a href="https://www.themodernapprentice.com/mutes.htm" target="_blank" rel="noopener noreferrer" className="block hover:underline text-primary">The Modern Apprentice</a>
-                    <a href="https://clinicalavianpathologyservices.com/feces-mutes/" target="_blank" rel="noopener noreferrer" className="block hover:underline text-primary">Clinical Avian Pathology</a>
-                </div>
-            </div>
-        </div>
-      ) : (
-        <p className="text-sm text-center text-muted-foreground py-10">No mute or casting records.</p>
-      )}
+            {!lastMute && !lastCasting && (
+               <p className="text-sm text-center text-muted-foreground py-10">No mute or casting records.</p>
+            )}
+          </>
+        ) : (
+          <p className="text-sm text-center text-muted-foreground py-10">No mute or casting records.</p>
+        )}
+      </div>
+
+      <div className="p-3 bg-secondary/50 rounded-lg text-sm">
+          <div className="font-medium flex items-center gap-2"><BookOpen className="w-4 h-4 text-primary"/> Resources</div>
+           <div className="text-xs text-muted-foreground mt-2 space-y-1">
+              <a href="https://www.themodernapprentice.com/mutes.htm" target="_blank" rel="noopener noreferrer" className="block hover:underline text-primary">The Modern Apprentice</a>
+              <a href="https://clinicalavianpathologyservices.com/feces-mutes/" target="_blank" rel="noopener noreferrer" className="block hover:underline text-primary">Clinical Avian Pathology</a>
+          </div>
+      </div>
     </div>
   );
 }

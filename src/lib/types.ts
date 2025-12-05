@@ -7,7 +7,7 @@ export interface Bird {
   name: string;
   species: string;
   gender: 'Male' | 'Female';
-  imageUrl: string;
+  imageUrl?: string;
   weight: number; // Current weight in grams
   dateCaptured: string;
   isHidden?: boolean;

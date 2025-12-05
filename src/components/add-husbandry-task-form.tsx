@@ -34,7 +34,7 @@ export function AddHusbandryTaskForm({ birdName, predefinedTasks, onSubmit, onCa
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((data) => onSubmit({ ...data, completed: false }))} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <p className="text-sm text-muted-foreground">
             Add a new husbandry task for {birdName}.
         </p>
