@@ -53,45 +53,31 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
   const [settings, setSettings] = useState<SettingsData>(() => settingsSchema.parse({}));
   const { toast } = useToast();
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>({} as User); // Assume user is logged in for now
+
+  // useEffect(() => {
+  //   const unsubscribe = useAuth(user => {
+  //     if (user) {
+  //       setUser(user);
+  //     } else {
+  //       router.push('/login');
+  //     }
+  //   });
+  //   return () => unsubscribe();
+  // }, [router]);
 
   useEffect(() => {
-    const unsubscribe = useAuth(user => {
-      if (user) {
-        setUser(user);
-      } else {
-        router.push('/login');
-      }
-    });
-    return () => unsubscribe();
-  }, [router]);
-
-  useEffect(() => {
+    // For now, we'll use initial data directly to bypass login for testing
+    setBirds(initialBirds);
+    setLogs(initialLogs);
+    
     try {
-      const storedBirds = localStorage.getItem('falconry-birds');
-      const storedLogs = localStorage.getItem('falconry-logs');
       const storedSettings = localStorage.getItem('falconry-settings');
-
-      if (storedBirds) {
-        setBirds(JSON.parse(storedBirds));
-      } else {
-        setBirds(initialBirds);
-      }
-
-      if (storedLogs) {
-        setLogs(JSON.parse(storedLogs));
-      } else {
-        setLogs(initialLogs);
-      }
-      
       if (storedSettings) {
         setSettings(settingsSchema.parse(JSON.parse(storedSettings)));
       }
-
     } catch (error) {
-        console.error("Failed to parse from localStorage", error);
-        setBirds(initialBirds);
-        setLogs(initialLogs);
+        console.error("Failed to parse settings from localStorage", error);
     }
     setIsLoaded(true);
   }, []);
@@ -99,8 +85,10 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
   useEffect(() => {
     if (isLoaded) {
       try {
-        localStorage.setItem('falconry-birds', JSON.stringify(birds));
-        localStorage.setItem('falconry-logs', JSON.stringify(logs));
+        // We can re-enable localStorage persistence if needed, but for a pure test env,
+        // starting fresh might be better.
+        // localStorage.setItem('falconry-birds', JSON.stringify(birds));
+        // localStorage.setItem('falconry-logs', JSON.stringify(logs));
         localStorage.setItem('falconry-settings', JSON.stringify(settings));
       } catch (error) {
         console.error("Failed to save to localStorage", error);
@@ -260,14 +248,14 @@ export function FalconryJournalClient({ view, selectedBirdId }: FalconryJournalC
                     Settings
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              {user && (
+              {/* {user && (
                 <SidebarMenuItem>
                     <SidebarMenuButton onClick={handleSignOut}>
                         <LogOut />
                         <span>Sign Out</span>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
-              )}
+              )} */}
             </SidebarGroup>
           </SidebarMenu>
         </SidebarContent>
